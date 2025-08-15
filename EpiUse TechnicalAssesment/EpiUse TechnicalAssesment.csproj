@@ -69,6 +69,7 @@
   <ItemGroup>
     <Content Include="Images\EpiUseLogo.png" />
     <Content Include="Images\harshil-gudka-VCAxkOfxtNI-unsplash.jpg" />
+    <Content Include="Images\photos-by-beks-lqVe6NdK8bQ-unsplash.jpg" />
     <Content Include="Styles\StyleSheet.css" />
     <Content Include="Web.config" />
     <Content Include="Login.aspx" />

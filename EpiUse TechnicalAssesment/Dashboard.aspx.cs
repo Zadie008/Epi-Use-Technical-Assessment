@@ -18,7 +18,10 @@ namespace EpiUse_TechnicalAssesment
             UnobtrusiveValidationMode = System.Web.UI.UnobtrusiveValidationMode.None;
             if (!IsPostBack)
             {
-                LoadEmployeeData();
+                LoadManagers();
+                LoadLocations();
+                LoadDepartments();
+                LoadEmployees();
             }
         }
         private void LoadEmployeeData()
@@ -43,14 +46,14 @@ namespace EpiUse_TechnicalAssesment
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT DepartmentID, DepartmentName FROM Departments ORDER BY DepartmentName";
+                string query = "SELECT DISTINCT DepartmentID, DepartmentName FROM Departments ORDER BY DepartmentName";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
                 ddlDepartments.DataSource = cmd.ExecuteReader();
                 ddlDepartments.DataTextField = "DepartmentName";
                 ddlDepartments.DataValueField = "DepartmentID";
                 ddlDepartments.DataBind();
-                ddlDepartments.Items.Insert(0, new System.Web.UI.WebControls.ListItem("All", ""));
+                ddlDepartments.Items.Insert(0, new ListItem("Select a department", ""));
             }
         }
 
@@ -88,19 +91,20 @@ namespace EpiUse_TechnicalAssesment
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = @"SELECT DISTINCT e.EmployeeNumber, 
-                                e.FirstName + ' ' + e.LastName AS FullName
-                         FROM Employees e
-                         INNER JOIN Employees sub ON e.EmployeeNumber = sub.ManagerID
-                         ORDER BY FullName";
+                string query = @"SELECT DISTINCT m.EmployeeNumber, 
+                        m.FirstName + ' ' + m.LastName AS ManagerName
+                 FROM Employees e
+                 INNER JOIN Employees m ON e.ManagerID = m.EmployeeNumber
+                 WHERE e.ManagerID IS NOT NULL
+                 ORDER BY ManagerName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
                 ddlManagers.DataSource = cmd.ExecuteReader();
-                ddlManagers.DataTextField = "FullName";
-                ddlManagers.DataValueField = "EmployeeNumber"; // ✅ use EmployeeNumber
+                ddlManagers.DataTextField = "ManagerName";
+                ddlManagers.DataValueField = "EmployeeNumber";
                 ddlManagers.DataBind();
-                ddlManagers.Items.Insert(0, new System.Web.UI.WebControls.ListItem("All", ""));
+                ddlManagers.Items.Insert(0, new ListItem("All", ""));
             }
         }
         private void LoadEmployees()
@@ -108,25 +112,24 @@ namespace EpiUse_TechnicalAssesment
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"
-            SELECT e.EmployeeNumber, 
-                   e.FirstName, 
-                   e.LastName, 
-                   e.Email, 
-                   e.Role, 
-                   e.Salary, 
-                   d.DepartmentName, 
-                   l.LocationName, 
-                   m.FirstName + ' ' + m.LastName AS ManagerName
-            FROM Employees e
-            LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
-            LEFT JOIN Locations l ON e.LocationID = l.LocationID
-            LEFT JOIN Employees m ON e.ManagerID = m.EmployeeNumber
-            WHERE (@FirstName = '' OR e.FirstName LIKE @FirstNamePattern)
-              AND (@LastName = '' OR e.LastName LIKE @LastNamePattern)
-              AND (@ManagerID = '' OR e.ManagerID = @ManagerID)
-              AND (@DepartmentID = '' OR e.DepartmentID = @DepartmentID)
-              AND (@LocationID = '' OR e.LocationID = @LocationID)
-            ORDER BY e.FirstName, e.LastName";
+        SELECT e.EmployeeNumber, 
+               e.FirstName, 
+               e.LastName, 
+               e.Email, 
+               e.Role, 
+               l.LocationName, 
+               d.DepartmentName,
+               m.FirstName + ' ' + m.LastName AS ManagerName
+        FROM Employees e
+        LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
+        LEFT JOIN Locations l ON e.LocationID = l.LocationID
+        LEFT JOIN Employees m ON e.ManagerID = m.EmployeeNumber
+        WHERE (@FirstName = '' OR e.FirstName LIKE @FirstNamePattern)
+          AND (@LastName = '' OR e.LastName LIKE @LastNamePattern)
+          AND (@ManagerID = '' OR e.ManagerID = @ManagerID)
+          AND (@DepartmentID = '' OR e.DepartmentID = @DepartmentID)
+          AND (@LocationID = '' OR e.LocationID = @LocationID)
+        ORDER BY e.FirstName, e.LastName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -140,7 +143,7 @@ namespace EpiUse_TechnicalAssesment
                 cmd.Parameters.AddWithValue("@LastName", lastName);
                 cmd.Parameters.AddWithValue("@LastNamePattern", "%" + lastName + "%");
 
-                // Manager filter (EmployeeNumber)
+                // Manager filter
                 cmd.Parameters.AddWithValue("@ManagerID",
                     string.IsNullOrEmpty(ddlManagers.SelectedValue) ? "" : ddlManagers.SelectedValue);
 
@@ -157,7 +160,6 @@ namespace EpiUse_TechnicalAssesment
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
 
-                // Bind to GridView (assuming your ASPX has a GridView with ID gvEmployees)
                 EmployeeGridView.DataSource = dt;
                 EmployeeGridView.DataBind();
             }
