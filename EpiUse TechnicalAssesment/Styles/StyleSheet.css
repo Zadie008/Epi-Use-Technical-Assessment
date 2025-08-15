@@ -1,6 +1,8 @@
-﻿/*============================================
-    Global Styles for all pages
-=============================================*/
+﻿/* ========================================
+    1. Base & Global Styles
+    ========================================*/
+
+/* Base styles for the entire document */
 body {
     font-family: 'Dancing Script', Georgia, serif;
     margin: 0;
@@ -10,7 +12,14 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-image: url('../images/harshil-gudka-VCAxkOfxtNI-unsplash.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    position: relative;
 }
+
 h1, h2, h3, h4, h5, h6 {
     color: navy;
     text-align: center;
@@ -18,9 +27,252 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 15px;
 }
 
-/*============================================
-    Login Page
-=============================================*/
+.page-wrapper {
+    background-color: white;
+    padding: 2em;
+    max-width: 1000px;
+    margin: 2em auto;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 1; 
+}
+
+
+.main-content {
+    padding-top: 20px;
+    flex-grow: 1;
+}
+
+header {
+    width: 100%;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5em;
+    padding: 10px;
+    border-bottom: 2px solid navy;
+    margin-top: 0;
+    margin-bottom:0;
+}
+
+nav {
+    width: 100%;
+    padding-bottom: 20px;
+    border-bottom: 2px solid navy;
+}
+
+.nav-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 15px;
+    width: 100%;
+}
+
+.nav-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    width: 180px;
+    height: 125px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    box-sizing: border-box;
+    flex: 0 0 150;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    background-color: #6998b9;
+}
+
+.nav-card:hover {
+    background-color: #5b87a8;
+    transform: translateY(-2px);
+}
+
+.nav-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 8px;
+}
+
+.nav-title {
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.6em 1.2em;
+    margin: 0 0.5em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-view-green {
+    background-color: #28a745;
+}
+.btn-view-green:hover {
+    background-color: #218838;
+}
+
+.btn-edit-yellow {
+    background-color: #ffc107;
+    color: #212529;
+}
+.btn-edit-yellow:hover {
+    background-color: #e0a800;
+}
+
+.btn-green {
+    background-color: #28a745;
+    color: #fff;
+}
+.btn-green:hover {
+    background-color: #218838;
+}
+
+.btn-yellow {
+    background-color: #ffc107;
+    color: #fff;
+}
+.btn-yellow:hover {
+    background-color: #e0a800;
+}
+.form-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1em;
+    margin-bottom: 1.2em;
+}
+
+.form-label {
+    font-weight: bold;
+    color: #333;
+    flex-shrink: 0;
+}
+
+.form-control {
+    padding: 8px 12px;
+    border: 1px solid #666;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    width: 250px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: #6998b9;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(105, 152, 185, 0.2);
+}
+
+/* Make dropdowns match other inputs */
+select.form-control {
+    height: 36px;
+    background-color: white;
+}
+
+.action-buttons {
+    margin-top: 1.5em;
+}
+
+.table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.table th,
+.table td {
+    padding: 0.75em;
+    border: 1px solid #ccc;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.table th {
+    position: sticky;
+    top: 0;
+    background-color: navy;
+    color: white;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.no-results {
+    margin-top: 1em;
+    font-weight: bold;
+    color: crimson;
+    text-align: center;
+}
+
+/* Custom scrollbar for tables */
+.table-container::-webkit-scrollbar {
+    width: 8px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ========================================
+    Page-Specific Overrides
+    ========================================*/
+
+/* Login Page Overrides */
+.login-page body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    background-color: #000;
+}
+
 .login-page-container {
     position: fixed;
     top: 0;
@@ -32,6 +284,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     z-index: 0;
 }
+
 .login-page-container::before {
     content: '';
     position: absolute;
@@ -45,6 +298,7 @@ h1, h2, h3, h4, h5, h6 {
     background-repeat: no-repeat;
     z-index: 1;
 }
+
 .login-page-container::after {
     content: '';
     position: absolute;
@@ -55,6 +309,7 @@ h1, h2, h3, h4, h5, h6 {
     background: rgba(0, 0, 0, 0.5);
     z-index: 2;
 }
+
 .login-box {
     background-color: rgba(255, 255, 255, 0.2);
     padding: 40px;
@@ -121,6 +376,15 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     font-size: 14px;
 }
+
+/* Hide navigation and header on the login page */
+.login-page header,
+.login-page nav,
+.login-page .main-content {
+    display: none !important;
+}
+
+/* Reset the master page wrapper for the login page */
 .login-page .page-wrapper {
     background: transparent !important;
     padding: 0 !important;
@@ -130,9 +394,141 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 0 !important;
 }
 
-/* Hide navigation and header on the login page */
-.login-page header,
-.login-page nav,
-.login-page .main-content {
-    display: none !important;
+/* Dashboard Page Overrides */
+.dashboard-page body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh;
+}
+
+.dashboard-page .page-wrapper {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-page .main-content::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/photos-by-beks-lqve6ndk8bq-unsplash.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+.dashboard-page .main-content::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: -1;
+}
+
+.dashboard-content {
+    position: relative;
+    min-height: 850px;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 10px;
+    margin: 20px auto;
+    max-width: 1200px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-page header,
+.dashboard-page nav,
+.dashboard-page .search-panel {
+    background-color: #ffc0cb;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: none;
+}
+
+.dashboard-page header h1 {
+    color: #000;
+    border-bottom: 2px solid #003366;
+}
+
+.dashboard-page nav {
+    border-bottom: 2px solid #003366;
+}
+
+.dashboard-page .nav-container {
+    background-color: transparent;
+}
+
+.dashboard-page .nav-card {
+    background-color: #b0e0e6;
+    color: #000 !important;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-page .nav-card:hover {
+    background-color: #87ceeb;
+    color: #fff !important;
+}
+
+.dashboard-page .nav-title {
+    color: #000;
+    font-weight: bold;
+}
+
+.dashboard-page .table {
+    background-color: #fff;
+}
+
+.dashboard-page .table tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+.dashboard-page .table tr:nth-child(even) {
+    background-color: #f5f5f5;
+}
+
+.dashboard-page .table th {
+    background-color: #003366;
+    color: #fff;
+}
+
+.dashboard-page .table td {
+    color: #000;
+    border: 1px solid #ddd;
+}
+
+/* Correct panel layout for horizontal arrangement */
+.search-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.search-form-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-label-group, .search-input-group {
+    width: auto;
+}
+
+.search-buttons-group {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
 }

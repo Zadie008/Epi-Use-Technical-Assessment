@@ -10,6 +10,7 @@
     </title>
         
 <%--    refernerces to the stylesheet --%>
+
    <link href="Styles/StyleSheet.css" rel="stylesheet" type="text/css" />
 </head>
 

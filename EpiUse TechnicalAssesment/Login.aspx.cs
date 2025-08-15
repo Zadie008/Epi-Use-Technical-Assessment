@@ -31,6 +31,7 @@ namespace EpiUse_TechnicalAssesment
             }
 
             string hashedPassword = HashPassword(rawPassword);
+                 
 
             try
             {
@@ -52,6 +53,7 @@ namespace EpiUse_TechnicalAssesment
                         {
                             if (reader.Read())
                             {
+
                                 // Successful login - store user data in session
                                 Session["EmployeeNumber"] = reader["EmployeeNumber"].ToString();
                                 Session["FullName"] = $"{reader["FirstName"]} {reader["LastName"]}";
@@ -96,9 +98,6 @@ namespace EpiUse_TechnicalAssesment
 
         public static string HashPassword(string password)
         {
-            // More secure password hashing with salt (recommended for production)
-            // This is a simplified version - consider using PBKDF2 or Argon2 in production
-
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));

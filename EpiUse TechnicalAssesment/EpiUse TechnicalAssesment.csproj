@@ -72,6 +72,8 @@
     <Content Include="Styles\StyleSheet.css" />
     <Content Include="Web.config" />
     <Content Include="Login.aspx" />
+    <Content Include="Dashboard.aspx" />
+    <Content Include="ReadMe.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MasterPage.Master.cs">
@@ -88,6 +90,20 @@
     </Compile>
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReadMe.aspx.cs">
+      <DependentUpon>ReadMe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReadMe.aspx.designer.cs">
+      <DependentUpon>ReadMe.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
