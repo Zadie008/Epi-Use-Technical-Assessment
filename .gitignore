@@ -53,3 +53,107 @@ dkms.conf
 
 # debug information files
 *.dwo
+## Ignore Visual Studio temporary files, build results, and cache
+## More info: https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Build results
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+# Visual Studio cache/options directory
+.vs/
+
+# ASP.NET specific
+*.dll
+*.pdb
+*.cache
+*.log
+*.csproj.user
+App_Data/
+
+# IIS Express
+.vs/
+*.vspscc
+*.vsp
+iisexpress/
+
+# Auto-generated files
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+*_i.asm
+*.cachefile
+
+# Web publish output
+*.Publish.xml
+publish/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/ directory in packages which is used as an MSBuild target
+!**/packages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/packages/repositories.config
+
+# Rider
+.idea/
+
+# JetBrains Rider plugin
+.idea/
+*.sln.iml
+
+# Local config files
+appsettings.*.json
+appsettings.Development.json
+secrets.json
+
+# Azure publish settings
+*.PublishSettings
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
