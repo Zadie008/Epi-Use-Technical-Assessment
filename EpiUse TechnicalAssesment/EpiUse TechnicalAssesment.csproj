@@ -67,16 +67,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\EpiUseLogo.png" />
+    <Content Include="Images\harshil-gudka-VCAxkOfxtNI-unsplash.jpg" />
+    <Content Include="Styles\StyleSheet.css" />
     <Content Include="Web.config" />
+    <Content Include="Login.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MasterPage.Master.cs">
       <DependentUpon>MasterPage.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="MasterPage.Master.designer.cs">
       <DependentUpon>MasterPage.Master</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="MasterPage.Master" />

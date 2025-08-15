@@ -4,16 +4,30 @@
 
 <html>
 <head runat="server">
-    <title></title>
-    <asp:ContentPlaceHolder ID="head" runat="server">
-    </asp:ContentPlaceHolder>
+       
+    <title>
+        <asp:ContentPlaceHolder ID="tab" runat="server"></asp:ContentPlaceHolder>
+    </title>
+        
+<%--    refernerces to the stylesheet --%>
+   <link href="Styles/StyleSheet.css" rel="stylesheet" type="text/css" />
 </head>
+
 <body>
     <form id="form1" runat="server">
-        <div>
-            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-            </asp:ContentPlaceHolder>
+        <div id="page" class="page-wrapper">
+        <header>
+             <asp:ContentPlaceHolder ID="headerContentPlaceHolder" runat="server"></asp:ContentPlaceHolder>
+        </header>
+
+            <div class="main-content" id="mainContentDiv">
+            <nav>
+                <asp:ContentPlaceHolder ID="navContent" runat="server"></asp:ContentPlaceHolder>
+            </nav>
+            <asp:ContentPlaceHolder ID="mainContentPlaceHolder" runat="server"></asp:ContentPlaceHolder>
+            </div>
         </div>
     </form>
 </body>
+
 </html>

@@ -11,52 +11,70 @@ namespace EpiUse_TechnicalAssesment
 {
 
 
-    public partial class MasterPage
+    public partial class WebForm1
     {
 
         /// <summary>
-        /// tab control.
+        /// lblUserName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder tab;
+        protected global::System.Web.UI.WebControls.Label lblUserName;
 
         /// <summary>
-        /// form1 control.
+        /// txtEmployeeNumber control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.WebControls.TextBox txtEmployeeNumber;
 
         /// <summary>
-        /// headerContentPlaceHolder control.
+        /// lblEmployeePassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder headerContentPlaceHolder;
+        protected global::System.Web.UI.WebControls.Label lblEmployeePassword;
 
         /// <summary>
-        /// navContent control.
+        /// txtPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder navContent;
+        protected global::System.Web.UI.WebControls.TextBox txtPassword;
 
         /// <summary>
-        /// mainContentPlaceHolder control.
+        /// btnLogin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder mainContentPlaceHolder;
+        protected global::System.Web.UI.WebControls.Button btnLogin;
+
+        /// <summary>
+        /// lblLoginMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblLoginMessage;
+
+        /// <summary>
+        /// btnOkay control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnOkay;
     }
 }
