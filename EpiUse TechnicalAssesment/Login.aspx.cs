@@ -12,6 +12,14 @@ namespace EpiUse_TechnicalAssesment
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Check if the user is already logged in
+            if (Session["EmployeeNumber"] != null)
+            {
+                // If they are logged in, redirect them to the dashboard
+                Response.Redirect("Dashboard.aspx");
+            }
+
+            // Only proceed with the login page's normal logic if the user is NOT logged in
             if (!IsPostBack)
             {
                 lblLoginMessage.Text = "";
@@ -23,7 +31,6 @@ namespace EpiUse_TechnicalAssesment
             string employeeNumber = txtEmployeeNumber.Text.Trim();
             string rawPassword = txtPassword.Text;
 
-            // Basic input validation
             if (string.IsNullOrEmpty(employeeNumber) || string.IsNullOrEmpty(rawPassword))
             {
                 ShowErrorPopup("Please enter both employee number and password");
@@ -31,7 +38,6 @@ namespace EpiUse_TechnicalAssesment
             }
 
             string hashedPassword = HashPassword(rawPassword);
-                 
 
             try
             {
@@ -39,9 +45,9 @@ namespace EpiUse_TechnicalAssesment
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = @"SELECT EmployeeNumber, FirstName, LastName, Role, DepartmentID, LocationID 
-                                    FROM Employees 
-                                    WHERE EmployeeNumber = @EmpNo AND PasswordHash = @Password";
+                    string query = @"SELECT EmployeeNumber, FirstName, LastName, Role, DepartmentID, LocationID, ManagerID 
+                                     FROM Employees  
+                                     WHERE EmployeeNumber = @EmpNo AND PasswordHash = @Password";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
@@ -53,13 +59,13 @@ namespace EpiUse_TechnicalAssesment
                         {
                             if (reader.Read())
                             {
-
                                 // Successful login - store user data in session
                                 Session["EmployeeNumber"] = reader["EmployeeNumber"].ToString();
                                 Session["FullName"] = $"{reader["FirstName"]} {reader["LastName"]}";
                                 Session["Role"] = reader["Role"].ToString();
                                 Session["DepartmentID"] = reader["DepartmentID"];
                                 Session["LocationID"] = reader["LocationID"];
+                                Session["ManagerID"] = reader["ManagerID"].ToString(); // Storing ManagerID
 
                                 Response.Redirect("Dashboard.aspx");
                             }
@@ -73,13 +79,11 @@ namespace EpiUse_TechnicalAssesment
             }
             catch (SqlException sqlEx)
             {
-                // Database-specific errors
                 LogError(sqlEx);
                 ShowErrorPopup("System error. Please try again later.");
             }
             catch (Exception ex)
             {
-                // General errors
                 LogError(ex);
                 ShowErrorPopup("An unexpected error occurred.");
             }
@@ -93,7 +97,7 @@ namespace EpiUse_TechnicalAssesment
 
         private void LogError(Exception ex)
         {
-           //logging purposes for error control
+            //logging purposes for error control
         }
 
         public static string HashPassword(string password)

@@ -15,6 +15,12 @@ namespace EpiUse_TechnicalAssesment
         private string connectionString = ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
         {
+            // FIX: Change the session variable check from "EmployeeID" to "EmployeeNumber"
+            if (Session["EmployeeNumber"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
             UnobtrusiveValidationMode = System.Web.UI.UnobtrusiveValidationMode.None;
             if (!IsPostBack)
             {
@@ -25,12 +31,21 @@ namespace EpiUse_TechnicalAssesment
                 LoadEmployees();
             }
         }
-        
+
         private void LoadDepartments()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT DISTINCT DepartmentID, DepartmentName FROM Departments ORDER BY DepartmentName";
+                // Get distinct department names with the first ID found for each
+                string query = @"SELECT DepartmentID, DepartmentName 
+                        FROM Departments 
+                        WHERE DepartmentID IN (
+                            SELECT MIN(DepartmentID) 
+                            FROM Departments 
+                            GROUP BY DepartmentName
+                        )
+                        ORDER BY DepartmentName";
+
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
                 ddlDepartments.DataSource = cmd.ExecuteReader();
@@ -57,10 +72,10 @@ namespace EpiUse_TechnicalAssesment
         }
         protected void EmployeeGridView_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            
+
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                 
+
             }
         }
 
@@ -69,11 +84,11 @@ namespace EpiUse_TechnicalAssesment
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"SELECT DISTINCT m.EmployeeNumber, 
-                        m.FirstName + ' ' + m.LastName AS ManagerName
-                 FROM Employees e
-                 INNER JOIN Employees m ON e.ManagerID = m.EmployeeNumber
-                 WHERE e.ManagerID IS NOT NULL
-                 ORDER BY ManagerName";
+                                        m.FirstName + ' ' + m.LastName AS ManagerName
+                                 FROM Employees e
+                                 INNER JOIN Employees m ON e.ManagerID = m.EmployeeNumber
+                                 WHERE e.ManagerID IS NOT NULL
+                                 ORDER BY ManagerName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
@@ -88,28 +103,31 @@ namespace EpiUse_TechnicalAssesment
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = @"
-        SELECT e.EmployeeNumber, 
-               e.FirstName, 
-               e.LastName, 
-               e.Email, 
-               e.Role, 
-               l.LocationName, 
-               d.DepartmentName,
-               m.FirstName + ' ' + m.LastName AS ManagerName,
-               e.Salary
-        FROM Employees e
-        LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
-        LEFT JOIN Locations l ON e.LocationID = l.LocationID
-        LEFT JOIN Employees m ON e.ManagerID = m.EmployeeNumber
-        WHERE (@FirstName = '' OR e.FirstName LIKE @FirstNamePattern)
-          AND (@LastName = '' OR e.LastName LIKE @LastNamePattern)
-          AND (@ManagerID = '' OR e.ManagerID = @ManagerID)
-          AND (@DepartmentID = '' OR e.DepartmentID = @DepartmentID)
-          AND (@LocationID = '' OR e.LocationID = @LocationID)
-          AND ((@MinSalary IS NULL OR e.Salary >= @MinSalary) 
-               AND (@MaxSalary IS NULL OR e.Salary <= @MaxSalary))
-        ORDER BY e.FirstName, e.LastName";
+               
+string query = @"
+SELECT e.EmployeeNumber, 
+       e.FirstName, 
+       e.LastName, 
+       e.Email, 
+       e.Role, 
+       l.LocationName, 
+       d.DepartmentName,
+       m.FirstName + ' ' + m.LastName AS ManagerName,
+       e.Salary
+FROM Employees e
+LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
+LEFT JOIN Locations l ON e.LocationID = l.LocationID
+LEFT JOIN Employees m ON e.ManagerID = m.EmployeeNumber
+WHERE(@FirstName = '' OR e.FirstName LIKE @FirstNamePattern)
+  AND(@LastName = '' OR e.LastName LIKE @LastNamePattern)
+  AND(@ManagerID = '' OR e.ManagerID = @ManagerID)
+  AND(@DepartmentID = '' OR d.DepartmentName = (
+      SELECT DepartmentName FROM Departments WHERE DepartmentID = @DepartmentID
+  ))
+  AND(@LocationID = '' OR e.LocationID = @LocationID)
+  AND((@MinSalary IS NULL OR e.Salary >= @MinSalary)
+      AND(@MaxSalary IS NULL OR e.Salary <= @MaxSalary))
+ORDER BY e.FirstName, e.LastName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -134,7 +152,7 @@ namespace EpiUse_TechnicalAssesment
                 // Location filter
                 cmd.Parameters.AddWithValue("@LocationID",
                     string.IsNullOrEmpty(ddlLocations.SelectedValue) ? "" : ddlLocations.SelectedValue);
-               // Salary issues
+                // Salary issues
                 if (!string.IsNullOrWhiteSpace(txtMinSalary.Text) && decimal.TryParse(txtMinSalary.Text, out decimal minSalary))
                 {
                     cmd.Parameters.AddWithValue("@MinSalary", minSalary);
@@ -204,7 +222,8 @@ namespace EpiUse_TechnicalAssesment
             if (e.CommandName == "View")
             {
                 string empNumber = e.CommandArgument.ToString();
-                Response.Redirect("ViewEmployee.aspx?emp=" + empNumber);
+                // Correct the query string parameter from "emp" to "empId"
+                Response.Redirect("ViewEmployee.aspx?empId=" + empNumber);
             }
         }
     }

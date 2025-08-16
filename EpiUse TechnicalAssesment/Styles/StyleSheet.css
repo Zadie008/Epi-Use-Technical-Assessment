@@ -675,6 +675,129 @@ select.form-control {
     border: 1px solid #f5c6cb;
     border-radius: 4px;
 }
+/* ========================================
+    View employee page
+    ========================================*/
+.employee-flex-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding:15px;
+}
+
+@media (min-width: 768px) {
+    .employee-flex-container {
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+    }
+}
+
+/* Container for employee details table */
+.employee-details-container {
+    flex-grow: 1;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Styling for the employee details table */
+.employee-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.employee-details-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.employee-details-table td {
+    padding: 12px 15px;
+    border: 1px solid #e9ecef;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.employee-details-table td:first-child {
+    font-weight: bold;
+    color: #495057;
+    width: 180px;
+}
+
+/* Styles for the employee image container */
+.employee-image-container {
+    width: 250px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 5px solid navy;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.employee-large-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Styles for the button group */
+.employee-button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+/* General button styling */
+.employee-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.employee-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employee-button[id*="btnEditEmployee"] {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.employee-button[id*="btnSaveEmployee"] {
+    background-color: #28a745;
+}
+
+.employee-button[id*="btnCancelEdit"] {
+    background-color: #dc3545;
+}
+
+
+.employee-button[id*="btnChangeProfile"] {
+    background-color: #007bff;
+}
+
+.employee-button[id*="btnBack"] {
+    background-color: #007bff;
+}
+
+/* ========================================
+    Media responsiveness 
+    ========================================*/
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
