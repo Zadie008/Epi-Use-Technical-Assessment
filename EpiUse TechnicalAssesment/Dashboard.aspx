@@ -7,24 +7,26 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="navContent" runat="server">
-    <div class="nav-container">
-    <a href="Dashboard.aspx" class="nav-card">
-        <img src="Images/Dashboard.png" alt="Hierarchy Icon" class="nav-icon" />
-        <span class="nav-title">Home</span>
-    </a>
-    <a href="Hierarchy.aspx" class="nav-card">
-        <img src="Images/Hierarchy.png" alt="Hierarchy Icon" class="nav-icon" />
-        <span class="nav-title">Hierarchy</span>
-    </a>
-    <a href="AddEmployee.aspx" class="nav-card">
-        <img src="Images/Employee.png" alt="Add employee" class="nav-icon" />
-        <span class="nav-title">Add employee</span>
-    </a>
-    <a href="ReadMe.aspx" class="nav-card">
-        <img src="Images/ReadMe.png" alt="Read Me Icon" class="nav-icon" />
-        <span class="nav-title">Read Me</span>
-    </a>
-</div>
+    <%--<div class="nav-container">
+        <a href="Dashboard.aspx" class="nav-card">
+            <img src="Images/Dashboard.png" alt="Hierarchy Icon" class="nav-icon" />
+            <span class="nav-title">Home</span>
+        </a>
+        <a href="Hierarchy.aspx" class="nav-card">
+            <img src="Images/Hierarchy.png" alt="Hierarchy Icon" class="nav-icon" />
+            <span class="nav-title">Hierarchy</span>
+        </a>
+        <asp:PlaceHolder ID="phAddEmployee" runat="server" Visible="false">
+            <a href="AddEmployee.aspx" class="nav-card">
+                <img src="Images/Employee.png" alt="Add employee" class="nav-icon" />
+                <span class="nav-title">Add employee</span>
+            </a>
+        </asp:PlaceHolder>
+        <a href="ReadMe.aspx" class="nav-card">
+            <img src="Images/ReadMe.png" alt="Read Me Icon" class="nav-icon" />
+            <span class="nav-title">Read Me</span>
+        </a>
+    </div>--%>
 </asp:Content>
 
 <asp:Content ID="Content4" ContentPlaceHolderID="mainContentPlaceHolder" runat="server">

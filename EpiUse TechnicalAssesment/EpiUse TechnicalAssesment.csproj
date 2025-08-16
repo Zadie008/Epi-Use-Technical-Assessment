@@ -76,6 +76,7 @@
     <Content Include="Dashboard.aspx" />
     <Content Include="ReadMe.aspx" />
     <Content Include="ViewEmployee.aspx" />
+    <Content Include="AddEmployee.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MasterPage.Master.cs">
@@ -113,6 +114,13 @@
     </Compile>
     <Compile Include="ViewEmployee.aspx.designer.cs">
       <DependentUpon>ViewEmployee.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AddEmployee.aspx.cs">
+      <DependentUpon>AddEmployee.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AddEmployee.aspx.designer.cs">
+      <DependentUpon>AddEmployee.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

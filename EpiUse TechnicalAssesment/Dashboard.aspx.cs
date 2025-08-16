@@ -15,7 +15,7 @@ namespace EpiUse_TechnicalAssesment
         private string connectionString = ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
         {
-            // FIX: Change the session variable check from "EmployeeID" to "EmployeeNumber"
+            
             if (Session["EmployeeNumber"] == null)
             {
                 Response.Redirect("Login.aspx");
@@ -127,7 +127,7 @@ WHERE(@FirstName = '' OR e.FirstName LIKE @FirstNamePattern)
   AND(@LocationID = '' OR e.LocationID = @LocationID)
   AND((@MinSalary IS NULL OR e.Salary >= @MinSalary)
       AND(@MaxSalary IS NULL OR e.Salary <= @MaxSalary))
-ORDER BY e.FirstName, e.LastName";
+ORDER BY e.EmployeeNumber";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -190,6 +190,7 @@ ORDER BY e.FirstName, e.LastName";
                     lblNoRecords.Text = "No records found matching your criteria.";
                 }
             }
+            
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)

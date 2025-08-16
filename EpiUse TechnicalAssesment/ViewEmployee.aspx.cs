@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -15,8 +12,10 @@ namespace EpiUse_TechnicalAssesment
     {
         private string connectionString = ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString;
         private string employeeEmail;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            UnobtrusiveValidationMode = System.Web.UI.UnobtrusiveValidationMode.None;
             if (!IsPostBack)
             {
                 if (Session["EmployeeNumber"] == null)
@@ -29,7 +28,7 @@ namespace EpiUse_TechnicalAssesment
                 if (!string.IsNullOrEmpty(empId))
                 {
                     LoadEmployee(empId);
-                    ControlEditButtonVisibility(empId);
+                    SetAccessControls(empId);
                 }
                 else
                 {
@@ -41,33 +40,28 @@ namespace EpiUse_TechnicalAssesment
 
         private void LoadEmployee(string empId)
         {
-            string currentUserNumber = Session["EmployeeNumber"].ToString();
-            string currentUserRole = Session["Role"]?.ToString();
-
-            int currentUserLocationId = Session["LocationID"] != null ? Convert.ToInt32(Session["LocationID"]) : -1;
-
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 string query = @"
-            SELECT 
-                e.EmployeeNumber, 
-                e.FirstName, 
-                e.LastName, 
-                e.DOB, 
-                e.Salary, 
-                e.Role, 
-                e.Email, 
-                e.ProfilePhotoBase64,
-                e.LocationID, 
-                e.ManagerID,
-                m.FirstName + ' ' + m.LastName AS ManagerName,
-                l.LocationName,
-                d.DepartmentName
-            FROM Employees e
-            LEFT JOIN Employees m ON e.ManagerID = m.EmployeeNumber
-            LEFT JOIN Locations l ON e.LocationID = l.LocationID
-            LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
-            WHERE e.EmployeeNumber = @EmployeeNumber";
+                SELECT 
+                    e.EmployeeNumber, 
+                    e.FirstName, 
+                    e.LastName, 
+                    e.DOB, 
+                    e.Email,
+                    e.Salary,
+                    e.Role, 
+                    e.ProfilePhotoBase64,
+                    e.LocationID, 
+                    e.ManagerID,
+                    m.FirstName + ' ' + m.LastName AS ManagerName,
+                    l.LocationName,
+                    d.DepartmentName
+                FROM Employees e
+                LEFT JOIN Employees m ON e.ManagerID = m.EmployeeNumber
+                LEFT JOIN Locations l ON e.LocationID = l.LocationID
+                LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
+                WHERE e.EmployeeNumber = @EmployeeNumber";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@EmployeeNumber", empId);
@@ -80,37 +74,45 @@ namespace EpiUse_TechnicalAssesment
                     pnlEmployee.Visible = true;
                     employeeEmail = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : "";
 
-                    // Basic employee info
-                    lblEmployeeID.Text = reader["EmployeeNumber"].ToString();
+                    // Set all field values
+                    lblEmployeeNumber.Text = reader["EmployeeNumber"].ToString();
                     lblFirstName.Text = reader["FirstName"].ToString();
                     lblLastName.Text = reader["LastName"].ToString();
-
                     lblBirthDate.Text = reader["DOB"] != DBNull.Value
                         ? Convert.ToDateTime(reader["DOB"]).ToString("yyyy-MM-dd")
                         : "";
+                    lblEmail.Text = employeeEmail;
 
-                    lblEmployeeNumber.Text = reader["EmployeeNumber"].ToString();
-
-                    // Salary visibility control
-                    string targetEmployeeNumber = reader["EmployeeNumber"].ToString();
-                    int targetLocationId = reader["LocationID"] != DBNull.Value ? Convert.ToInt32(reader["LocationID"]) : -1;
-                    string targetManagerID = reader["ManagerID"] != DBNull.Value ? reader["ManagerID"].ToString() : "";
+                    // Handle salary
                     decimal salary = reader["Salary"] != DBNull.Value ? Convert.ToDecimal(reader["Salary"]) : 0;
-
+                    lblSalary.Text = string.Format("{0:C}", salary);
                     hdnOriginalSalary.Value = salary.ToString();
 
-                    bool canViewSalary = CanViewSalary(currentUserNumber, targetEmployeeNumber, currentUserRole, currentUserLocationId, targetLocationId, targetManagerID);
-
-                    lblSalary.Text = canViewSalary ? string.Format("{0:C}", salary) : "***";
-                    txtSalary.Text = canViewSalary ? salary.ToString() : "";
-
                     lblRole.Text = reader["Role"].ToString();
-                    lblManager.Text = reader["ManagerName"] != DBNull.Value ? reader["ManagerName"].ToString() : "No Manager";
-                    lblLocation.Text = reader["LocationName"] != DBNull.Value ? reader["LocationName"].ToString() : "No Location";
-                    lblDepartment.Text = reader["DepartmentName"] != DBNull.Value ? reader["DepartmentName"].ToString() : "No Department";
+                    lblDepartment.Text = reader["DepartmentName"] != DBNull.Value
+                        ? reader["DepartmentName"].ToString()
+                        : "No Department";
+                    lblManager.Text = reader["ManagerName"] != DBNull.Value
+                        ? reader["ManagerName"].ToString()
+                        : "No Manager";
+                    lblLocation.Text = reader["LocationName"] != DBNull.Value
+                        ? reader["LocationName"].ToString()
+                        : "No Location";
 
-                    string profilePhotoBase64 = reader["ProfilePhotoBase64"] != DBNull.Value ? reader["ProfilePhotoBase64"].ToString() : "";
+                    // Set values for edit fields
+                    txtEmployeeNumber.Text = lblEmployeeNumber.Text;
+                    txtFirstName.Text = lblFirstName.Text;
+                    txtLastName.Text = lblLastName.Text;
+                    txtBirthDate.Text = lblBirthDate.Text;
+                    txtEmail.Text = lblEmail.Text;
+                    txtSalary.Text = hdnOriginalSalary.Value;
+                    txtRole.Text = lblRole.Text;
+                    txtDepartment.Text = lblDepartment.Text;
 
+                    // Handle profile photo
+                    string profilePhotoBase64 = reader["ProfilePhotoBase64"] != DBNull.Value
+                        ? reader["ProfilePhotoBase64"].ToString()
+                        : "";
                     if (!string.IsNullOrEmpty(profilePhotoBase64))
                     {
                         imgGravatar.ImageUrl = "data:image/jpeg;base64," + profilePhotoBase64;
@@ -128,63 +130,62 @@ namespace EpiUse_TechnicalAssesment
             }
         }
 
-        private void ControlEditButtonVisibility(string employeeNumber)
+        private void SetAccessControls(string targetEmployeeNumber)
         {
             string currentUserNumber = Session["EmployeeNumber"].ToString();
             string currentUserRole = Session["Role"]?.ToString();
             int currentUserLocationId = Convert.ToInt32(Session["LocationID"]);
 
-            string targetEmployeeNumber = "";
+            // Get target employee's location and department
             int targetLocationId = -1;
+            string targetDepartment = "";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string query = "SELECT EmployeeNumber, LocationID FROM Employees WHERE EmployeeNumber = @EmployeeNumber";
+                string query = "SELECT LocationID, DepartmentID FROM Employees WHERE EmployeeNumber = @EmployeeNumber";
                 SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@EmployeeNumber", employeeNumber);
+                cmd.Parameters.AddWithValue("@EmployeeNumber", targetEmployeeNumber);
 
                 con.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    targetEmployeeNumber = reader["EmployeeNumber"].ToString();
-                    targetLocationId = Convert.ToInt32(reader["LocationID"]);
+                    targetLocationId = reader["LocationID"] != DBNull.Value ? Convert.ToInt32(reader["LocationID"]) : -1;
+                    targetDepartment = reader["DepartmentID"] != DBNull.Value ? reader["DepartmentID"].ToString() : "";
                 }
             }
 
-            bool canEdit = false;
+            bool isSelf = currentUserNumber == targetEmployeeNumber;
+            bool isCEO = currentUserRole == "CEO";
+            bool isHeadOfLocation = currentUserRole.StartsWith("Head of");
+            bool isSeniorHR = currentUserRole == "Senior HR";
+            bool sameLocation = currentUserLocationId == targetLocationId;
+            bool isHRDepartment = targetDepartment == "1"; // Assuming 1 is HR department ID
 
-            if (currentUserNumber == targetEmployeeNumber)
+            // Can view salary if self, CEO, Head of Location, or Senior HR
+            bool canViewSalary = isSelf || isCEO || (isHeadOfLocation && sameLocation) || (isSeniorHR && sameLocation && isHRDepartment);
+
+            // Can edit personal details if it's their own profile
+            bool canEditPersonalDetails = isSelf;
+
+            // Can edit role/department if CEO, Head of Location, or Senior HR
+            bool canEditRoleDepartment = isCEO || isHeadOfLocation || isSeniorHR;
+
+            // Apply salary visibility
+            if (!canViewSalary)
             {
-                canEdit = true;
-            }
-            else if (currentUserRole == "HR Manager" && currentUserLocationId == targetLocationId)
-            {
-                canEdit = true;
-            }
-            else if (currentUserRole == "CEO")
-            {
-                canEdit = true;
+                lblSalary.Text = "***";
+                txtSalary.Visible = false;
             }
 
-            btnEditEmployee.Visible = canEdit;
-        }
+            // Enable Edit button only if the user can edit something
+            btnEditEmployee.Visible = canEditPersonalDetails || canEditRoleDepartment;
 
-        private bool CanViewSalary(string currentUserNumber, string targetEmployeeNumber, string currentUserRole, int currentUserLocationId, int targetLocationId, string targetManagerID)
-        {
-            if (currentUserNumber == targetEmployeeNumber)
-                return true;
-
-            if ((currentUserRole == "HR Manager" || currentUserRole == "HR") && currentUserLocationId == targetLocationId)
-                return true;
-
-            if (currentUserNumber == targetManagerID)
-                return true;
-
-            if (currentUserRole == "CEO")
-                return true;
-
-            return false;
+            // Store permissions in ViewState
+            ViewState["CanEditPersonalDetails"] = canEditPersonalDetails;
+            ViewState["CanEditRoleDepartment"] = canEditRoleDepartment;
+            ViewState["CanViewSalary"] = canViewSalary;
+            ViewState["IsSelf"] = isSelf;
         }
 
         protected void btnEditEmployee_Click(object sender, EventArgs e)
@@ -199,126 +200,167 @@ namespace EpiUse_TechnicalAssesment
 
         private void ToggleEditMode(bool isEdit)
         {
-            string currentUserRole = Session["Role"]?.ToString();
-            bool isSalaryEditable = (currentUserRole == "HR Manager" || currentUserRole == "CEO");
+            bool canEditPersonalDetails = ViewState["CanEditPersonalDetails"] != null && (bool)ViewState["CanEditPersonalDetails"];
+            bool canEditRoleDepartment = ViewState["CanEditRoleDepartment"] != null && (bool)ViewState["CanEditRoleDepartment"];
+            bool canViewSalary = ViewState["CanViewSalary"] != null && (bool)ViewState["CanViewSalary"];
+            bool isSelf = ViewState["IsSelf"] != null && (bool)ViewState["IsSelf"];
 
-            lblFirstName.Visible = !isEdit;
-            txtFirstName.Visible = isEdit;
-            if (isEdit) txtFirstName.Text = lblFirstName.Text;
-
-            lblLastName.Visible = !isEdit;
-            txtLastName.Visible = isEdit;
-            if (isEdit) txtLastName.Text = lblLastName.Text;
-
-            lblBirthDate.Visible = !isEdit;
-            txtBirthDate.Visible = isEdit;
-            if (isEdit) txtBirthDate.Text = lblBirthDate.Text;
-
-            lblEmployeeNumber.Visible = !isEdit;
-            txtEmployeeNumber.Visible = isEdit;
-            if (isEdit) txtEmployeeNumber.Text = lblEmployeeNumber.Text;
-
-            lblSalary.Visible = !isEdit;
-            txtSalary.Visible = isEdit && isSalaryEditable;
-            if (isEdit && isSalaryEditable)
+            // If not in edit mode, show all labels and hide edit fields
+            if (!isEdit)
             {
-                txtSalary.Text = hdnOriginalSalary.Value;
-            }
-            else if (isEdit && !isSalaryEditable)
-            {
+                // Show all labels
+                lblEmployeeNumber.Visible = true;
+                lblFirstName.Visible = true;
+                lblLastName.Visible = true;
+                lblBirthDate.Visible = true;
+                lblEmail.Visible = true;
                 lblSalary.Visible = true;
+                lblRole.Visible = true;
+                lblDepartment.Visible = true;
+                lblManager.Visible = true;
+                lblLocation.Visible = true;
+
+                // Hide all edit fields
+                txtFirstName.Visible = false;
+                txtLastName.Visible = false;
+                txtBirthDate.Visible = false;
+                txtEmail.Visible = false;
                 txtSalary.Visible = false;
+                txtRole.Visible = false;
+                txtDepartment.Visible = false;
+
+                // Show Edit button if allowed
+                btnEditEmployee.Visible = canEditPersonalDetails || canEditRoleDepartment;
+            }
+            else // In edit mode
+            {
+                // Always show all labels (view fields)
+                lblEmployeeNumber.Visible = true;
+                lblFirstName.Visible = false;
+                lblLastName.Visible = false;
+                lblBirthDate.Visible = false;
+                lblEmail.Visible = false;
+                lblSalary.Visible = true;
+                lblRole.Visible = true;
+                lblDepartment.Visible = true;
+                lblManager.Visible = true;
+                lblLocation.Visible = true;
+
+                // Show edit fields only for allowed fields
+                txtFirstName.Visible = canEditPersonalDetails;
+                txtLastName.Visible = canEditPersonalDetails;
+                txtBirthDate.Visible = canEditPersonalDetails;
+                txtEmail.Visible = canEditPersonalDetails;
+
+                // Salary, Role, Department are editable only by admins
+                txtSalary.Visible = canViewSalary && (canEditRoleDepartment);
+                txtRole.Visible = canEditRoleDepartment;
+                txtDepartment.Visible = canEditRoleDepartment;
             }
 
-            lblRole.Visible = !isEdit;
-            txtRole.Visible = isEdit;
-            if (isEdit) txtRole.Text = lblRole.Text;
-
-            lblManager.Visible = !isEdit;
-            lblLocation.Visible = !isEdit;
-            lblDepartment.Visible = !isEdit;
-            txtManager.Visible = false;
-            txtLocation.Visible = false;
-            txtDepartment.Visible = false;
-
-            lblEmployeeID.Visible = !isEdit;
-            txtEmployeeID.Visible = isEdit;
-            if (isEdit) txtEmployeeID.Text = lblEmployeeID.Text;
-
-            btnEditEmployee.Visible = !isEdit;
+            // Toggle buttons
+            btnEditEmployee.Visible = !isEdit && (canEditPersonalDetails || canEditRoleDepartment);
             btnSaveEmployee.Visible = isEdit;
             btnCancelEdit.Visible = isEdit;
-            btnChangeProfile.Visible = isEdit;
+            btnChangeProfile.Visible = isEdit && isSelf; // Only allow changing profile if it's their own profile
+            revSalary.Enabled = isEdit && canViewSalary && canEditRoleDepartment;
+            rvSalary.Enabled = isEdit && canViewSalary && canEditRoleDepartment;
         }
 
         protected void btnSaveEmployee_Click(object sender, EventArgs e)
         {
-            string employeeNumber = txtEmployeeID.Text;
+            string currentUserRole = Session["Role"]?.ToString();
+            bool isCEO = currentUserRole == "CEO";
+            bool isHeadOfLocation = currentUserRole.StartsWith("Head of");
+
+            string employeeNumber = lblEmployeeNumber.Text;
             string firstName = txtFirstName.Text;
             string lastName = txtLastName.Text;
             string birthDate = txtBirthDate.Text;
+            string email = txtEmail.Text;
             string newEmployeeNumber = txtEmployeeNumber.Text;
 
+            // Handle salary
             decimal salary = 0;
-            string currentUserRole = Session["Role"]?.ToString();
-
-            if (currentUserRole == "HR Manager" || currentUserRole == "CEO")
+            if ((bool)ViewState["CanViewSalary"] && (bool)ViewState["CanEditRoleDepartment"])
             {
                 string salaryString = txtSalary.Text.Replace("$", "").Replace(",", "").Trim();
-                if (!string.IsNullOrWhiteSpace(salaryString) && decimal.TryParse(salaryString, out salary))
+
+                // Check if salary is numeric
+                if (!decimal.TryParse(salaryString, out salary))
                 {
-                    // Salary was successfully parsed
+                    lblMessage.Text = "Salary must be a valid number.";
+                    return;
                 }
-                else
+
+                // Check if salary is non-negative
+                if (salary < 0)
                 {
-                    lblMessage.Text = "Invalid salary format. Please enter a valid number.";
+                    lblMessage.Text = "Salary cannot be negative.";
                     return;
                 }
             }
             else
             {
-                if (!string.IsNullOrWhiteSpace(hdnOriginalSalary.Value))
-                {
-                    decimal.TryParse(hdnOriginalSalary.Value, out salary);
-                }
+                lblMessage.Text = "Invalid salary format. Please enter a valid number.";
+                    return;
+                decimal.TryParse(hdnOriginalSalary.Value, out salary);
+            }
+                   
+
+            // Handle role - only editable by CEO/Head of Location
+            string role = lblRole.Text; // Default to existing
+            if ((isCEO || isHeadOfLocation) && txtRole.Visible)
+            {
+                role = txtRole.Text;
             }
 
-            string role = txtRole.Text;
+            string department = txtDepartment.Text;
 
-            SaveEmployeeData(employeeNumber, firstName, lastName, birthDate, newEmployeeNumber, salary, role);
+            SaveEmployeeData(employeeNumber, firstName, lastName, birthDate, email, newEmployeeNumber, salary, role, department);
 
+            // Reload the employee data
             LoadEmployee(employeeNumber);
+            SetAccessControls(employeeNumber);
             ToggleEditMode(false);
             lblMessage.Text = "Changes saved successfully.";
         }
 
-        private void SaveEmployeeData(string employeeNumber, string firstName, string lastName, string birthDate, string newEmployeeNumber, decimal salary, string role)
+        private void SaveEmployeeData(string employeeNumber, string firstName, string lastName,
+                                    string birthDate, string email, string newEmployeeNumber,
+                                    decimal salary, string role, string department)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 string query = @"
-            UPDATE Employees SET
-            FirstName = @FirstName,
-            LastName = @LastName,
-            DOB = @BirthDate,
-            EmployeeNumber = @NewEmployeeNumber,
-            Salary = @Salary,
-            Role = @Role
-            WHERE EmployeeNumber = @EmployeeNumber";
+                UPDATE Employees SET
+                    FirstName = @FirstName,
+                    LastName = @LastName,
+                    DOB = @BirthDate,
+                    Email = @Email,
+                    EmployeeNumber = @NewEmployeeNumber,
+                    Salary = @Salary,
+                    Role = @Role
+                WHERE EmployeeNumber = @EmployeeNumber";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@EmployeeNumber", employeeNumber);
                 cmd.Parameters.AddWithValue("@FirstName", firstName);
                 cmd.Parameters.AddWithValue("@LastName", lastName);
                 cmd.Parameters.AddWithValue("@BirthDate", birthDate);
+                cmd.Parameters.AddWithValue("@Email", email);
                 cmd.Parameters.AddWithValue("@NewEmployeeNumber", newEmployeeNumber);
                 cmd.Parameters.AddWithValue("@Salary", salary);
                 cmd.Parameters.AddWithValue("@Role", role);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
+
+                // Note: Department would need additional handling since it's likely a foreign key
+                // You might need a separate update for department if it's changeable
             }
         }
+
         private string GetGravatarUrl(string email)
         {
             using (MD5 md5 = MD5.Create())
@@ -333,10 +375,16 @@ namespace EpiUse_TechnicalAssesment
                 return $"https://www.gravatar.com/avatar/{sb}?s=200&d=identicon";
             }
         }
+
         protected void btnChangeProfile_Click(object sender, EventArgs e)
         {
             string employeeNumber = lblEmployeeNumber.Text;
             Response.Redirect($"ChangeProfilePhoto.aspx?empId={employeeNumber}");
+        }
+
+        protected void btnBack_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Dashboard.aspx");
         }
     }
 }

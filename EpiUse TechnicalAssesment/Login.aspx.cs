@@ -12,14 +12,6 @@ namespace EpiUse_TechnicalAssesment
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Check if the user is already logged in
-            if (Session["EmployeeNumber"] != null)
-            {
-                // If they are logged in, redirect them to the dashboard
-                Response.Redirect("Dashboard.aspx");
-            }
-
-            // Only proceed with the login page's normal logic if the user is NOT logged in
             if (!IsPostBack)
             {
                 lblLoginMessage.Text = "";
@@ -33,7 +25,8 @@ namespace EpiUse_TechnicalAssesment
 
             if (string.IsNullOrEmpty(employeeNumber) || string.IsNullOrEmpty(rawPassword))
             {
-                ShowErrorPopup("Please enter both employee number and password");
+                lblLoginMessage.Text = "Please enter both employee number and password";
+                ScriptManager.RegisterStartupScript(this, GetType(), "showPopup", "showPopup();", true);
                 return;
             }
 
@@ -41,59 +34,52 @@ namespace EpiUse_TechnicalAssesment
 
             try
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString;
-
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString))
                 {
                     string query = @"SELECT EmployeeNumber, FirstName, LastName, Role, DepartmentID, LocationID, ManagerID 
-                                     FROM Employees  
-                                     WHERE EmployeeNumber = @EmpNo AND PasswordHash = @Password";
+                            FROM Employees  
+                            WHERE EmployeeNumber = @EmpNo AND PasswordHash = @Password";
 
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@EmpNo", employeeNumber);
+                    cmd.Parameters.AddWithValue("@Password", hashedPassword);
+
+                    con.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        cmd.Parameters.AddWithValue("@EmpNo", employeeNumber);
-                        cmd.Parameters.AddWithValue("@Password", hashedPassword);
-
-                        con.Open();
-                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        if (reader.Read())
                         {
-                            if (reader.Read())
-                            {
-                                // Successful login - store user data in session
-                                Session["EmployeeNumber"] = reader["EmployeeNumber"].ToString();
-                                Session["FullName"] = $"{reader["FirstName"]} {reader["LastName"]}";
-                                Session["Role"] = reader["Role"].ToString();
-                                Session["DepartmentID"] = reader["DepartmentID"];
-                                Session["LocationID"] = reader["LocationID"];
-                                Session["ManagerID"] = reader["ManagerID"].ToString(); // Storing ManagerID
+                            // Store all user data in session
+                            Session["EmployeeNumber"] = reader["EmployeeNumber"].ToString();
+                            Session["FullName"] = $"{reader["FirstName"]} {reader["LastName"]}";
+                            Session["Role"] = reader["Role"].ToString();
+                            Session["DepartmentID"] = reader["DepartmentID"];
+                            Session["LocationID"] = reader["LocationID"];
+                            Session["ManagerID"] = reader["ManagerID"].ToString();
 
-                                Response.Redirect("Dashboard.aspx");
-                            }
-                            else
-                            {
-                                ShowErrorPopup("Invalid employee number or password");
-                            }
+                            // Clear any existing error message
+                            lblLoginMessage.Text = "";
+
+                            // Redirect to dashboard
+                            Response.Redirect("Dashboard.aspx", false);
+                            Context.ApplicationInstance.CompleteRequest();
+                        }
+                        else
+                        {
+                            lblLoginMessage.Text = "Invalid employee number or password";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "showPopup", "showPopup();", true);
                         }
                     }
                 }
             }
-            catch (SqlException sqlEx)
-            {
-                LogError(sqlEx);
-                ShowErrorPopup("System error. Please try again later.");
-            }
             catch (Exception ex)
             {
+                lblLoginMessage.Text = "System error. Please try again later.";
+                ScriptManager.RegisterStartupScript(this, GetType(), "showPopup", "showPopup();", true);
                 LogError(ex);
-                ShowErrorPopup("An unexpected error occurred.");
             }
         }
 
-        private void ShowErrorPopup(string message)
-        {
-            lblLoginMessage.Text = message;
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "showPopup", "showPopup();", true);
-        }
 
         private void LogError(Exception ex)
         {
@@ -116,7 +102,7 @@ namespace EpiUse_TechnicalAssesment
 
         protected void btnOkay_Click(object sender, EventArgs e)
         {
-            // Clear the error message when OK is clicked
+            // Clear error message when selecting okay on the popup
             lblLoginMessage.Text = "";
         }
     }

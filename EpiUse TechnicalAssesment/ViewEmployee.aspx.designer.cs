@@ -33,22 +33,22 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.HiddenField hdnOriginalSalary;
 
         /// <summary>
-        /// lblEmployeeID control.
+        /// lblEmployeeNumber control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEmployeeID;
+        protected global::System.Web.UI.WebControls.Label lblEmployeeNumber;
 
         /// <summary>
-        /// txtEmployeeID control.
+        /// txtEmployeeNumber control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEmployeeID;
+        protected global::System.Web.UI.WebControls.TextBox txtEmployeeNumber;
 
         /// <summary>
         /// lblFirstName control.
@@ -105,22 +105,22 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.TextBox txtBirthDate;
 
         /// <summary>
-        /// lblEmployeeNumber control.
+        /// lblEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEmployeeNumber;
+        protected global::System.Web.UI.WebControls.Label lblEmail;
 
         /// <summary>
-        /// txtEmployeeNumber control.
+        /// txtEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEmployeeNumber;
+        protected global::System.Web.UI.WebControls.TextBox txtEmail;
 
         /// <summary>
         /// lblSalary control.
@@ -141,6 +141,24 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.TextBox txtSalary;
 
         /// <summary>
+        /// revSalary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revSalary;
+
+        /// <summary>
+        /// rvSalary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RangeValidator rvSalary;
+
+        /// <summary>
         /// lblRole control.
         /// </summary>
         /// <remarks>
@@ -159,42 +177,6 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.TextBox txtRole;
 
         /// <summary>
-        /// lblManager control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblManager;
-
-        /// <summary>
-        /// txtManager control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtManager;
-
-        /// <summary>
-        /// lblLocation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblLocation;
-
-        /// <summary>
-        /// txtLocation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLocation;
-
-        /// <summary>
         /// lblDepartment control.
         /// </summary>
         /// <remarks>
@@ -211,6 +193,24 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDepartment;
+
+        /// <summary>
+        /// lblManager control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblManager;
+
+        /// <summary>
+        /// lblLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblLocation;
 
         /// <summary>
         /// imgGravatar control.
