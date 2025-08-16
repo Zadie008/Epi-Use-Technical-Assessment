@@ -21,27 +21,11 @@ namespace EpiUse_TechnicalAssesment
                 LoadManagers();
                 LoadLocations();
                 LoadDepartments();
+                lblNoRecords.Visible = false;
                 LoadEmployees();
             }
         }
-        private void LoadEmployeeData()
-        {
-            string query = @"
-        SELECT FirstName, LastName, Email, Role, 
-               L.LocationName, D.DepartmentName, EmployeeNumber
-        FROM Employees E
-        INNER JOIN Locations L ON E.LocationID = L.LocationID
-        INNER JOIN Departments D ON E.DepartmentID = D.DepartmentID";
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                EmployeeGridView.DataSource = reader;
-                EmployeeGridView.DataBind();
-            }
-        }
+        
         private void LoadDepartments()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -68,22 +52,15 @@ namespace EpiUse_TechnicalAssesment
                 ddlLocations.DataTextField = "LocationName";
                 ddlLocations.DataValueField = "LocationID";
                 ddlLocations.DataBind();
-                ddlLocations.Items.Insert(0, new System.Web.UI.WebControls.ListItem("All", ""));
+                ddlLocations.Items.Insert(0, new System.Web.UI.WebControls.ListItem("Select a location", ""));
             }
         }
         protected void EmployeeGridView_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            // You can add your logic here.
-            // For example, to check the type of row and perform actions.
+            
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                // Example: Change the background color of the row based on a condition
-                // DataRowView rowView = (DataRowView)e.Row.DataItem;
-                // if (rowView["SomeValue"].ToString() == "Important")
-                // {
-                //     e.Row.BackColor = System.Drawing.Color.LightCoral;
-                // }
-
+                 
             }
         }
 
@@ -104,7 +81,7 @@ namespace EpiUse_TechnicalAssesment
                 ddlManagers.DataTextField = "ManagerName";
                 ddlManagers.DataValueField = "EmployeeNumber";
                 ddlManagers.DataBind();
-                ddlManagers.Items.Insert(0, new ListItem("All", ""));
+                ddlManagers.Items.Insert(0, new ListItem("Select a manager", ""));
             }
         }
         private void LoadEmployees()
@@ -119,7 +96,8 @@ namespace EpiUse_TechnicalAssesment
                e.Role, 
                l.LocationName, 
                d.DepartmentName,
-               m.FirstName + ' ' + m.LastName AS ManagerName
+               m.FirstName + ' ' + m.LastName AS ManagerName,
+               e.Salary
         FROM Employees e
         LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
         LEFT JOIN Locations l ON e.LocationID = l.LocationID
@@ -129,6 +107,8 @@ namespace EpiUse_TechnicalAssesment
           AND (@ManagerID = '' OR e.ManagerID = @ManagerID)
           AND (@DepartmentID = '' OR e.DepartmentID = @DepartmentID)
           AND (@LocationID = '' OR e.LocationID = @LocationID)
+          AND ((@MinSalary IS NULL OR e.Salary >= @MinSalary) 
+               AND (@MaxSalary IS NULL OR e.Salary <= @MaxSalary))
         ORDER BY e.FirstName, e.LastName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -154,14 +134,43 @@ namespace EpiUse_TechnicalAssesment
                 // Location filter
                 cmd.Parameters.AddWithValue("@LocationID",
                     string.IsNullOrEmpty(ddlLocations.SelectedValue) ? "" : ddlLocations.SelectedValue);
+               // Salary issues
+                if (!string.IsNullOrWhiteSpace(txtMinSalary.Text) && decimal.TryParse(txtMinSalary.Text, out decimal minSalary))
+                {
+                    cmd.Parameters.AddWithValue("@MinSalary", minSalary);
+                }
+                else
+                {
+                    cmd.Parameters.AddWithValue("@MinSalary", DBNull.Value);
+                }
+
+                if (!string.IsNullOrWhiteSpace(txtMaxSalary.Text) && decimal.TryParse(txtMaxSalary.Text, out decimal maxSalary))
+                {
+                    cmd.Parameters.AddWithValue("@MaxSalary", maxSalary);
+                }
+                else
+                {
+                    cmd.Parameters.AddWithValue("@MaxSalary", DBNull.Value);
+                }
 
                 conn.Open();
                 DataTable dt = new DataTable();
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
 
-                EmployeeGridView.DataSource = dt;
-                EmployeeGridView.DataBind();
+                if (dt.Rows.Count > 0)
+                {
+                    EmployeeGridView.DataSource = dt;
+                    EmployeeGridView.DataBind();
+                    EmployeeGridView.Visible = true;
+                    lblNoRecords.Visible = false;
+                }
+                else
+                {
+                    EmployeeGridView.Visible = false;
+                    lblNoRecords.Visible = true;
+                    lblNoRecords.Text = "No records found matching your criteria.";
+                }
             }
         }
 
@@ -177,6 +186,7 @@ namespace EpiUse_TechnicalAssesment
             ddlManagers.SelectedIndex = 0;
             ddlDepartments.SelectedIndex = 0;
             ddlLocations.SelectedIndex = 0;
+            lblNoRecords.Visible = false;
             LoadEmployees();
         }
 

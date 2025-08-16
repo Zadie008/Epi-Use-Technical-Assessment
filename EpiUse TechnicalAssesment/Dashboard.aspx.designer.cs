@@ -24,13 +24,13 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Panel SearchPanel;
 
         /// <summary>
-        /// lblName control.
+        /// lblFirstName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblName;
+        protected global::System.Web.UI.WebControls.Label lblFirstName;
 
         /// <summary>
         /// txtFirstName control.
@@ -42,22 +42,13 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.TextBox txtFirstName;
 
         /// <summary>
-        /// revFirstName control.
+        /// lblLastName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator revFirstName;
-
-        /// <summary>
-        /// lblSurename control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSurename;
+        protected global::System.Web.UI.WebControls.Label lblLastName;
 
         /// <summary>
         /// txtLastName control.
@@ -69,22 +60,13 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.TextBox txtLastName;
 
         /// <summary>
-        /// revLastName control.
+        /// lblManager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator revLastName;
-
-        /// <summary>
-        /// lblManagerName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblManagerName;
+        protected global::System.Web.UI.WebControls.Label lblManager;
 
         /// <summary>
         /// ddlManagers control.
@@ -94,24 +76,6 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlManagers;
-
-        /// <summary>
-        /// lblLocation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblLocation;
-
-        /// <summary>
-        /// ddlLocations control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlLocations;
 
         /// <summary>
         /// lblDepartment control.
@@ -132,13 +96,31 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.DropDownList ddlDepartments;
 
         /// <summary>
-        /// lblSalaryRangeMin control.
+        /// lblLocation control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSalaryRangeMin;
+        protected global::System.Web.UI.WebControls.Label lblLocation;
+
+        /// <summary>
+        /// ddlLocations control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlLocations;
+
+        /// <summary>
+        /// lblMinSalary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMinSalary;
 
         /// <summary>
         /// txtMinSalary control.
@@ -159,22 +141,22 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.RegularExpressionValidator revMinSalary;
 
         /// <summary>
-        /// rvMinSalary control.
+        /// cvMinSalary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RangeValidator rvMinSalary;
+        protected global::System.Web.UI.WebControls.CompareValidator cvMinSalary;
 
         /// <summary>
-        /// lblSalaryRangeMax control.
+        /// lblMaxSalary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSalaryRangeMax;
+        protected global::System.Web.UI.WebControls.Label lblMaxSalary;
 
         /// <summary>
         /// txtMaxSalary control.
@@ -195,13 +177,13 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.RegularExpressionValidator revMaxSalary;
 
         /// <summary>
-        /// rvMaxSalary control.
+        /// cvMaxSalary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RangeValidator rvMaxSalary;
+        protected global::System.Web.UI.WebControls.CompareValidator cvMaxSalary;
 
         /// <summary>
         /// btnSearch control.
@@ -229,6 +211,15 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary1;
+
+        /// <summary>
+        /// lblNoRecords control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNoRecords;
 
         /// <summary>
         /// EmployeeGridView control.

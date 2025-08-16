@@ -31,134 +31,92 @@
     <div class="dashboard-content">
         <h2>Employee Table</h2>
 
-        <asp:Panel ID="SearchPanel" runat="server" DefaultButton="btnSearch" CssClass="search-panel">
-            <div class="search-form-row">
-                <div class="search-label-group">
-                    <asp:Label ID="lblName" runat="server" Text="First Name:" />
-                </div>
-                <div class="search-input-group">
-                    <asp:TextBox ID="txtFirstName" runat="server" CssClass="form-control" 
-                        placeholder="e.g. John" />
-                    <asp:RegularExpressionValidator ID="revFirstName" runat="server"
-                        ControlToValidate="txtFirstName"
-                        ValidationExpression="^[a-zA-Z\s'-]*$"
-                        ErrorMessage="First name can only contain letters and spaces."
-                        Display="None" ForeColor="Red" ValidationGroup="SearchGroup" />
-                </div>
-            </div>
-            
-            <div class="search-form-row">
-                <div class="search-label-group">
-                    <asp:Label ID="lblSurename" runat="server" Text="Last Name:" />
-                </div>
-                <div class="search-input-group">
-                    <asp:TextBox ID="txtLastName" runat="server" CssClass="form-control" 
-                        placeholder="e.g. Smith" />
-                    <asp:RegularExpressionValidator ID="revLastName" runat="server"
-                        ControlToValidate="txtLastName"
-                        ValidationExpression="^[a-zA-Z\s'-]*$"
-                        ErrorMessage="Last name can only contain letters and spaces."
-                        Display="None" ForeColor="Red" ValidationGroup="SearchGroup" />
-                </div>
-            </div>
-            
-            <div class="search-form-row">
-                <div class="search-label-group">
-                    <asp:Label ID="lblManagerName" runat="server" Text="Manager Name:" />
-                </div>
-                <div class="search-input-group">
-                    <asp:DropDownList ID="ddlManagers" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="Select a manager" Value="" Selected="True" />
-                    </asp:DropDownList>
-                </div>
-            </div>
-            
-            <div class="search-form-row">
-                <div class="search-label-group">
-                    <asp:Label ID="lblLocation" runat="server" Text="Location:" />
-                </div>
-                <div class="search-input-group">
-                    <asp:DropDownList ID="ddlLocations" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="Select a location" Value="" Selected="True" />
-                    </asp:DropDownList>
-                </div>
-            </div>
-            
-            <div class="search-form-row">
-                <div class="search-label-group">
-                    <asp:Label ID="lblDepartment" runat="server" Text="Department:" />
-                </div>
-                <div class="search-input-group">
-                    <asp:DropDownList ID="ddlDepartments" runat="server" 
-                        CssClass="form-control" AutoPostBack="true" 
-                        OnSelectedIndexChanged="ddlDepartments_SelectedIndexChanged">
-                        <asp:ListItem Text="Select a department" Value="" Selected="True" />
-                    </asp:DropDownList>
-                </div>
-            </div>
-            
-            <div class="search-form-row">
-                <div class="search-label-group">
-                    <asp:Label ID="lblSalaryRangeMin" runat="server" Text="Minimum Salary:" />
-                </div>
-                <div class="search-input-group">
-                    <asp:TextBox ID="txtMinSalary" runat="server" CssClass="form-control" 
-                        placeholder="e.g. 0 or 25000" />
-                    <asp:RegularExpressionValidator ID="revMinSalary" runat="server"
-                        ControlToValidate="txtMinSalary"
-                        ValidationExpression="^\d*\.?\d*$"
-                        ErrorMessage="Please enter a valid number for minimum salary."
-                        Display="None" ForeColor="Red" ValidationGroup="SearchGroup" />
-                    <asp:RangeValidator ID="rvMinSalary" runat="server"
-                        ControlToValidate="txtMinSalary"
-                        MinimumValue="0" MaximumValue="99999999" Type="Currency"
-                        ErrorMessage="Minimum salary must be a non-negative number."
-                        Display="None" ForeColor="Red" ValidationGroup="SearchGroup" />
-                </div>
-            </div>
-            
-            <div class="search-form-row">
-                <div class="search-label-group">
-                    <asp:Label ID="lblSalaryRangeMax" runat="server" Text="Maximum Salary:" />
-                </div>
-                <div class="search-input-group">
-                    <asp:TextBox ID="txtMaxSalary" runat="server" CssClass="form-control" 
-                        placeholder="e.g. 50000 or 100000" />
-                    <asp:RegularExpressionValidator ID="revMaxSalary" runat="server"
-                        ControlToValidate="txtMaxSalary"
-                        ValidationExpression="^\d*\.?\d*$"
-                        ErrorMessage="Please enter a valid number for maximum salary."
-                        Display="None" ForeColor="Red" ValidationGroup="SearchGroup" />
-                    <asp:RangeValidator ID="rvMaxSalary" runat="server"
-                        ControlToValidate="txtMaxSalary"
-                        MinimumValue="0" MaximumValue="99999999" Type="Currency"
-                        ErrorMessage="Maximum salary must be a non-negative number."
-                        Display="None" ForeColor="Red" ValidationGroup="SearchGroup" />
-                </div>
-            </div>
-            
-            <div class="search-buttons-group">
-                <asp:Button ID="btnSearch" runat="server" Text="Search"
-                    CssClass="btn btn-green" OnClick="btnSearch_Click"
-                    ValidationGroup="SearchGroup" />
-                <asp:Button ID="btnReset" runat="server" Text="Reset" CssClass="btn btn-yellow" 
-                    OnClick="btnReset_Click" />
-            </div>
-            
-            <div class="validation-summary-container">
-                <asp:ValidationSummary
-                    ID="ValidationSummary1"
-                    runat="server"
-                    ShowSummary="true"
-                    ShowMessageBox="false"
-                    DisplayMode="BulletList"
-                    ForeColor="Red"
-                    CssClass="validation-summary"
-                    ValidationGroup="SearchGroup" />
-            </div>
-        </asp:Panel>
+<asp:Panel ID="SearchPanel" runat="server" DefaultButton="btnSearch" CssClass="search-panel">
+    <div class="search-row">
+        <div class="search-group">
+            <asp:Label ID="lblFirstName" runat="server" Text="First Name:" AssociatedControlID="txtFirstName" CssClass="search-label" />
+            <asp:TextBox ID="txtFirstName" runat="server" CssClass="search-input" placeholder="e.g. John" />
+        </div>
+        
+        <div class="search-group">
+            <asp:Label ID="lblLastName" runat="server" Text="Last Name:" AssociatedControlID="txtLastName" CssClass="search-label" />
+            <asp:TextBox ID="txtLastName" runat="server" CssClass="search-input" placeholder="e.g. Smith" />
+        </div>
+        
+        <div class="search-group">
+            <asp:Label ID="lblManager" runat="server" Text="Manager:" AssociatedControlID="ddlManagers" CssClass="search-label" />
+            <asp:DropDownList ID="ddlManagers" runat="server" CssClass="search-input"></asp:DropDownList>
+        </div>
+        
+        <div class="search-group">
+            <asp:Label ID="lblDepartment" runat="server" Text="Department:" AssociatedControlID="ddlDepartments" CssClass="search-label" />
+            <asp:DropDownList ID="ddlDepartments" runat="server" CssClass="search-input" 
+                AutoPostBack="true" OnSelectedIndexChanged="ddlDepartments_SelectedIndexChanged"></asp:DropDownList>
+        </div>
+    </div>
+    
+    <div class="search-row">
+        <div class="search-group">
+            <asp:Label ID="lblLocation" runat="server" Text="Location:" AssociatedControlID="ddlLocations" CssClass="search-label" />
+            <asp:DropDownList ID="ddlLocations" runat="server" CssClass="search-input"></asp:DropDownList>
+        </div>
+        
+        <div class="search-group">
+            <asp:Label ID="lblMinSalary" runat="server" Text="Minimum Salary:" AssociatedControlID="txtMinSalary" CssClass="search-label" />
+            <asp:TextBox ID="txtMinSalary" runat="server" CssClass="search-input" placeholder="e.g. 10000" />
+            <asp:RegularExpressionValidator ID="revMinSalary" runat="server" 
+                ControlToValidate="txtMinSalary"
+                ValidationExpression="^\d*\.?\d+$"
+                ErrorMessage="Minimum salary must be a positive number"
+                Display="Dynamic"
+                ForeColor="Red"
+                ValidationGroup="SearchGroup" />
+            <asp:CompareValidator ID="cvMinSalary" runat="server"
+                ControlToValidate="txtMinSalary"
+                Operator="GreaterThanEqual"
+                Type="Double"
+                ValueToCompare="0"
+                ErrorMessage="Salary cannot be negative"
+                Display="Dynamic"
+                ForeColor="Red"
+                ValidationGroup="SearchGroup" />
+        </div>
+        
+        <div class="search-group">
+            <asp:Label ID="lblMaxSalary" runat="server" Text="Maximum Salary:" AssociatedControlID="txtMaxSalary" CssClass="search-label" />
+            <asp:TextBox ID="txtMaxSalary" runat="server" CssClass="search-input" placeholder="e.g. 50000" />
+            <asp:RegularExpressionValidator ID="revMaxSalary" runat="server" 
+                ControlToValidate="txtMaxSalary"
+                ValidationExpression="^\d*\.?\d+$"
+                ErrorMessage="Maximum salary must be a positive number"
+                Display="Dynamic"
+                ForeColor="Red"
+                ValidationGroup="SearchGroup" />
+            <asp:CompareValidator ID="cvMaxSalary" runat="server"
+                ControlToValidate="txtMaxSalary"
+                Operator="GreaterThanEqual"
+                Type="Double"
+                ValueToCompare="0"
+                ErrorMessage="Salary cannot be negative"
+                Display="Dynamic"
+                ForeColor="Red"
+                ValidationGroup="SearchGroup" />
+        </div>
+    </div>
+    
+    <div class="search-group button-group">
+        <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-green" 
+            OnClick="btnSearch_Click" ValidationGroup="SearchGroup" />
+        <asp:Button ID="btnReset" runat="server" Text="Reset" CssClass="btn btn-yellow" 
+            OnClick="btnReset_Click" />
+    </div>
 
+    <asp:ValidationSummary ID="ValidationSummary1" runat="server" 
+        ShowSummary="true" ShowMessageBox="false" DisplayMode="BulletList"
+        ForeColor="Red" CssClass="validation-summary" ValidationGroup="SearchGroup" />
+</asp:Panel>
         <div class="table-container">
+            <asp:Label ID="lblNoRecords" runat="server" Text="" CssClass="no-records-message" Visible="false"></asp:Label>
             <asp:GridView ID="EmployeeGridView" runat="server" AutoGenerateColumns="false" CssClass="table"
                 OnRowCommand="EmployeeGridView_RowCommand"
                 DataKeyNames="EmployeeNumber">
@@ -178,12 +136,17 @@
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
+                 <RowStyle CssClass="grid-row" />
+                <AlternatingRowStyle CssClass="grid-alt-row" />
+                <SelectedRowStyle CssClass="grid-selected-row" />
+                <HeaderStyle CssClass="grid-header" />
+                <PagerStyle CssClass="grid-pager" />
             </asp:GridView>
         </div>
     </div>
 
     <script type="text/javascript">
-        // Ensure table header stays aligned with content during horizontal scroll
+        // Ensure table header stays aligned with content during scroll
         function syncScrollHeaders() {
             const container = document.querySelector('.table-container');
             const header = container.querySelector('thead');
@@ -200,7 +163,6 @@
             syncScrollHeaders();
         };
 
-        // For ASP.NET postbacks
         var prm = Sys.WebForms.PageRequestManager.getInstance();
         prm.add_endRequest(function () {
             syncScrollHeaders();
