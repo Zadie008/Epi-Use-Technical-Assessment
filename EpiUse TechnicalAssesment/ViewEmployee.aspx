@@ -53,16 +53,16 @@
                         <td>Salary:</td>
                         <td>
                             <asp:Label ID="lblSalary" runat="server" CssClass="view-field" />
-                            <asp:TextBox ID="txtSalary" runat="server" Visible="false" CssClass="edit-field" />
+                            <asp:TextBox ID="txtSalary" runat="server" Visible="false" CssClass="edit-field" onkeyup="formatSalary(this)" />
                             <asp:RegularExpressionValidator 
                                 ID="revSalary" 
                                 runat="server" 
                                 ControlToValidate="txtSalary"
-                                ValidationExpression="^\d+(\.\d{1,2})?$"
-                                ErrorMessage="Salary must be a number (e.g., 50000 or 50000.50)"
+                                ValidationExpression="^[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{1,2})?$"
+                                ErrorMessage="Please enter a valid salary (e.g. 50,000 or 50000.50)"
                                 Display="Dynamic"
                                 ForeColor="Red"
-                                Enabled="false" /> 
+                                Enabled="false" />
 
                              <asp:RangeValidator 
                                 ID="rvSalary" 
@@ -80,16 +80,18 @@
                     <tr>
                         <td>Role:</td>
                         <td>
-                            <asp:Label ID="lblRole" runat="server" CssClass="view-field" />
-                            <asp:TextBox ID="txtRole" runat="server" Visible="false" CssClass="edit-field" />
-                        </td>
+        <asp:Label ID="lblRole" runat="server" CssClass="view-field" />
+        <asp:DropDownList ID="ddlRole" runat="server" Visible="false" CssClass="edit-field" 
+            DataTextField="PositionName" DataValueField="PositionID" />
+    </td>
                     </tr>
                     <tr>
                         <td>Department:</td>
                         <td>
-                            <asp:Label ID="lblDepartment" runat="server" CssClass="view-field" />
-                            <asp:TextBox ID="txtDepartment" runat="server" Visible="false" CssClass="edit-field" />
-                        </td>
+        <asp:Label ID="lblDepartment" runat="server" CssClass="view-field" />
+        <asp:DropDownList ID="ddlDepartment" runat="server" Visible="false" CssClass="edit-field" 
+            DataTextField="DepartmentName" DataValueField="DepartmentID" />
+    </td>
                     </tr>
                     <tr>
                         <td>Manager:</td>
@@ -120,4 +122,23 @@
         </div>
     </asp:Panel>
     <asp:Label ID="lblMessage" runat="server" Text="" ForeColor="Red"></asp:Label>
+    <script type="text/javascript">
+    function formatSalary(input) {
+        // Remove all non-digit characters except decimal point
+        var value = input.value.replace(/[^\d.]/g, '');
+        
+        // Split into whole and decimal parts
+        var parts = value.split('.');
+        if (parts.length > 2) {
+            // More than one decimal point - invalid
+            parts = [parts[0] + parts[1], parts.slice(2).join('')];
+        }
+        
+        // Format whole number part with commas
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        
+        // Rejoin and update the input
+        input.value = parts[0] + (parts.length > 1 ? '.' + parts[1] : '');
+    }
+    </script>
 </asp:Content>

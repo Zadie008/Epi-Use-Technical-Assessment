@@ -168,13 +168,13 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Label lblRole;
 
         /// <summary>
-        /// txtRole control.
+        /// ddlRole control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRole;
+        protected global::System.Web.UI.WebControls.DropDownList ddlRole;
 
         /// <summary>
         /// lblDepartment control.
@@ -186,13 +186,13 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Label lblDepartment;
 
         /// <summary>
-        /// txtDepartment control.
+        /// ddlDepartment control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDepartment;
+        protected global::System.Web.UI.WebControls.DropDownList ddlDepartment;
 
         /// <summary>
         /// lblManager control.
