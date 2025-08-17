@@ -213,6 +213,15 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Label lblLocation;
 
         /// <summary>
+        /// ddlLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlLocation;
+
+        /// <summary>
         /// imgGravatar control.
         /// </summary>
         /// <remarks>

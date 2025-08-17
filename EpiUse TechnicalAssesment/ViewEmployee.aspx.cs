@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Globalization;
 
 namespace EpiUse_TechnicalAssesment
 {
@@ -132,6 +133,8 @@ namespace EpiUse_TechnicalAssesment
                     PopulateDepartmentDropdown(Convert.ToInt32(ViewState["OriginalLocationId"]));
                     int currentPositionId = reader["PositionID"] != DBNull.Value ? Convert.ToInt32(reader["PositionID"]) : 0;
                     PopulateRoleDropdown(currentPositionId);
+                    PopulateLocationDropdown(); 
+                    PopulateDepartmentDropdown(Convert.ToInt32(ViewState["OriginalLocationId"]));
 
                     // Set selected values
                     ddlDepartment.SelectedValue = ViewState["OriginalDepartmentId"].ToString();
@@ -226,7 +229,7 @@ namespace EpiUse_TechnicalAssesment
             bool isHRDepartment = targetDepartmentId == 1;
 
             bool canViewSalary = isSelf || isCEO || (isHeadOfLocation && sameLocation) || (isSeniorHR && sameLocation && isHRDepartment);
-            bool canEditPersonalDetails = isSelf;
+            bool canEditPersonalDetails = isSelf || isCEO || isHeadOfLocation || isSeniorHR;
             bool canEditRoleDepartment = isCEO || isHeadOfLocation || isSeniorHR;
 
             if (!canViewSalary)
@@ -270,7 +273,7 @@ namespace EpiUse_TechnicalAssesment
             lblRole.Visible = !isEdit || !canEditRoleDepartment;
             lblDepartment.Visible = !isEdit || !canEditRoleDepartment;
             lblManager.Visible = true;
-            lblLocation.Visible = true;
+            lblLocation.Visible = !isEdit || !canEditRoleDepartment;
 
             txtFirstName.Visible = isEdit && canEditPersonalDetails;
             txtLastName.Visible = isEdit && canEditPersonalDetails;
@@ -279,6 +282,8 @@ namespace EpiUse_TechnicalAssesment
             txtSalary.Visible = isEdit && canViewSalary && canEditRoleDepartment;
             ddlRole.Visible = isEdit && canEditRoleDepartment;
             ddlDepartment.Visible = isEdit && canEditRoleDepartment;
+            lblLocation.Visible = !isEdit || !canEditRoleDepartment;
+            ddlLocation.Visible = isEdit && canEditRoleDepartment;
 
             btnEditEmployee.Visible = !isEdit && (canEditPersonalDetails || canEditRoleDepartment);
             btnSaveEmployee.Visible = isEdit;
@@ -306,7 +311,7 @@ namespace EpiUse_TechnicalAssesment
                 // Remove any commas and validate
                 salaryString = salaryString.Replace(",", "");
 
-                if (!decimal.TryParse(salaryString, out salary))
+                if (!decimal.TryParse(salaryString, NumberStyles.Any, CultureInfo.InvariantCulture, out salary))
                 {
                     lblMessage.Text = "Salary must be a valid number (e.g. 50000 or 50000.50)";
                     return;
@@ -334,75 +339,124 @@ namespace EpiUse_TechnicalAssesment
         }
 
         private void SaveEmployeeData(string employeeNumber, string firstName, string lastName,
-                                    string birthDate, string email, string newEmployeeNumber,
-                                    decimal salary, int positionId, int departmentId)
+                            string birthDate, string email, string newEmployeeNumber,
+                            decimal salary, int positionId, int departmentId)
         {
             // Get original values
             int originalPositionId = Convert.ToInt32(ViewState["OriginalPositionId"]);
             int originalLocationId = Convert.ToInt32(ViewState["OriginalLocationId"]);
+            int newLocationId = Convert.ToInt32(ddlLocation.SelectedValue);
 
-            // Validate department belongs to the location
+            // Check if department exists in the new location
+            if (newLocationId != originalLocationId)
+            {
+                if (!DepartmentExistsInLocation(departmentId, newLocationId))
+                {
+                    lblMessage.Text = "Current department doesn't exist in the new location. Please select a valid department.";
+                    return;
+                }
+            }
+
+            // Validate department belongs to the location (even if location didn't change)
             int newDepartmentLocationId = GetDepartmentLocation(departmentId);
-            if (newDepartmentLocationId != originalLocationId)
+            if (newDepartmentLocationId != newLocationId)
             {
-                lblMessage.Text = "Selected department doesn't belong to employee's location!";
+                lblMessage.Text = "Selected department doesn't belong to the selected location!";
                 return;
             }
 
-            // Validate role transition
-            if (!IsValidRoleTransition(originalPositionId, positionId))
+            // Validate role transition (only if role is changing)
+            if (positionId != originalPositionId)
             {
-                lblMessage.Text = "Invalid role transition!";
-                return;
+                if (!IsValidRoleTransition(originalPositionId, positionId))
+                {
+                    lblMessage.Text = "Invalid role transition!";
+                    return;
+                }
+
+                // Validate unique roles (only if role is changing)
+                if (!IsUniqueRoleAllowed(positionId, departmentId, newLocationId, employeeNumber))
+                {
+                    lblMessage.Text = "This role is already occupied in this department/location!";
+                    return;
+                }
             }
 
-            // Get new manager based on new role
-            string newManagerId = GetManagerForNewRole(positionId, departmentId, originalLocationId);
+            // Get new manager based on new role and location
+            string newManagerId = GetManagerForNewRole(positionId, departmentId, newLocationId);
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string query = @"
-                UPDATE Employees SET
-                    FirstName = @FirstName,
-                    LastName = @LastName,
-                    DOB = @BirthDate,
-                    Email = @Email,
-                    EmployeeNumber = @NewEmployeeNumber,
-                    Salary = @Salary,
-                    PositionID = @PositionID,
-                    DepartmentID = @DepartmentID,
-                    ManagerID = @ManagerID
-                WHERE EmployeeNumber = @EmployeeNumber";
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@EmployeeNumber", employeeNumber);
-                cmd.Parameters.AddWithValue("@FirstName", firstName);
-                cmd.Parameters.AddWithValue("@LastName", lastName);
-                cmd.Parameters.AddWithValue("@BirthDate", birthDate);
-                cmd.Parameters.AddWithValue("@Email", email);
-                cmd.Parameters.AddWithValue("@NewEmployeeNumber", newEmployeeNumber);
-                cmd.Parameters.AddWithValue("@Salary", salary);
-                cmd.Parameters.AddWithValue("@PositionID", positionId);
-                cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
-                cmd.Parameters.AddWithValue("@ManagerID", newManagerId ?? (object)DBNull.Value);
+                // Start transaction to ensure all updates succeed or fail together
+                con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
 
                 try
                 {
-                    con.Open();
+                    // First update the employee record
+                    string query = @"
+            UPDATE Employees SET
+                FirstName = @FirstName,
+                LastName = @LastName,
+                DOB = @BirthDate,
+                Email = @Email,
+                EmployeeNumber = @NewEmployeeNumber,
+                Salary = @Salary,
+                PositionID = @PositionID,
+                DepartmentID = @DepartmentID,
+                LocationID = @LocationID,
+                ManagerID = @ManagerID
+            WHERE EmployeeNumber = @EmployeeNumber";
+
+                    SqlCommand cmd = new SqlCommand(query, con, transaction);
+                    cmd.Parameters.AddWithValue("@EmployeeNumber", employeeNumber);
+                    cmd.Parameters.AddWithValue("@FirstName", firstName);
+                    cmd.Parameters.AddWithValue("@LastName", lastName);
+                    cmd.Parameters.AddWithValue("@BirthDate", birthDate);
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.Parameters.AddWithValue("@NewEmployeeNumber", newEmployeeNumber);
+                    cmd.Parameters.AddWithValue("@Salary", salary);
+                    cmd.Parameters.AddWithValue("@PositionID", positionId);
+                    cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
+                    cmd.Parameters.AddWithValue("@LocationID", newLocationId);
+                    cmd.Parameters.AddWithValue("@ManagerID", newManagerId ?? (object)DBNull.Value);
+
                     int rowsAffected = cmd.ExecuteNonQuery();
 
                     if (rowsAffected > 0)
                     {
+                        // If employee number changed, update any references to this employee as manager
+                        if (employeeNumber != newEmployeeNumber)
+                        {
+                            string updateManagerRefs = @"
+                    UPDATE Employees 
+                    SET ManagerID = @NewEmployeeNumber 
+                    WHERE ManagerID = @OldEmployeeNumber";
+
+                            cmd = new SqlCommand(updateManagerRefs, con, transaction);
+                            cmd.Parameters.AddWithValue("@NewEmployeeNumber", newEmployeeNumber);
+                            cmd.Parameters.AddWithValue("@OldEmployeeNumber", employeeNumber);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
                         lblMessage.Text = "Employee updated successfully!";
                         LoadEmployee(newEmployeeNumber);
                     }
                     else
                     {
+                        transaction.Rollback();
                         lblMessage.Text = "No changes were made to the employee record.";
                     }
                 }
+                catch (SqlException ex)
+                {
+                    transaction.Rollback();
+                    lblMessage.Text = "Database error updating employee: " + ex.Message;
+                }
                 catch (Exception ex)
                 {
+                    transaction.Rollback();
                     lblMessage.Text = "Error updating employee: " + ex.Message;
                 }
             }
@@ -441,7 +495,44 @@ namespace EpiUse_TechnicalAssesment
             // Only allow moving up by exactly one level
             return newIndex == currentIndex - 1;
         }
+        private bool IsUniqueRoleAllowed(int positionId, int departmentId, int locationId, string currentEmployeeNumber)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                string query = "";
+                if (positionId == 1)
+                {
+                    query = @"SELECT COUNT(*) FROM Employees 
+                      WHERE PositionID = @PositionID 
+                      AND LocationID = @LocationID
+                      AND EmployeeNumber <> @EmployeeNumber";
+                }
+                // Head of location (PositionID 2, 3, 4 depending on location) must be unique per location
+                else if (positionId == 2 || positionId == 3 || positionId == 4)
+                {
+                    query = @"SELECT COUNT(*) FROM Employees 
+                      WHERE PositionID = @PositionID 
+                      AND LocationID = @LocationID
+                      AND EmployeeNumber <> @EmployeeNumber";
+                }
+                               
+                else
+                {
+                    return true; // other roles (Junior, Intern, etc.) can have multiples
+                }
 
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@PositionID", positionId);
+                cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
+                cmd.Parameters.AddWithValue("@LocationID", locationId);
+                cmd.Parameters.AddWithValue("@EmployeeNumber", currentEmployeeNumber);
+
+                con.Open();
+                int count = (int)cmd.ExecuteScalar();
+
+                return count == 0; // must be zero to allow uniqueness
+            }
+        }
         private string GetManagerForNewRole(int newPositionId, int departmentId, int locationId)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -519,5 +610,59 @@ namespace EpiUse_TechnicalAssesment
         {
             Response.Redirect("Dashboard.aspx");
         }
+
+        private void PopulateLocationDropdown()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                string query = "SELECT LocationID, LocationName FROM Locations ORDER BY LocationName";
+                SqlCommand cmd = new SqlCommand(query, con);
+
+                con.Open();
+                ddlLocation.DataSource = cmd.ExecuteReader();
+                ddlLocation.DataTextField = "LocationName";
+                ddlLocation.DataValueField = "LocationID";
+                ddlLocation.DataBind();
+
+                // Set current location as selected
+                if (ViewState["OriginalLocationId"] != null)
+                {
+                    ddlLocation.SelectedValue = ViewState["OriginalLocationId"].ToString();
+                }
+            }
+        }
+
+        protected void ddlLocation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddlLocation.SelectedValue != ViewState["OriginalLocationId"].ToString())
+            {
+                int newLocationId = Convert.ToInt32(ddlLocation.SelectedValue);
+                int currentDepartmentId = Convert.ToInt32(ddlDepartment.SelectedValue);
+
+                // Check if current department exists in new location
+                if (!DepartmentExistsInLocation(currentDepartmentId, newLocationId))
+                {
+                    lblMessage.Text = "Current department doesn't exist in the new location. Please select a different department.";
+                    PopulateDepartmentDropdown(newLocationId);
+                    ddlDepartment.SelectedIndex = 0; // Select first available department
+                }
+            }
+        }
+
+        private bool DepartmentExistsInLocation(int departmentId, int locationId)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                string query = "SELECT COUNT(*) FROM Departments WHERE DepartmentID = @DepartmentID AND LocationID = @LocationID";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
+                cmd.Parameters.AddWithValue("@LocationID", locationId);
+
+                con.Open();
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
     }
 }

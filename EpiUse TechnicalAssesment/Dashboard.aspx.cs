@@ -24,7 +24,7 @@ namespace EpiUse_TechnicalAssesment
             UnobtrusiveValidationMode = System.Web.UI.UnobtrusiveValidationMode.None;
             if (!IsPostBack)
             {
-                LoadManagers();
+                LoadSeniors();
                 LoadLocations();
                 LoadDepartments();
                 lblNoRecords.Visible = false;
@@ -79,24 +79,24 @@ namespace EpiUse_TechnicalAssesment
             }
         }
 
-        private void LoadManagers()
+        private void LoadSeniors()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = @"SELECT DISTINCT m.EmployeeNumber, 
-                                        m.FirstName + ' ' + m.LastName AS ManagerName
-                                 FROM Employees e
-                                 INNER JOIN Employees m ON e.ManagerID = m.EmployeeNumber
-                                 WHERE e.ManagerID IS NOT NULL
-                                 ORDER BY ManagerName";
+                string query = @"
+            SELECT EmployeeNumber, 
+                   FirstName + ' ' + LastName AS SeniorName
+            FROM Employees
+            WHERE Role LIKE 'Senior%'   -- finds Senior HR, Senior Developer, etc.
+            ORDER BY SeniorName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
-                ddlManagers.DataSource = cmd.ExecuteReader();
-                ddlManagers.DataTextField = "ManagerName";
-                ddlManagers.DataValueField = "EmployeeNumber";
-                ddlManagers.DataBind();
-                ddlManagers.Items.Insert(0, new ListItem("Select a manager", ""));
+                ddlSeniors.DataSource = cmd.ExecuteReader();
+                ddlSeniors.DataTextField = "SeniorName";
+                ddlSeniors.DataValueField = "EmployeeNumber";
+                ddlSeniors.DataBind();
+                ddlSeniors.Items.Insert(0, new ListItem("Select a senior", ""));
             }
         }
         private void LoadEmployees()
@@ -143,7 +143,7 @@ ORDER BY e.EmployeeNumber";
 
                 // Manager filter
                 cmd.Parameters.AddWithValue("@ManagerID",
-                    string.IsNullOrEmpty(ddlManagers.SelectedValue) ? "" : ddlManagers.SelectedValue);
+                    string.IsNullOrEmpty(ddlSeniors.SelectedValue) ? "" : ddlSeniors.SelectedValue);
 
                 // Department filter
                 cmd.Parameters.AddWithValue("@DepartmentID",
@@ -202,7 +202,7 @@ ORDER BY e.EmployeeNumber";
         {
             txtFirstName.Text = "";
             txtLastName.Text = "";
-            ddlManagers.SelectedIndex = 0;
+            ddlSeniors.SelectedIndex = 0;
             ddlDepartments.SelectedIndex = 0;
             ddlLocations.SelectedIndex = 0;
             lblNoRecords.Visible = false;

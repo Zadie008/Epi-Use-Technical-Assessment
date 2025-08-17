@@ -103,6 +103,8 @@
                         <td>Location:</td>
                         <td>
                             <asp:Label ID="lblLocation" runat="server" CssClass="view-field" />
+                            <asp:DropDownList ID="ddlLocation" runat="server" Visible="false" AutoPostBack="true" 
+                                OnSelectedIndexChanged="ddlLocation_SelectedIndexChanged" CssClass="form-control" />
                         </td>
                     </tr>
                 </table>

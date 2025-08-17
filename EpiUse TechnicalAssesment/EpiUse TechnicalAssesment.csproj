@@ -67,9 +67,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\diagram.png" />
+    <Content Include="Images\employees.png" />
     <Content Include="Images\EpiUseLogo.png" />
+    <Content Include="Images\google-docs.png" />
     <Content Include="Images\harshil-gudka-VCAxkOfxtNI-unsplash.jpg" />
+    <Content Include="Images\home %281%29.png" />
     <Content Include="Images\photos-by-beks-lqVe6NdK8bQ-unsplash.jpg" />
+    <Content Include="Scripts\JavaScript.js" />
     <Content Include="Styles\StyleSheet.css" />
     <Content Include="Web.config" />
     <Content Include="Login.aspx" />
@@ -77,6 +82,8 @@
     <Content Include="ReadMe.aspx" />
     <Content Include="ViewEmployee.aspx" />
     <Content Include="AddEmployee.aspx" />
+    <Content Include="ChangeProfilePhoto.aspx" />
+    <Content Include="Hierarchy.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MasterPage.Master.cs">
@@ -121,6 +128,20 @@
     </Compile>
     <Compile Include="AddEmployee.aspx.designer.cs">
       <DependentUpon>AddEmployee.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ChangeProfilePhoto.aspx.cs">
+      <DependentUpon>ChangeProfilePhoto.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ChangeProfilePhoto.aspx.designer.cs">
+      <DependentUpon>ChangeProfilePhoto.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Hierarchy.aspx.cs">
+      <DependentUpon>Hierarchy.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Hierarchy.aspx.designer.cs">
+      <DependentUpon>Hierarchy.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
