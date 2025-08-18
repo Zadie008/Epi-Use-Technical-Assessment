@@ -990,10 +990,12 @@ select.form-control {
     border-radius: 8px;
     background-color: #f9f9f9;
     margin: 20px auto;
-    overflow: auto;
+    overflow: hidden;
+    cursor: grab;
 }
 .node {
     cursor: pointer;
+    transition: transform 0.3s ease;
 }
 /* Node Styles */
 .node circle {
@@ -1032,55 +1034,39 @@ select.form-control {
 /* Link Styles */
 .link {
     fill: none;
-    stroke: #ccc;
-    stroke-width: 2px;
+    stroke: #444;
+    stroke-width: 3px;
+    transition: all 0.3s ease;
 }
 
 /* Tooltip */
 .tooltip {
     position: absolute;
-    padding: 8px;
+    padding: 10px;
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
-    border-radius: 4px;
+    border-radius: 6px;
     pointer-events: none;
-    font-size: 12px;
-    max-width: 200px;
+    font-size: 14px;
+    max-width: 250px;
+    line-height: 1.5;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    #hierarchy-container {
-        height: 500px;
-    }
-
-    .node circle {
-        r: 20;
-    }
-
-    .node text.name {
-        font-size: 10px;
-    }
-
-    .node text.title {
-        font-size: 8px;
-    }
-}
 #hierarchy-container svg {
     display: block;
     margin: 0 auto;
 }
 
 .node text.name {
-    font: 12px 'Segoe UI', Arial, sans-serif;
-    font-weight: 600;
-    fill: #333;
+    font-size: 14px;
+    font-weight: 700;
+    fill: #111;
     pointer-events: none;
 }
 
 .node text.title {
-    font: 10px 'Segoe UI', Arial, sans-serif;
-    fill: #666;
+    font-size: 12px;
+    fill: #555;
     pointer-events: none;
 }
 
@@ -1115,6 +1101,90 @@ select.form-control {
     stroke-width: 4px;
     filter: drop-shadow(0 0 4px rgba(0,0,0,0.2));
 }
+/* ========================================
+    Editing the database
+    ========================================*/
+options-panel {
+    background-color: #D3D4DB;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.database-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.form-panel {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+#<%= pnlEmployee.ClientID % > {
+    border-left: 4px solid #4285f4; /* Blue accent */
+}
+
+#<%= pnlDepartment.ClientID % > {
+    border-left: 4px solid #34a853; /* Green accent */
+}
+
+#<%= pnlLocation.ClientID % > {
+    border-left: 4px solid #ea4335; /* Red accent */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.active {
+    background-color: #0056b3;
+}
+
 /* ========================================
     Media responsiveness 
     ========================================*/

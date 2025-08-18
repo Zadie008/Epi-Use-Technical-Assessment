@@ -3,44 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|c:\\users\\zadie\\onedrive\\documents\\github\\epi-use-technical-assessment\\epiuse technicalassesment\\viewemployee.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:viewemployee.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|c:\\users\\zadie\\onedrive\\documents\\github\\epi-use-technical-assessment\\epiuse technicalassesment\\addemployee.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:addemployee.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|c:\\users\\zadie\\onedrive\\documents\\github\\epi-use-technical-assessment\\epiuse technicalassesment\\viewemployee.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:viewemployee.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|c:\\users\\zadie\\onedrive\\documents\\github\\epi-use-technical-assessment\\epiuse technicalassesment\\addemployee.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:addemployee.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|c:\\users\\zadie\\onedrive\\documents\\github\\epi-use-technical-assessment\\epiuse technicalassesment\\addemployee.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:addemployee.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\dashboard.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:dashboard.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|c:\\users\\zadie\\onedrive\\documents\\github\\epi-use-technical-assessment\\epiuse technicalassesment\\scripts\\javascript.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:scripts\\javascript.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\hierarchy.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:hierarchy.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\hierarchy.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:hierarchy.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\styles\\stylesheet.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:styles\\stylesheet.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|c:\\users\\zadie\\onedrive\\documents\\github\\epi-use-technical-assessment\\epiuse technicalassesment\\masterpage.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}",
-      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:masterpage.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\login.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:login.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+      "AbsoluteMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|c:\\users\\zadie\\onedrive\\documents\\github\\epi-use-technical-assessment\\epiuse technicalassesment\\scripts\\javascript.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{63044653-D10B-4BB6-927C-F821AADBD17F}|EpiUse TechnicalAssesment.csproj|solutionrelative:scripts\\javascript.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     }
   ],
   "DocumentGroupContainers": [
@@ -70,46 +54,59 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ViewEmployee.aspx",
-              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\ViewEmployee.aspx",
-              "RelativeDocumentMoniker": "ViewEmployee.aspx",
-              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\ViewEmployee.aspx",
-              "RelativeToolTip": "ViewEmployee.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-08-18T11:57:26.163Z",
+              "DocumentIndex": 2,
+              "Title": "AddEmployee.aspx.designer.cs",
+              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\AddEmployee.aspx.designer.cs",
+              "RelativeDocumentMoniker": "AddEmployee.aspx.designer.cs",
+              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\AddEmployee.aspx.designer.cs",
+              "RelativeToolTip": "AddEmployee.aspx.designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAkwB8BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-18T14:13:06.163Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ViewEmployee.aspx.cs",
-              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\ViewEmployee.aspx.cs",
-              "RelativeDocumentMoniker": "ViewEmployee.aspx.cs",
-              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\ViewEmployee.aspx.cs",
-              "RelativeToolTip": "ViewEmployee.aspx.cs",
-              "ViewState": "AgIAADwAAAAAAAAAAAAowEUAAAA7AAAAAAAAAA==",
+              "Title": "AddEmployee.aspx.cs",
+              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\AddEmployee.aspx.cs",
+              "RelativeDocumentMoniker": "AddEmployee.aspx.cs",
+              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\AddEmployee.aspx.cs",
+              "RelativeToolTip": "AddEmployee.aspx.cs",
+              "ViewState": "AgIAAHwAAAAAAAAAAAAnwIoAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-18T11:23:42.954Z",
+              "WhenOpened": "2025-08-18T13:05:31.656Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "MasterPage.Master",
-              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\MasterPage.Master",
-              "RelativeDocumentMoniker": "MasterPage.Master",
-              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\MasterPage.Master",
-              "RelativeToolTip": "MasterPage.Master",
+              "DocumentIndex": 1,
+              "Title": "AddEmployee.aspx",
+              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\AddEmployee.aspx",
+              "RelativeDocumentMoniker": "AddEmployee.aspx",
+              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\AddEmployee.aspx",
+              "RelativeToolTip": "AddEmployee.aspx",
               "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-08-18T11:10:33.285Z",
+              "WhenOpened": "2025-08-18T13:05:30.037Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
+              "Title": "JavaScript.js",
+              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Scripts\\JavaScript.js",
+              "RelativeDocumentMoniker": "Scripts\\JavaScript.js",
+              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Scripts\\JavaScript.js",
+              "RelativeToolTip": "Scripts\\JavaScript.js",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAQwF8AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-08-17T10:27:07.439Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Dashboard.aspx",
               "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Dashboard.aspx",
               "RelativeDocumentMoniker": "Dashboard.aspx",
@@ -122,80 +119,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "JavaScript.js",
-              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Scripts\\JavaScript.js",
-              "RelativeDocumentMoniker": "Scripts\\JavaScript.js",
-              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Scripts\\JavaScript.js",
-              "RelativeToolTip": "Scripts\\JavaScript.js",
-              "ViewState": "AgIAADIAAAAAAAAAAAAowDoAAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-08-17T10:27:07.439Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "Hierarchy.aspx.cs",
-              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Hierarchy.aspx.cs",
-              "RelativeDocumentMoniker": "Hierarchy.aspx.cs",
-              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Hierarchy.aspx.cs",
-              "RelativeToolTip": "Hierarchy.aspx.cs",
-              "ViewState": "AgIAACsAAAAAAAAAAAAowD0AAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-17T09:56:38.938Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Hierarchy.aspx",
-              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Hierarchy.aspx",
-              "RelativeDocumentMoniker": "Hierarchy.aspx",
-              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Hierarchy.aspx",
-              "RelativeToolTip": "Hierarchy.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-08-17T09:56:37.738Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
               "Title": "StyleSheet.css",
               "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Styles\\StyleSheet.css",
               "RelativeDocumentMoniker": "Styles\\StyleSheet.css",
               "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Styles\\StyleSheet.css",
               "RelativeToolTip": "Styles\\StyleSheet.css",
-              "ViewState": "AgIAANEDAAAAAAAAAAAAAOQDAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAFMEAAAAAAAAAAAIwG4EAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
               "WhenOpened": "2025-08-15T13:11:01.913Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Web.config",
-              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Web.config",
-              "RelativeDocumentMoniker": "Web.config",
-              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Web.config",
-              "RelativeToolTip": "Web.config",
-              "ViewState": "AgIAADMAAAAAAAAAAAAAAEQAAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-08-15T17:57:07.937Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Login.aspx",
-              "DocumentMoniker": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Login.aspx",
-              "RelativeDocumentMoniker": "Login.aspx",
-              "ToolTip": "C:\\Users\\zadie\\OneDrive\\Documents\\GitHub\\Epi-Use-Technical-Assessment\\EpiUse TechnicalAssesment\\Login.aspx",
-              "RelativeToolTip": "Login.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-08-17T10:09:35.299Z"
             }
           ]
         }

@@ -15,8 +15,8 @@ function renderD3(rootData) {
 
     const treeLayout = d3.tree()
         .size([height - 100, width - 200])
-        .nodeSize([120, 200])
-        .separation((a, b) => (a.parent === b.parent ? 1 : 2));
+        .nodeSize([150, 250])
+        .separation((a, b) => (a.parent === b.parent ? 0.8 : 1.5));
 
     const root = d3.hierarchy(rootData);
     treeLayout(root);
@@ -54,7 +54,7 @@ function renderD3(rootData) {
         if (empId) {
             window.location.href = "ViewEmployee.aspx?empId=" + encodeURIComponent(empId);
         } else {
-            console.error("No employee ID found in node data:", d.data);
+            console.error("No employee ID found in data:", d.data);
         }
     });
 
@@ -62,11 +62,11 @@ function renderD3(rootData) {
     svg.append("defs").append("clipPath")
         .attr("id", "circle-clip")
         .append("circle")
-        .attr("r", 35)
+        .attr("r", 45)
         .attr("cx", 0)
         .attr("cy", 0);
 
-    // Profile image (Base64 or Gravatar fallback)
+    // Profile image (Gravatar fallback)
     node.append("image")
         .attr("xlink:href", d => {
             if (d.data.Photo && d.data.Photo.trim() !== "") {
@@ -77,15 +77,15 @@ function renderD3(rootData) {
                 return `https://www.gravatar.com/avatar/${hash}?s=70&d=identicon`;
             }
         })
-        .attr("x", -35)
-        .attr("y", -35)
-        .attr("width", 70)
-        .attr("height", 70)
+        .attr("x", -45)
+        .attr("y", -45)
+        .attr("width", 90)
+        .attr("height", 90)
         .attr("clip-path", "url(#circle-clip)");
 
     // Name
     node.append("text")
-        .attr("dy", "3.5em")
+        .attr("dy", "5em")
         .attr("class", "name")
         .style("text-anchor", "middle")
         .style("font-weight", "600")
@@ -93,7 +93,7 @@ function renderD3(rootData) {
 
     // Role
     node.append("text")
-        .attr("dy", "5.2em")
+        .attr("dy", "6.5em")
         .attr("class", "title")
         .style("text-anchor", "middle")
         .text(d => d.data.Role);
