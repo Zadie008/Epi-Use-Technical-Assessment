@@ -60,22 +60,22 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.TextBox txtLastName;
 
         /// <summary>
-        /// lblSeniors control.
+        /// lblPositions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSeniors;
+        protected global::System.Web.UI.WebControls.Label lblPositions;
 
         /// <summary>
-        /// ddlSeniors control.
+        /// ddlPositions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSeniors;
+        protected global::System.Web.UI.WebControls.DropDownList ddlPositions;
 
         /// <summary>
         /// lblDepartment control.

@@ -27,8 +27,8 @@
                 </div>
 
                 <div class="search-group">
-                    <asp:Label ID="lblSeniors" runat="server" Text="Senior:" AssociatedControlID="ddlSeniors" CssClass="search-label" />
-                    <asp:DropDownList ID="ddlSeniors" runat="server" CssClass="search-input"></asp:DropDownList>
+                    <asp:Label ID="lblPositions" runat="server" Text="Title:" AssociatedControlID="ddlPositions" CssClass="search-label" />
+                    <asp:DropDownList ID="ddlPositions" runat="server" CssClass="search-input"></asp:DropDownList>
                 </div>
 
                 <div class="search-group">
@@ -99,7 +99,7 @@
                 ShowSummary="true" ShowMessageBox="false" DisplayMode="BulletList"
                 ForeColor="Red" CssClass="validation-summary" ValidationGroup="SearchGroup" />
         </asp:Panel>
-        <div class="table-container">
+       <div class="table-container">
             <asp:Label ID="lblNoRecords" runat="server" Text="" CssClass="no-records-message" Visible="false"></asp:Label>
             <asp:GridView ID="EmployeeGridView" runat="server" AutoGenerateColumns="false" CssClass="table"
                 OnRowCommand="EmployeeGridView_RowCommand"
@@ -111,7 +111,7 @@
                     <asp:BoundField DataField="Role" HeaderText="Role" />
                     <asp:BoundField DataField="LocationName" HeaderText="Location" />
                     <asp:BoundField DataField="DepartmentName" HeaderText="Department" />
-                    <%--<asp:BoundField DataField="ManagerName" HeaderText="Manager" />--%>
+                    <asp:BoundField DataField="ManagerName" HeaderText="Manager" />
 
                     <asp:TemplateField HeaderText="Actions">
                         <ItemTemplate>

@@ -9,17 +9,18 @@ namespace EpiUse_TechnicalAssesment
 {
     public partial class MasterPage : System.Web.UI.MasterPage
     {
-        protected void Page_Load(object sender, EventArgs e)
+       
+            protected void Page_Load(object sender, EventArgs e)
         {
             if (Request.Url.AbsolutePath.ToLower().Contains("login.aspx"))
             {
-                return;
+                return; // Skip role checks on login page
             }
 
             if (!IsPostBack)
             {
                 // Check if user is logged in (for all pages except login)
-                if (Session["Role"] == null)
+                if (Session["RoleID"] == null) // Changed from Session["Role"]
                 {
                     Response.Redirect("Login.aspx");
                     return;
@@ -31,23 +32,13 @@ namespace EpiUse_TechnicalAssesment
 
         private void SetNavigationVisibility()
         {
-            // Get the user's role from session
-            string userRole = Session["Role"].ToString();
+            if (Session["RoleID"] == null) return;
 
-            // Define which roles can add employees
-            string[] authorizedRoles = {
-            "CEO",
-            "Head of Pretoria",
-            "Head of Cape Town",
-            "Head of Durban",
-            "Senior HR",
-            "Senior Payroll",
-            "Senior Dev",
-            "Senior Support"
-        };
+            int roleId = Convert.ToInt32(Session["RoleID"]);
 
-            // Show Add Employee link only for authorized roles
-            phAddEmployee.Visible = authorizedRoles.Contains(userRole);
+            // RoleID 1 & 2 (CEO, Heads) get full access
+            // RoleID 3 (Regular employees) only see Dashboard, Hierarchy, ReadMe
+            phAddEmployee.Visible = (roleId == 1 || roleId == 2);
         }
     }
 }

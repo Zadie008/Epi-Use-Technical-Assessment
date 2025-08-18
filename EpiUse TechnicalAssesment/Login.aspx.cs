@@ -20,12 +20,12 @@ namespace EpiUse_TechnicalAssesment
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            string employeeNumber = txtEmployeeNumber.Text.Trim();
+            string employeeId = txtEmployeeNumber.Text.Trim();
             string rawPassword = txtPassword.Text;
 
-            if (string.IsNullOrEmpty(employeeNumber) || string.IsNullOrEmpty(rawPassword))
+            if (string.IsNullOrEmpty(employeeId) || string.IsNullOrEmpty(rawPassword))
             {
-                lblLoginMessage.Text = "Please enter both employee number and password";
+                lblLoginMessage.Text = "Please enter both employee ID and password";
                 ScriptManager.RegisterStartupScript(this, GetType(), "showPopup", "showPopup();", true);
                 return;
             }
@@ -36,12 +36,16 @@ namespace EpiUse_TechnicalAssesment
             {
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString))
                 {
-                    string query = @"SELECT EmployeeNumber, FirstName, LastName, Role, DepartmentID, LocationID, ManagerID 
-                            FROM Employees  
-                            WHERE EmployeeNumber = @EmpNo AND PasswordHash = @Password";
+                    // DEBUG: Output the values being checked
+                    System.Diagnostics.Debug.WriteLine($"Attempting login for EmployeeID: {employeeId}");
+                    System.Diagnostics.Debug.WriteLine($"Using hashed password: {hashedPassword}");
+
+                    string query = @"SELECT EmployeeID, RoleID 
+                            FROM USER_AUTH 
+                            WHERE EmployeeID = @EmpID AND Password = @Password";
 
                     SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.Parameters.AddWithValue("@EmpNo", employeeNumber);
+                    cmd.Parameters.AddWithValue("@EmpID", employeeId);
                     cmd.Parameters.AddWithValue("@Password", hashedPassword);
 
                     con.Open();
@@ -49,24 +53,31 @@ namespace EpiUse_TechnicalAssesment
                     {
                         if (reader.Read())
                         {
-                            // Store all user data in session
-                            Session["EmployeeNumber"] = reader["EmployeeNumber"].ToString();
-                            Session["FullName"] = $"{reader["FirstName"]} {reader["LastName"]}";
-                            Session["Role"] = reader["Role"].ToString();
-                            Session["DepartmentID"] = reader["DepartmentID"];
-                            Session["LocationID"] = reader["LocationID"];
-                            Session["ManagerID"] = reader["ManagerID"].ToString();
+                            // DEBUG: Confirm we found a matching user
+                            string foundEmployeeID = reader["EmployeeID"].ToString();
+                            string foundRoleID = reader["RoleID"].ToString();
+                            System.Diagnostics.Debug.WriteLine($"Login successful for EmployeeID: {foundEmployeeID}, RoleID: {foundRoleID}");
 
-                            // Clear any existing error message
+                            // Set session variables
+                            Session["EmployeeID"] = foundEmployeeID;
+                            Session["RoleID"] = foundRoleID;
+
+                            // DEBUG: Verify session variables are set
+                            System.Diagnostics.Debug.WriteLine($"Session variables set - EmployeeID: {Session["EmployeeID"]}, RoleID: {Session["RoleID"]}");
+
+                            // Clear any error message
                             lblLoginMessage.Text = "";
 
-                            // Redirect to dashboard
+                            // Redirect to Dashboard
+                            System.Diagnostics.Debug.WriteLine("Attempting redirect to Dashboard.aspx");
                             Response.Redirect("Dashboard.aspx", false);
                             Context.ApplicationInstance.CompleteRequest();
+                            return; // Explicit return after redirect
                         }
                         else
                         {
-                            lblLoginMessage.Text = "Invalid employee number or password";
+                            System.Diagnostics.Debug.WriteLine("No matching user found");
+                            lblLoginMessage.Text = "Invalid employee ID or password";
                             ScriptManager.RegisterStartupScript(this, GetType(), "showPopup", "showPopup();", true);
                         }
                     }
@@ -74,6 +85,7 @@ namespace EpiUse_TechnicalAssesment
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Login error: {ex.ToString()}");
                 lblLoginMessage.Text = "System error. Please try again later.";
                 ScriptManager.RegisterStartupScript(this, GetType(), "showPopup", "showPopup();", true);
                 LogError(ex);
@@ -83,7 +95,7 @@ namespace EpiUse_TechnicalAssesment
 
         private void LogError(Exception ex)
         {
-            //logging purposes for error control
+            // for error loggin purposes
         }
 
         public static string HashPassword(string password)
@@ -102,7 +114,6 @@ namespace EpiUse_TechnicalAssesment
 
         protected void btnOkay_Click(object sender, EventArgs e)
         {
-            // Clear error message when selecting okay on the popup
             lblLoginMessage.Text = "";
         }
     }
