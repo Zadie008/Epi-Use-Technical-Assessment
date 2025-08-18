@@ -24,7 +24,6 @@ namespace EpiUse_TechnicalAssesment
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                // Modified query to ensure all positions are included
                 string query = @"
             SELECT e.EmployeeNumber, e.FirstName, e.LastName, e.Role, e.ManagerID,
                    e.Email, e.ProfilePhotoBase64, e.PositionID,
@@ -34,8 +33,7 @@ namespace EpiUse_TechnicalAssesment
             LEFT JOIN Position p ON e.PositionID = p.PositionID
             LEFT JOIN Locations l ON e.LocationID = l.LocationID
             LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
-            ORDER BY p.Ranking DESC, e.LastName, e.FirstName
-        ";
+            ORDER BY p.Ranking DESC, e.LastName, e.FirstName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 using (SqlDataReader reader = cmd.ExecuteReader())
@@ -44,6 +42,7 @@ namespace EpiUse_TechnicalAssesment
                     {
                         employees.Add(new
                         {
+                            id = reader["EmployeeNumber"].ToString(), // This is crucial for D3.js
                             EmployeeNumber = reader["EmployeeNumber"].ToString(),
                             Name = reader["FirstName"].ToString() + " " + reader["LastName"].ToString(),
                             Role = reader["Role"].ToString(),

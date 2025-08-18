@@ -25,7 +25,10 @@ namespace EpiUse_TechnicalAssesment
                     return;
                 }
 
-                string empId = Request.QueryString["empId"];
+                string empId = Request.QueryString["empId"] ??
+                      Request.QueryString["EmployeeNumber"] ??
+                      Request.QueryString["id"];
+
                 if (!string.IsNullOrEmpty(empId))
                 {
                     LoadEmployee(empId);
@@ -35,6 +38,12 @@ namespace EpiUse_TechnicalAssesment
                 {
                     lblMessage.Text = "No Employee ID specified.";
                     pnlEmployee.Visible = false;
+                    var queryParams = new StringBuilder("Received query string parameters: ");
+                    foreach (string key in Request.QueryString.AllKeys)
+                    {
+                        queryParams.Append($"{key}={Request.QueryString[key]}, ");
+                    }
+                    System.Diagnostics.Debug.WriteLine(queryParams.ToString());
                 }
             }
         }
@@ -43,29 +52,16 @@ namespace EpiUse_TechnicalAssesment
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string query = @"
-                SELECT 
-                    e.EmployeeNumber, 
-                    e.FirstName, 
-                    e.LastName, 
-                    e.DOB, 
-                    e.Email,
-                    e.Salary,
-                    p.PositionName as Role,
-                    e.ProfilePhotoBase64,
-                    e.LocationID, 
-                    e.ManagerID,
-                    m.FirstName + ' ' + m.LastName AS ManagerName,
-                    l.LocationName,
-                    d.DepartmentName,
-                    e.DepartmentID,
-                    p.PositionID
-                FROM Employees e
-                LEFT JOIN Employees m ON e.ManagerID = m.EmployeeNumber
-                LEFT JOIN Locations l ON e.LocationID = l.LocationID
-                LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
-                LEFT JOIN Position p ON e.PositionID = p.PositionID
-                WHERE e.EmployeeNumber = @EmployeeNumber";
+                string query = @"SELECT e.EmployeeNumber, e.FirstName, e.LastName, e.DOB, e.Email,
+                        e.Salary, p.PositionName, e.ProfilePhotoBase64, e.LocationID, 
+                        e.ManagerID, m.FirstName + ' ' + m.LastName AS ManagerName,
+                        l.LocationName, d.DepartmentName, e.DepartmentID, p.PositionID
+                        FROM Employees e
+                        LEFT JOIN Employees m ON e.ManagerID = m.EmployeeNumber
+                        LEFT JOIN Locations l ON e.LocationID = l.LocationID
+                        LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
+                        LEFT JOIN Position p ON e.PositionID = p.PositionID
+                        WHERE e.EmployeeNumber = @EmployeeNumber";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@EmployeeNumber", empId);
@@ -92,7 +88,9 @@ namespace EpiUse_TechnicalAssesment
                     lblSalary.Text = string.Format("{0:C}", salary);
                     hdnOriginalSalary.Value = salary.ToString();
 
-                    lblRole.Text = reader["Role"].ToString();
+                    lblRole.Text = reader["PositionName"] != DBNull.Value
+    ? reader["PositionName"].ToString()
+    : "No Role";
                     lblDepartment.Text = reader["DepartmentName"] != DBNull.Value
                         ? reader["DepartmentName"].ToString()
                         : "No Department";

@@ -992,7 +992,9 @@ select.form-control {
     margin: 20px auto;
     overflow: auto;
 }
-
+.node {
+    cursor: pointer;
+}
 /* Node Styles */
 .node circle {
     fill: #fff;
