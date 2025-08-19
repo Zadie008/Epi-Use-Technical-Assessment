@@ -1,49 +1,26 @@
-﻿function openTab(evt, tabName) {
-    var i, tabcontent, tabbuttons;
+﻿// ========== Helper for Gravatar ==========
+function getGravatarUrl(email) {
+    if (!email) return "https://www.gravatar.com/avatar/?d=identicon";
 
-    // Hide all tab content
-    tabcontent = document.getElementsByClassName("tab-content");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-        tabcontent[i].classList.remove("active");
+    try {
+        // Use the already loaded CryptoJS library
+        const emailHash = CryptoJS.MD5(email.trim().toLowerCase()).toString();
+        return `https://www.gravatar.com/avatar/${emailHash}?d=identicon`;
+    } catch (error) {
+        console.error("Error generating Gravatar URL:", error);
+        return "https://www.gravatar.com/avatar/?d=identicon";
     }
-
-    // Remove active class from all buttons
-    tabbuttons = document.getElementsByClassName("tab-button");
-    for (i = 0; i < tabbuttons.length; i++) {
-        tabbuttons[i].classList.remove("active");
-    }
-
-    // Show the specific tab content
-    document.getElementById(tabName).style.display = "block";
-    document.getElementById(tabName).classList.add("active");
-
-    // Add active class to the button that opened the tab
-    evt.currentTarget.classList.add("active");
 }
-
-// Show modal functions
-function showDeleteConfirmModal() {
-    $('#deleteConfirmModal').modal('show');
-}
-
-function showSuccessModal(message) {
-    $('#lblSuccessMessage').text(message);
-    $('#successModal').modal('show');
 
 // ========== Main D3 Hierarchy ==========
 function renderD3(rootData) {
     console.log("Rendering hierarchy with data:", rootData);
 
-    // D3 helper functions are correctly nested inside renderD3
-    function md5(string) {
-        return CryptoJS.MD5(string).toString();
-    }
-
-    function getGravatarUrl(email) {
-        if (!email) return "https://www.gravatar.com/avatar/?d=identicon";
-        const emailHash = md5(email.trim().toLowerCase());
-        return `https://www.gravatar.com/avatar/${emailHash}?d=identicon`;
+    // Check if rootData is valid
+    if (!rootData || !rootData.id) {
+        console.error("Invalid root data:", rootData);
+        alert("Invalid hierarchy data received");
+        return;
     }
 
     const container = document.getElementById("hierarchy-container");
@@ -54,25 +31,31 @@ function renderD3(rootData) {
 
     const width = container.clientWidth;
     const height = container.clientHeight;
+    console.log("Container dimensions:", width, "x", height);
 
+    // Clear previous visualization
     d3.select("#hierarchy-container").selectAll("*").remove();
 
+    // Create tree layout
     const treeLayout = d3.tree()
-        .size([width - 100, height - 200])
-        .nodeSize([100, 150]);
+        .size([height - 100, width - 200])  // Note: swapped for vertical layout
+        .nodeSize([100, 200]);
 
+    // Create hierarchy
     const root = d3.hierarchy(rootData);
     treeLayout(root);
 
+    // Create SVG
     const svg = d3.select("#hierarchy-container")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
-        .attr("viewBox", [0, 0, width, height]);
+        .attr("viewBox", `0 0 ${width} ${height}`);
 
+    // Add zoom functionality
     const zoom = d3.zoom()
         .scaleExtent([0.1, 3])
-        .on("zoom", (event) => {
+        .on("zoom", function (event) {
             g.attr("transform", event.transform);
         });
 
@@ -80,150 +63,131 @@ function renderD3(rootData) {
 
     const g = svg.append("g");
 
-    const bounds = root.descendants().reduce((acc, d) => ({
-        x: [Math.min(acc.x[0], d.x), Math.max(acc.x[1], d.x)],
-        y: [Math.min(acc.y[0], d.y), Math.max(acc.y[1], d.y)]
-    }), { x: [0, 0], y: [0, 0] });
+    // Calculate bounds for centering
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    root.each(d => {
+        if (d.x > x1) x1 = d.x;
+        if (d.x < x0) x0 = d.x;
+        if (d.y > y1) y1 = d.y;
+        if (d.y < y0) y0 = d.y;
+    });
 
-    const dx = bounds.x[1] - bounds.x[0];
-    const dy = bounds.y[1] - bounds.y[0];
-    const xOffset = (width - dx) / 2 - bounds.x[0];
-    const yOffset = (height - dy) / 2 - bounds.y[0];
+    const initialTransform = d3.zoomIdentity
+        .translate(width / 2, height / 2 - (y1 - y0) / 2)
+        .scale(1);
 
-    g.attr("transform", `translate(${xOffset},${yOffset})`);
+    g.attr("transform", `translate(${initialTransform.x},${initialTransform.y})`);
 
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "hierarchy-tooltip")
-        .style("opacity", 0)
-        .style("position", "absolute")
-        .style("background", "#fff")
-        .style("border", "1px solid #e0e0e0")
-        .style("border-radius", "4px")
-        .style("padding", "8px 12px")
-        .style("box-shadow", "0 2px 10px rgba(0,0,0,0.1)")
-        .style("pointer-events", "none")
-        .style("font-family", "'Segoe UI', Arial, sans-serif")
-        .style("font-size", "13px")
-        .style("z-index", "1000")
-        .style("max-width", "250px");
-
+    // Draw links
     g.selectAll(".link")
         .data(root.links())
         .enter().append("path")
         .attr("class", "link")
         .attr("d", d3.linkVertical()
-            .x(d => d.x)
-            .y(d => d.y));
+            .x(d => d.y)
+            .y(d => d.x));
 
-    svg.append("defs").selectAll("clipPath")
-        .data(root.descendants())
-        .enter().append("clipPath")
-        .attr("id", d => `clip-${d.data.id}`)
-        .append("circle")
-        .attr("r", 35);
-
+    // Draw nodes
     const node = g.selectAll(".node")
         .data(root.descendants())
         .enter().append("g")
         .attr("class", d => d.data.id === "org-root" ? "node root-node" : "node")
-        .attr("transform", d => `translate(${d.x},${d.y})`)
+        .attr("transform", d => `translate(${d.y},${d.x})`)
         .on("click", function (event, d) {
             if (d.data.id === "org-root") return;
-            console.log("Navigating to EmployeeID:", d.data.id, "Name:", d.data.Name);
-
-            // Use encodeURIComponent to handle special characters
-            const employeeId = encodeURIComponent(d.data.id);
-            window.location.href = `ViewEmployee.aspx?empId=${employeeId}`;
-
-            // Prevent any default behavior or propagation
-            event.stopPropagation();
+            console.log("Clicked on:", d.data.id);
+            window.location.href = `ViewEmployee.aspx?empId=${encodeURIComponent(d.data.id)}`;
             event.preventDefault();
-        })
-        .style("cursor", d => d.data.id === "org-root" ? "default" : "pointer");
+        });
 
+    // Node circles
     node.append("circle")
-        .attr("r", 40)
-        .attr("fill", "none")
+        .attr("r", 10)
+        .attr("fill", "#fff")
         .attr("stroke", "#4a90e2")
-        .attr("stroke-width", 3)
-        .attr("class", d => {
-            const ranking = d.data.Ranking;
-            return ranking ? `ranking${ranking}` : "";
-        })
-        .on("mouseover", function () {
-            d3.select(this).attr("stroke-width", 4).attr("stroke", "#2a6fbb");
-        })
-        .on("mouseout", function () {
-            const ranking = d3.select(this).attr("class") || "";
-            const strokeWidth = ranking.includes("ranking1") ? 5 :
-                ranking.includes("ranking2") ? 4 : 3;
-            d3.select(this).attr("stroke-width", strokeWidth);
-        });
-
-    node.append("image")
-        .attr("xlink:href", d => d.data.ImageUrl || getGravatarUrl(d.data.Email))
-        .attr("x", -35)
-        .attr("y", -35)
-        .attr("width", 70)
-        .attr("height", 70)
-        .attr("clip-path", d => `url(#clip-${d.data.id})`)
-        .attr("class", "node-image")
-        .on("mouseover", function (event, d) {
-            if (d.data.id === "org-root") return;
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", 1);
-            tooltip.html(`
-                <div><strong>Employee ID:</strong> ${d.data.id}</div>
-                <div><strong>Email:</strong> ${d.data.Email}</div>
-                <div><strong>Position:</strong> ${d.data.PositionName}</div>
-            `)
-                .style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 28) + "px");
-        })
-        .on("mouseout", function () {
-            tooltip.transition()
-                .duration(500)
-                .style("opacity", 0);
-        })
-        .on("mousemove", function (event) {
-            tooltip
-                .style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 28) + "px");
-        });
-
-    node.append("text")
-        .attr("class", "name")
-        .attr("dy", "4em")
-        .attr("text-anchor", "middle")
-        .text(d => d.data.Name);
-
-    const resetButton = svg.append("g")
-        .attr("class", "reset-zoom")
-        .attr("transform", `translate(${width - 50}, 20)`)
-        .style("cursor", "pointer");
-
-    resetButton.append("rect")
-        .attr("width", 30)
-        .attr("height", 30)
-        .attr("fill", "#f9f9f9")
-        .attr("stroke", "#4a90e2")
-        .attr("rx", 5)
         .attr("stroke-width", 2);
 
-    resetButton.append("text")
-        .attr("x", 15)
-        .attr("y", 18)
+    // Node text (simple version for debugging)
+    node.append("text")
+        .attr("dy", "0.31em")
         .attr("text-anchor", "middle")
-        .text("⟲")
-        .attr("font-size", "16px")
-        .attr("fill", "#4a90e2");
+        .text(d => d.data.Name || d.data.id)
+        .attr("font-size", "12px");
 
-    resetButton.on("click", () => {
-        svg.transition()
-            .duration(750)
-            .call(zoom.transform, d3.zoomIdentity
-                .translate(xOffset, yOffset)
-                .scale(1));
+    console.log("Hierarchy rendered successfully");
+}
+
+function showSuccessPanel() {
+    var panel = document.getElementById('<%= pnlSuccess.ClientID %>');
+    if (panel) {
+        panel.style.display = 'block';
+    }
+}
+
+function hideSuccessPanel() {
+    var panel = document.getElementById('<%= pnlSuccess.ClientID %>');
+    if (panel) {
+        panel.style.display = 'none';
+    }
+}
+
+function showDeletePanel() {
+    var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
+    if (panel) {
+        panel.style.display = 'block';
+    }
+}
+
+function hideDeletePanel() {
+    var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
+    if (panel) {
+        panel.style.display = 'none';
+    }
+}
+
+// Close panels when clicking outside
+document.addEventListener('click', function (e) {
+    // Success Panel
+    var successPanel = document.getElementById('<%= pnlSuccess.ClientID %>');
+    if (successPanel && successPanel.style.display === 'block') {
+        var successContent = successPanel.querySelector('.success-panel-content');
+        if (successContent && !successContent.contains(e.target)) {
+            hideSuccessPanel();
+        }
+    }
+
+    // Delete Panel
+    var deletePanel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
+    if (deletePanel && deletePanel.style.display === 'block') {
+        var deleteContent = deletePanel.querySelector('.modal-panel-content');
+        if (deleteContent && !deleteContent.contains(e.target)) {
+            hideDeletePanel();
+        }
+    }
+});
+
+// Auto-close success panel after 5 seconds
+function autoCloseSuccessPanel() {
+    setTimeout(function () {
+        hideSuccessPanel();
+    }, 5000);
+}
+
+// Re-bind events after AJAX update
+var prm = Sys.WebForms.PageRequestManager.getInstance();
+prm.add_endRequest(function () {
+    // Re-bind any JavaScript events here if needed
+    bindTabEvents();
+});
+
+function bindTabEvents() {
+    $('.tab-button').off('click').on('click', function (e) {
+        e.preventDefault();
+        $('.tab-button').removeClass('active');
+        $(this).addClass('active');
+        $('.tab-content').hide();
+        var tabName = $(this).attr('data-tab');
+        $('#' + tabName).show();
+        $('#<%= activeTabHidden.ClientID %>').val(tabName);
     });
 }

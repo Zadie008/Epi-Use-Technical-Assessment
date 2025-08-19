@@ -27,13 +27,12 @@ namespace EpiUse_TechnicalAssesment
             {
                 PopulateDropdowns();
                 BindGridViews();
-                // Set the first tab as active by default
+
                 activeTabHidden.Value = "employeeTab";
                 UpdateTabVisibility();
             }
             else
             {
-                // Maintain tab state on postback
                 UpdateTabVisibility();
             }
         }
@@ -43,58 +42,47 @@ namespace EpiUse_TechnicalAssesment
             LinkButton button = (LinkButton)sender;
             string tabName = button.CommandArgument;
             activeTabHidden.Value = tabName;
-            UpdateTabVisibility();
         }
+
         private void UpdateTabVisibility()
         {
-            // Hide all tabs
             employeeTab.Style["display"] = "none";
-            employeeTab.CssClass = employeeTab.CssClass.Replace("active", "").Trim();
             departmentTab.Style["display"] = "none";
-            departmentTab.CssClass = departmentTab.CssClass.Replace("active", "").Trim();
             positionTab.Style["display"] = "none";
-            positionTab.CssClass = positionTab.CssClass.Replace("active", "").Trim();
             locationTab.Style["display"] = "none";
-            locationTab.CssClass = locationTab.CssClass.Replace("active", "").Trim();
 
-            // Remove active class from all buttons
             lbEmployeeTab.CssClass = lbEmployeeTab.CssClass.Replace("active", "").Trim();
             lbDepartmentTab.CssClass = lbDepartmentTab.CssClass.Replace("active", "").Trim();
             lbPositionTab.CssClass = lbPositionTab.CssClass.Replace("active", "").Trim();
             lbLocationTab.CssClass = lbLocationTab.CssClass.Replace("active", "").Trim();
 
-            // Show the active tab
             switch (activeTabHidden.Value)
             {
                 case "employeeTab":
                     employeeTab.Style["display"] = "block";
-                    employeeTab.CssClass += " active";
                     lbEmployeeTab.CssClass += " active";
                     break;
                 case "departmentTab":
                     departmentTab.Style["display"] = "block";
-                    departmentTab.CssClass += " active";
                     lbDepartmentTab.CssClass += " active";
                     break;
                 case "positionTab":
                     positionTab.Style["display"] = "block";
-                    positionTab.CssClass += " active";
                     lbPositionTab.CssClass += " active";
                     break;
                 case "locationTab":
                     locationTab.Style["display"] = "block";
-                    locationTab.CssClass += " active";
                     lbLocationTab.CssClass += " active";
                     break;
             }
         }
+
         private void PopulateDropdowns()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                // Populate positions dropdown
                 string positionQuery = "SELECT PositionID, PositionName FROM POSITION";
                 using (SqlCommand cmdPosition = new SqlCommand(positionQuery, connection))
                 {
@@ -108,8 +96,7 @@ namespace EpiUse_TechnicalAssesment
                     }
                 }
 
-                // Populate departments dropdown
-                string departmentQuery = "SELECT DepartmentID, DepartmentName FROM DEPARTMENT";
+                string departmentQuery = "SELECT DISTINCT DepartmentName FROM DEPARTMENT ORDER BY DepartmentName";
                 using (SqlCommand cmdDepartment = new SqlCommand(departmentQuery, connection))
                 {
                     using (SqlDataReader departmentReader = cmdDepartment.ExecuteReader())
@@ -117,12 +104,11 @@ namespace EpiUse_TechnicalAssesment
                         departmentDropdown.Items.Clear();
                         while (departmentReader.Read())
                         {
-                            departmentDropdown.Items.Add(new ListItem(departmentReader["DepartmentName"].ToString(), departmentReader["DepartmentID"].ToString()));
+                            departmentDropdown.Items.Add(new ListItem(departmentReader["DepartmentName"].ToString(), departmentReader["DepartmentName"].ToString()));
                         }
                     }
                 }
 
-                // Populate locations dropdown
                 string locationQuery = "SELECT LocationID, LocationName FROM LOCATION";
                 using (SqlCommand cmdLocation = new SqlCommand(locationQuery, connection))
                 {
@@ -136,7 +122,6 @@ namespace EpiUse_TechnicalAssesment
                     }
                 }
 
-                // Populate manager dropdown (for reporting line)
                 string managerQuery = "SELECT EmployeeID, FirstName + ' ' + LastName AS FullName FROM EMPLOYEES";
                 using (SqlCommand cmdManager = new SqlCommand(managerQuery, connection))
                 {
@@ -245,13 +230,14 @@ namespace EpiUse_TechnicalAssesment
         {
             validationMessage.Text = "";
 
-            string firstName = firstNameTextbox.Value.Trim();
-            string lastName = lastNameTextbox.Value.Trim();
-            string dobString = dobTextbox.Value.Trim();
-            string email = emailTextbox.Value.Trim();
-            string password = passwordTextbox.Value;
-            string confirmPass = confirmPassword.Value;
-            string salaryString = salaryTextbox.Value.Trim();
+            // CHANGED: .Value to .Text
+            string firstName = firstNameTextbox.Text.Trim();
+            string lastName = lastNameTextbox.Text.Trim();
+            string dobString = dobTextbox.Text.Trim();
+            string email = emailTextbox.Text.Trim();
+            string password = passwordTextbox.Text;
+            string confirmPass = confirmPassword.Text;
+            string salaryString = salaryTextbox.Text.Trim();
 
             // Validation logic
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) ||
@@ -301,10 +287,9 @@ namespace EpiUse_TechnicalAssesment
                 return;
             }
 
-            // Database Insertion (if validation passes)
+            // Database Insertion
             int positionId = Convert.ToInt32(positionDropdown.SelectedValue);
             int departmentId = Convert.ToInt32(departmentDropdown.SelectedValue);
-            int locationId = Convert.ToInt32(locationDropdown.SelectedValue);
             int managerId = Convert.ToInt32(managerDropdown.SelectedValue);
             string hashedPassword = HashPassword(password);
 
@@ -316,7 +301,7 @@ namespace EpiUse_TechnicalAssesment
                     connection.Open();
                     transaction = connection.BeginTransaction();
 
-                    string employeeInsertQuery = "INSERT INTO EMPLOYEES (FirstName, LastName, DateOfBirth, Email, DepartmentID, PositionID, LocationID) VALUES (@FirstName, @LastName, @DOB, @Email, @DepartmentID, @PositionID, @LocationID); SELECT SCOPE_IDENTITY();";
+                    string employeeInsertQuery = "INSERT INTO EMPLOYEES (FirstName, LastName, DateOfBirth, Email, DepartmentID, PositionID) VALUES (@FirstName, @LastName, @DOB, @Email, @DepartmentID, @PositionID); SELECT SCOPE_IDENTITY();";
                     SqlCommand cmd = new SqlCommand(employeeInsertQuery, connection, transaction);
                     cmd.Parameters.AddWithValue("@FirstName", firstName);
                     cmd.Parameters.AddWithValue("@LastName", lastName);
@@ -324,7 +309,6 @@ namespace EpiUse_TechnicalAssesment
                     cmd.Parameters.AddWithValue("@Email", email);
                     cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
                     cmd.Parameters.AddWithValue("@PositionID", positionId);
-                    cmd.Parameters.AddWithValue("@LocationID", locationId);
 
                     int employeeId = Convert.ToInt32(cmd.ExecuteScalar());
 
@@ -352,9 +336,12 @@ namespace EpiUse_TechnicalAssesment
 
                     transaction.Commit();
 
-                    // Show success message
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showSuccessModal",
-                        $"showSuccessModal('Employee added successfully! Employee ID: {employeeId}');", true);
+                    // Show success panel
+                    lblSuccessMessage.Text = $"Employee added successfully! Employee ID: {employeeId}";
+                    pnlSuccess.Style["display"] = "block";
+
+                    UpdateEmployeePanel();
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
 
                     ClearForm();
                     BindGridViews();
@@ -374,9 +361,15 @@ namespace EpiUse_TechnicalAssesment
         {
             deleteValidationMessage.Text = "";
 
-            string loggedInUserPassword = password1.Value;
+            if (Session["EmployeeID"] == null)
+            {
+                deleteValidationMessage.Text = "You must be logged in to delete an employee.";
+                return;
+            }
 
-            // Verify the entered password against the logged-in user's stored password
+            // CHANGED: .Value to .Text
+            string loggedInUserPassword = password1.Text;
+
             bool passwordIsValid = VerifyUserPassword(loggedInUserPassword);
 
             if (!passwordIsValid)
@@ -391,14 +384,24 @@ namespace EpiUse_TechnicalAssesment
                 return;
             }
 
-            // Show confirmation popup
-            lblEmployeeIDConfirm.Text = txtEmpId.Text;
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "showDeleteConfirmModal", "showDeleteConfirmModal();", true);
+            Session["EmployeeToDelete"] = employeeIdToDelete;
+            lblEmployeeIDConfirm.Text = employeeIdToDelete.ToString();
+            pnlDeleteConfirm.Style["display"] = "block";
+
+            UpdateDeleteConfirmPanel();
         }
 
         protected void btnConfirmDelete_Click(object sender, EventArgs e)
         {
-            int employeeIdToDelete = Convert.ToInt32(lblEmployeeIDConfirm.Text);
+            pnlDeleteConfirm.Style["display"] = "none";
+
+            if (Session["EmployeeToDelete"] == null || Session["EmployeeID"] == null)
+            {
+                deleteValidationMessage.Text = "Session expired. Please try again.";
+                return;
+            }
+
+            int employeeIdToDelete = Convert.ToInt32(Session["EmployeeToDelete"]);
             int loggedInEmployeeId = Convert.ToInt32(Session["EmployeeID"]);
 
             try
@@ -410,7 +413,18 @@ namespace EpiUse_TechnicalAssesment
 
                     try
                     {
-                        // Delete from related tables first
+                        string checkEmployeeQuery = "SELECT COUNT(*) FROM EMPLOYEES WHERE EmployeeID = @EmployeeID";
+                        SqlCommand cmdCheck = new SqlCommand(checkEmployeeQuery, connection, transaction);
+                        cmdCheck.Parameters.AddWithValue("@EmployeeID", employeeIdToDelete);
+                        int employeeExists = Convert.ToInt32(cmdCheck.ExecuteScalar());
+
+                        if (employeeExists == 0)
+                        {
+                            transaction.Rollback();
+                            deleteValidationMessage.Text = "Employee not found.";
+                            return;
+                        }
+
                         string deleteSalaryQuery = "DELETE FROM SALARY WHERE EmployeeID = @EmployeeID";
                         SqlCommand cmdSalary = new SqlCommand(deleteSalaryQuery, connection, transaction);
                         cmdSalary.Parameters.AddWithValue("@EmployeeID", employeeIdToDelete);
@@ -426,7 +440,11 @@ namespace EpiUse_TechnicalAssesment
                         cmdReportingLine.Parameters.AddWithValue("@EmployeeID", employeeIdToDelete);
                         cmdReportingLine.ExecuteNonQuery();
 
-                        // Finally delete the employee
+                        string deletePictureQuery = "DELETE FROM EMPLOYEE_PICTURE WHERE EmployeeID = @EmployeeID";
+                        SqlCommand cmdPicture = new SqlCommand(deletePictureQuery, connection, transaction);
+                        cmdPicture.Parameters.AddWithValue("@EmployeeID", employeeIdToDelete);
+                        cmdPicture.ExecuteNonQuery();
+
                         string deleteEmployeeQuery = "DELETE FROM EMPLOYEES WHERE EmployeeID = @EmployeeID";
                         SqlCommand cmdEmployee = new SqlCommand(deleteEmployeeQuery, connection, transaction);
                         cmdEmployee.Parameters.AddWithValue("@EmployeeID", employeeIdToDelete);
@@ -434,30 +452,40 @@ namespace EpiUse_TechnicalAssesment
 
                         if (rowsAffected > 0)
                         {
-                            transaction.Commit();
+                            string createLogTableQuery = @"
+                                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DELETION_LOG' AND xtype='U')
+                                CREATE TABLE DELETION_LOG (
+                                    LogID INT IDENTITY(1,1) PRIMARY KEY,
+                                    DeletedEmployeeID INT,
+                                    DeletedByEmployeeID INT,
+                                    DeletionDate DATETIME
+                                )";
+                            SqlCommand cmdCreateLog = new SqlCommand(createLogTableQuery, connection, transaction);
+                            cmdCreateLog.ExecuteNonQuery();
 
-                            // Log the deletion
                             string logQuery = "INSERT INTO DELETION_LOG (DeletedEmployeeID, DeletedByEmployeeID, DeletionDate) VALUES (@DeletedEmployeeID, @DeletedByEmployeeID, GETDATE())";
-                            SqlCommand cmdLog = new SqlCommand(logQuery, connection);
+                            SqlCommand cmdLog = new SqlCommand(logQuery, connection, transaction);
                             cmdLog.Parameters.AddWithValue("@DeletedEmployeeID", employeeIdToDelete);
                             cmdLog.Parameters.AddWithValue("@DeletedByEmployeeID", loggedInEmployeeId);
                             cmdLog.ExecuteNonQuery();
 
-                            // Show success message
-                            ScriptManager.RegisterStartupScript(this, this.GetType(), "showSuccessModal",
-                                "showSuccessModal('Employee deleted successfully!');", true);
+                            transaction.Commit();
 
-                            // Clear fields
+                            lblSuccessMessage.Text = "Employee deleted successfully!";
+                            pnlSuccess.Style["display"] = "block";
+
+                            UpdateEmployeePanel();
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
+
                             txtEmpId.Text = "";
-                            password1.Value = "";
-
-                            // Refresh grid
+                            password1.Text = "";
+                            Session.Remove("EmployeeToDelete");
                             BindGridViews();
                         }
                         else
                         {
                             transaction.Rollback();
-                            deleteValidationMessage.Text = "Employee not found or could not be deleted.";
+                            deleteValidationMessage.Text = "Employee could not be deleted.";
                         }
                     }
                     catch (Exception ex)
@@ -496,11 +524,12 @@ namespace EpiUse_TechnicalAssesment
                         connection.Open();
                         cmd.ExecuteNonQuery();
 
-                        // Show success message
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showSuccessModal",
-                            "showSuccessModal('Department added successfully!');", true);
+                        lblSuccessMessage.Text = "Department added successfully!";
+                        pnlSuccess.Style["display"] = "block";
 
-                        // Clear field and refresh grid
+                        UpdateDepartmentPanel();
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
+
                         txtDepartmentName.Text = "";
                         BindGridViews();
                         PopulateDropdowns();
@@ -536,11 +565,12 @@ namespace EpiUse_TechnicalAssesment
                         connection.Open();
                         cmd.ExecuteNonQuery();
 
-                        // Show success message
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showSuccessModal",
-                            "showSuccessModal('Position added successfully!');", true);
+                        lblSuccessMessage.Text = "Position added successfully!";
+                        pnlSuccess.Style["display"] = "block";
 
-                        // Clear field and refresh grid
+                        UpdatePositionPanel();
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
+
                         txtPositionName.Text = "";
                         BindGridViews();
                         PopulateDropdowns();
@@ -576,11 +606,12 @@ namespace EpiUse_TechnicalAssesment
                         connection.Open();
                         cmd.ExecuteNonQuery();
 
-                        // Show success message
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showSuccessModal",
-                            "showSuccessModal('Location added successfully!');", true);
+                        lblSuccessMessage.Text = "Location added successfully!";
+                        pnlSuccess.Style["display"] = "block";
 
-                        // Clear field and refresh grid
+                        UpdateLocationPanel();
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
+
                         txtLocationName.Text = "";
                         BindGridViews();
                         PopulateDropdowns();
@@ -610,11 +641,12 @@ namespace EpiUse_TechnicalAssesment
                         connection.Open();
                         cmd.ExecuteNonQuery();
 
-                        // Show success message
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showSuccessModal",
-                            "showSuccessModal('Department deleted successfully!');", true);
+                        lblSuccessMessage.Text = "Department deleted successfully!";
+                        pnlSuccess.Style["display"] = "block";
 
-                        // Refresh grid and dropdowns
+                        UpdateDepartmentPanel();
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
+
                         BindGridViews();
                         PopulateDropdowns();
                     }
@@ -643,11 +675,12 @@ namespace EpiUse_TechnicalAssesment
                         connection.Open();
                         cmd.ExecuteNonQuery();
 
-                        // Show success message
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showSuccessModal",
-                            "showSuccessModal('Position deleted successfully!');", true);
+                        lblSuccessMessage.Text = "Position deleted successfully!";
+                        pnlSuccess.Style["display"] = "block";
 
-                        // Refresh grid and dropdowns
+                        UpdatePositionPanel();
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
+
                         BindGridViews();
                         PopulateDropdowns();
                     }
@@ -676,11 +709,12 @@ namespace EpiUse_TechnicalAssesment
                         connection.Open();
                         cmd.ExecuteNonQuery();
 
-                        // Show success message
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showSuccessModal",
-                            "showSuccessModal('Location deleted successfully!');", true);
+                        lblSuccessMessage.Text = "Location deleted successfully!";
+                        pnlSuccess.Style["display"] = "block";
 
-                        // Refresh grid and dropdowns
+                        UpdateLocationPanel();
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
+
                         BindGridViews();
                         PopulateDropdowns();
                     }
@@ -706,7 +740,6 @@ namespace EpiUse_TechnicalAssesment
 
                     try
                     {
-                        // Delete from related tables first
                         string deleteSalaryQuery = "DELETE FROM SALARY WHERE EmployeeID = @EmployeeID";
                         SqlCommand cmdSalary = new SqlCommand(deleteSalaryQuery, connection, transaction);
                         cmdSalary.Parameters.AddWithValue("@EmployeeID", employeeId);
@@ -722,7 +755,6 @@ namespace EpiUse_TechnicalAssesment
                         cmdReportingLine.Parameters.AddWithValue("@EmployeeID", employeeId);
                         cmdReportingLine.ExecuteNonQuery();
 
-                        // Finally delete the employee
                         string deleteEmployeeQuery = "DELETE FROM EMPLOYEES WHERE EmployeeID = @EmployeeID";
                         SqlCommand cmdEmployee = new SqlCommand(deleteEmployeeQuery, connection, transaction);
                         cmdEmployee.Parameters.AddWithValue("@EmployeeID", employeeId);
@@ -732,18 +764,18 @@ namespace EpiUse_TechnicalAssesment
                         {
                             transaction.Commit();
 
-                            // Log the deletion
                             string logQuery = "INSERT INTO DELETION_LOG (DeletedEmployeeID, DeletedByEmployeeID, DeletionDate) VALUES (@DeletedEmployeeID, @DeletedByEmployeeID, GETDATE())";
                             SqlCommand cmdLog = new SqlCommand(logQuery, connection);
                             cmdLog.Parameters.AddWithValue("@DeletedEmployeeID", employeeId);
                             cmdLog.Parameters.AddWithValue("@DeletedByEmployeeID", loggedInEmployeeId);
                             cmdLog.ExecuteNonQuery();
 
-                            // Show success message
-                            ScriptManager.RegisterStartupScript(this, this.GetType(), "showSuccessModal",
-                                "showSuccessModal('Employee deleted successfully!');", true);
+                            lblSuccessMessage.Text = "Employee deleted successfully!";
+                            pnlSuccess.Style["display"] = "block";
 
-                            // Refresh grid
+                            UpdateEmployeePanel();
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
+
                             BindGridViews();
                         }
                         else
@@ -776,49 +808,74 @@ namespace EpiUse_TechnicalAssesment
 
         private bool VerifyUserPassword(string enteredPassword)
         {
-            if (Session["EmployeeID"] == null) return false;
             int loggedInEmployeeId = Convert.ToInt32(Session["EmployeeID"]);
+            string hashedEnteredPassword = HashPassword(enteredPassword);
 
-            string storedHashedPassword = GetUserHashedPasswordFromDb(loggedInEmployeeId);
-            string enteredHashedPassword = HashPassword(enteredPassword);
-
-            return enteredHashedPassword == storedHashedPassword;
-        }
-
-        private string GetUserHashedPasswordFromDb(int employeeId)
-        {
-            string hashedPassword = null;
-            string query = "SELECT Password FROM USER_AUTH WHERE EmployeeID = @EmployeeID";
-
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                string query = "SELECT Password FROM USER_AUTH WHERE EmployeeID = @EmployeeID";
+                using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
-                    con.Open();
-                    object result = cmd.ExecuteScalar();
-                    if (result != null)
-                    {
-                        hashedPassword = result.ToString();
-                    }
+                    cmd.Parameters.AddWithValue("@EmployeeID", loggedInEmployeeId);
+                    connection.Open();
+                    string storedPassword = cmd.ExecuteScalar()?.ToString();
+
+                    return storedPassword == hashedEnteredPassword;
                 }
             }
-            return hashedPassword;
         }
 
         private void ClearForm()
         {
-            firstNameTextbox.Value = "";
-            lastNameTextbox.Value = "";
-            dobTextbox.Value = "";
-            emailTextbox.Value = "";
-            passwordTextbox.Value = "";
-            confirmPassword.Value = "";
-            salaryTextbox.Value = "";
+            
+            firstNameTextbox.Text = "";
+            lastNameTextbox.Text = "";
+            dobTextbox.Text = "";
+            emailTextbox.Text = "";
+            passwordTextbox.Text = "";
+            confirmPassword.Text = "";
+            salaryTextbox.Text = "";
+
             if (positionDropdown.Items.Count > 0) positionDropdown.SelectedIndex = 0;
             if (departmentDropdown.Items.Count > 0) departmentDropdown.SelectedIndex = 0;
             if (locationDropdown.Items.Count > 0) locationDropdown.SelectedIndex = 0;
             if (managerDropdown.Items.Count > 0) managerDropdown.SelectedIndex = 0;
+        }
+
+        // UpdatePanel methods
+        private void UpdateEmployeePanel()
+        {
+            upEmployeeTab.Update();
+            upSuccess.Update();
+            upDeleteConfirm.Update();
+        }
+
+        private void UpdateDepartmentPanel()
+        {
+            upDepartmentTab.Update();
+            upSuccess.Update();
+        }
+
+        private void UpdatePositionPanel()
+        {
+            upPositionTab.Update();
+            upSuccess.Update();
+        }
+
+        private void UpdateLocationPanel()
+        {
+            upLocationTab.Update();
+            upSuccess.Update();
+        }
+
+        private void UpdateDeleteConfirmPanel()
+        {
+            upDeleteConfirm.Update();
+        }
+
+        private void UpdateSuccessPanel()
+        {
+            upSuccess.Update();
         }
     }
 }

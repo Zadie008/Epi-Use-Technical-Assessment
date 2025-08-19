@@ -51,6 +51,15 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.LinkButton lbLocationTab;
 
         /// <summary>
+        /// upEmployeeTab control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upEmployeeTab;
+
+        /// <summary>
         /// employeeTab control.
         /// </summary>
         /// <remarks>
@@ -75,7 +84,7 @@ namespace EpiUse_TechnicalAssesment
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText firstNameTextbox;
+        protected global::System.Web.UI.WebControls.TextBox firstNameTextbox;
 
         /// <summary>
         /// lastNameTextbox control.
@@ -84,7 +93,7 @@ namespace EpiUse_TechnicalAssesment
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText lastNameTextbox;
+        protected global::System.Web.UI.WebControls.TextBox lastNameTextbox;
 
         /// <summary>
         /// dobTextbox control.
@@ -93,7 +102,7 @@ namespace EpiUse_TechnicalAssesment
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl dobTextbox;
+        protected global::System.Web.UI.WebControls.TextBox dobTextbox;
 
         /// <summary>
         /// emailTextbox control.
@@ -102,7 +111,7 @@ namespace EpiUse_TechnicalAssesment
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl emailTextbox;
+        protected global::System.Web.UI.WebControls.TextBox emailTextbox;
 
         /// <summary>
         /// positionDropdown control.
@@ -147,7 +156,7 @@ namespace EpiUse_TechnicalAssesment
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword passwordTextbox;
+        protected global::System.Web.UI.WebControls.TextBox passwordTextbox;
 
         /// <summary>
         /// confirmPassword control.
@@ -156,7 +165,7 @@ namespace EpiUse_TechnicalAssesment
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword confirmPassword;
+        protected global::System.Web.UI.WebControls.TextBox confirmPassword;
 
         /// <summary>
         /// salaryTextbox control.
@@ -165,7 +174,7 @@ namespace EpiUse_TechnicalAssesment
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl salaryTextbox;
+        protected global::System.Web.UI.WebControls.TextBox salaryTextbox;
 
         /// <summary>
         /// submitButton control.
@@ -201,7 +210,7 @@ namespace EpiUse_TechnicalAssesment
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword password1;
+        protected global::System.Web.UI.WebControls.TextBox password1;
 
         /// <summary>
         /// btnDeleteEmployee control.
@@ -220,6 +229,15 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvEmployees;
+
+        /// <summary>
+        /// upDepartmentTab control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upDepartmentTab;
 
         /// <summary>
         /// departmentTab control.
@@ -267,6 +285,15 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.GridView gvDepartments;
 
         /// <summary>
+        /// upPositionTab control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upPositionTab;
+
+        /// <summary>
         /// positionTab control.
         /// </summary>
         /// <remarks>
@@ -310,6 +337,15 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvPositions;
+
+        /// <summary>
+        /// upLocationTab control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upLocationTab;
 
         /// <summary>
         /// locationTab control.
@@ -357,22 +393,22 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.GridView gvLocations;
 
         /// <summary>
-        /// lblEmployeeIDConfirm control.
+        /// upSuccess control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEmployeeIDConfirm;
+        protected global::System.Web.UI.UpdatePanel upSuccess;
 
         /// <summary>
-        /// btnConfirmDelete control.
+        /// pnlSuccess control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
+        protected global::System.Web.UI.WebControls.Panel pnlSuccess;
 
         /// <summary>
         /// lblSuccessMessage control.
@@ -382,6 +418,60 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblSuccessMessage;
+
+        /// <summary>
+        /// btnSuccessOK control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSuccessOK;
+
+        /// <summary>
+        /// upDeleteConfirm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upDeleteConfirm;
+
+        /// <summary>
+        /// pnlDeleteConfirm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlDeleteConfirm;
+
+        /// <summary>
+        /// lblEmployeeIDConfirm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEmployeeIDConfirm;
+
+        /// <summary>
+        /// btnCancelDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelDelete;
+
+        /// <summary>
+        /// btnConfirmDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
 
         /// <summary>
         /// activeTabHidden control.
