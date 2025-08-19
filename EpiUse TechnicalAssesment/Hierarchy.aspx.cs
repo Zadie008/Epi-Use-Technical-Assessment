@@ -27,7 +27,7 @@ namespace EpiUse_TechnicalAssesment
             {
                 conn.Open();
 
-                // 1. Load all reporting relationships
+                // 1. Reporting lines
                 using (var cmd = new SqlCommand("SELECT ManagerEmployeeID, ReportEmployeeID FROM REPORTING_LINE", conn))
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -43,45 +43,56 @@ namespace EpiUse_TechnicalAssesment
                     }
                 }
 
-                // 2. Load all employees
-                using (var cmd = new SqlCommand(
-                    @"SELECT e.EmployeeID, e.FirstName, e.LastName, p.PositionName, d.DepartmentName 
-              FROM Employees e
-              LEFT JOIN Position p ON e.PositionID = p.PositionID
-              LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID", conn))
+                // 2. Employees with extended information
+                using (var cmd = new SqlCommand(@"
+                    SELECT e.EmployeeID, e.FirstName, e.LastName, e.Email, p.Picture,  
+                           e.PositionID, pos.PositionName
+                    FROM EMPLOYEES e
+                    LEFT JOIN EMPLOYEE_PICTURE p ON e.EmployeeID = p.EmployeeID
+                    LEFT JOIN POSITION pos ON e.PositionID = pos.PositionID", conn))
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         string empId = reader["EmployeeID"].ToString();
+                        string email = reader["Email"].ToString();
+                        string picture = reader["Picture"] != DBNull.Value ? Convert.ToBase64String((byte[])reader["Picture"]) : null;
+                        string positionName = reader["PositionName"] != DBNull.Value ? reader["PositionName"].ToString() : "No Position";
+
+                        string imageUrl;
+                        if (!string.IsNullOrEmpty(picture))
+                        {
+                            imageUrl = $"data:image/png;base64,{picture}";
+                        }
+                        else
+                        {
+                            string emailHash = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(email.Trim().ToLower(), "MD5").ToLower();
+                            imageUrl = $"https://www.gravatar.com/avatar/{emailHash}?d=identicon";
+                        }
+
                         employees[empId] = new
                         {
                             id = empId,
                             EmployeeID = empId,
                             Name = $"{reader["FirstName"]} {reader["LastName"]}",
-                            Position = reader["PositionName"]?.ToString() ?? "",
-                            Department = reader["DepartmentName"]?.ToString() ?? "",
-                            Email = "", // Will be added if needed
-                            children = new List<dynamic>() // Initialize empty children list
+                            Email = email,
+                            PositionName = positionName,
+                            ImageUrl = imageUrl,
+                            children = new List<dynamic>()
                         };
                     }
                 }
             }
 
-            // 3. Build the hierarchy
+            // 3. Build hierarchy
             var rootNodes = new List<dynamic>();
 
-            // Find all employees who don't report to anyone (potential CEOs)
             foreach (var employee in employees.Values)
             {
-                bool hasManager = reportingLines.Any(x => x.Value.Contains(employee.EmployeeID));
-                if (!hasManager)
-                {
-                    rootNodes.Add(employee);
-                }
+                bool hasManager = reportingLines.Any(x => x.Value.Contains(employee.id));
+                if (!hasManager) rootNodes.Add(employee);
             }
 
-            // Add all reporting relationships
             foreach (var relationship in reportingLines)
             {
                 if (employees.TryGetValue(relationship.Key, out var manager))
@@ -96,38 +107,17 @@ namespace EpiUse_TechnicalAssesment
                 }
             }
 
-            // 4. Create the root node
-            dynamic hierarchyData;
-            if (rootNodes.Count == 1)
+            // 4. Root node
+            dynamic hierarchyData = rootNodes.Count == 1 ? rootNodes[0] : new
             {
-                hierarchyData = rootNodes[0];
-            }
-            else if (rootNodes.Count > 1)
-            {
-                // If multiple roots (shouldn't happen in proper hierarchy)
-                hierarchyData = new
-                {
-                    id = "org-root",
-                    Name = "Organization",
-                    Position = "",
-                    Department = "",
-                    children = rootNodes
-                };
-            }
-            else
-            {
-                // Fallback if no roots found (shouldn't happen)
-                hierarchyData = new
-                {
-                    id = "org-root",
-                    Name = "Organization",
-                    Position = "",
-                    Department = "",
-                    children = employees.Values.ToList()
-                };
-            }
+                id = "org-root",
+                Name = "Organization",
+                ImageUrl = "",
+                children = rootNodes
+            };
 
             return new JavaScriptSerializer().Serialize(hierarchyData);
         }
+
     }
 }

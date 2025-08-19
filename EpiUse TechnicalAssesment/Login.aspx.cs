@@ -76,10 +76,7 @@ namespace EpiUse_TechnicalAssesment
         }
 
 
-        private void LogError(Exception ex)
-        {
-            // for error loggin purposes
-        }
+        
 
         public static string HashPassword(string password)
         {

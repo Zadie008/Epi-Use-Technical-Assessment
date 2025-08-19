@@ -11,277 +11,115 @@ namespace EpiUse_TechnicalAssesment
 {
 
 
-    public partial class WebForm5
+    public partial class AddEmployee
     {
 
         /// <summary>
-        /// btnAddEmployee control.
+        /// firstNameTextbox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddEmployee;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText firstNameTextbox;
 
         /// <summary>
-        /// btnAddDepartment control.
+        /// lastNameTextbox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddDepartment;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText lastNameTextbox;
 
         /// <summary>
-        /// btnAddLocation control.
+        /// dobTextbox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddLocation;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl dobTextbox;
 
         /// <summary>
-        /// pnlEmployee control.
+        /// emailTextbox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlEmployee;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl emailTextbox;
 
         /// <summary>
-        /// txtFirstName control.
+        /// positionDropdown control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtFirstName;
+        protected global::System.Web.UI.WebControls.DropDownList positionDropdown;
 
         /// <summary>
-        /// revFirstName control.
+        /// departmentDropdown control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator revFirstName;
+        protected global::System.Web.UI.WebControls.DropDownList departmentDropdown;
 
         /// <summary>
-        /// txtLastName control.
+        /// locationDropdown control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLastName;
+        protected global::System.Web.UI.WebControls.DropDownList locationDropdown;
 
         /// <summary>
-        /// revLastName control.
+        /// passwordTextbox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator revLastName;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword passwordTextbox;
 
         /// <summary>
-        /// txtDOB control.
+        /// confirmPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDOB;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword confirmPassword;
 
         /// <summary>
-        /// cvDOB control.
+        /// salaryTextbox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CompareValidator cvDOB;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl salaryTextbox;
 
         /// <summary>
-        /// txtEmail control.
+        /// managerDropdown control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEmail;
+        protected global::System.Web.UI.WebControls.DropDownList managerDropdown;
 
         /// <summary>
-        /// revEmail control.
+        /// submitButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator revEmail;
-
-        /// <summary>
-        /// ddlRoles control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlRoles;
-
-        /// <summary>
-        /// txtSalary control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSalary;
-
-        /// <summary>
-        /// cvSalary control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CompareValidator cvSalary;
-
-        /// <summary>
-        /// ddlDepartment control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlDepartment;
-
-        /// <summary>
-        /// ddlLocation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlLocation;
-
-        /// <summary>
-        /// txtPassword1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPassword1;
-
-        /// <summary>
-        /// txtPassword2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPassword2;
-
-        /// <summary>
-        /// cvPasswords control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CompareValidator cvPasswords;
-
-        /// <summary>
-        /// btnSubmitEmployee control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubmitEmployee;
-
-        /// <summary>
-        /// pnlDepartment control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlDepartment;
-
-        /// <summary>
-        /// ddlDeptLocation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlDeptLocation;
-
-        /// <summary>
-        /// txtDeptName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDeptName;
-
-        /// <summary>
-        /// ddlEmployeesDepart control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlEmployeesDepart;
-
-        /// <summary>
-        /// btnSubmitDepartment control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubmitDepartment;
-
-        /// <summary>
-        /// pnlLocation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlLocation;
-
-        /// <summary>
-        /// txtLocationName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLocationName;
-
-        /// <summary>
-        /// ddlEmployees control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlEmployees;
-
-        /// <summary>
-        /// btnSubmitLocation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubmitLocation;
+        protected global::System.Web.UI.WebControls.Button submitButton;
     }
 }
