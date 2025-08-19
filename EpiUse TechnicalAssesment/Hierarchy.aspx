@@ -9,13 +9,8 @@
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="mainContentPlaceHolder" runat="server">
     <h2>Company Hierarchy</h2>
-    
-    
-    
     <div id="hierarchy-container" style="width: 100%; height: 800px;"></div>
     
-    <%--<asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" />--%>
-    <asp:ScriptManager ID="ScriptManager2" runat="server" EnablePageMethods="true" />
+   <%-- <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" />--%>
     <script src="<%= ResolveUrl("~/Scripts/JavaScript.js") %>"></script>
-
 </asp:Content>

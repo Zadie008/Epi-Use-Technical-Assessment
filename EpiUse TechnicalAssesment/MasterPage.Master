@@ -1,63 +1,53 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterPage.master.cs" Inherits="EpiUse_TechnicalAssesment.MasterPage" %>
 
 <!DOCTYPE html>
-
 <html>
 <head runat="server">
-       
     <title>
         <asp:ContentPlaceHolder ID="tab" runat="server"></asp:ContentPlaceHolder>
     </title>
-        
-<%--    refernerces to the stylesheet --%>
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
-<script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
-
-
-<script src="<%= ResolveUrl("~/Scripts/JavaScript.js") %>"></script>
-   <link href="Styles/StyleSheet.css" rel="stylesheet" type="text/css" />
-
+    <link href="Styles/StyleSheet.css" rel="stylesheet" type="text/css" />
 </head>
-
 <body>
     <form id="form1" runat="server">
+        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" />
         <div id="page" class="page-wrapper">
-        <header>
-             <asp:ContentPlaceHolder ID="headerContentPlaceHolder" runat="server"></asp:ContentPlaceHolder>
-        </header>
+            <header>
+                <asp:ContentPlaceHolder ID="headerContentPlaceHolder" runat="server"></asp:ContentPlaceHolder>
+            </header>
 
             <div class="main-content" id="mainContentDiv">
-            <nav>
-                <asp:ContentPlaceHolder ID="navContent" runat="server"></asp:ContentPlaceHolder>
-                <div class="nav-container">
-    <a href="Dashboard.aspx" class="nav-card">
-        <img src="Images/home (1).png" alt="Hierarchy Icon" class="nav-icon" />
-        <span class="nav-title">Home</span>
-    </a>
-    <a href="Hierarchy.aspx" class="nav-card">
-        <img src="Images/diagram.png" alt="Hierarchy Icon" class="nav-icon" />
-        <span class="nav-title">Hierarchy</span>
-    </a>
-    <asp:PlaceHolder ID="phAddEmployee" runat="server" Visible="false">
-        <a href="AddEmployee.aspx" class="nav-card">
-            <img src="Images/employees.png" alt="Add employee" class="nav-icon" />
-            <span class="nav-title">Add employee</span>
-        </a>
-    </asp:PlaceHolder>
-    <a href="ReadMe.aspx" class="nav-card">
-        <img src="Images/google-docs.png" alt="Read Me Icon" class="nav-icon" />
-        <span class="nav-title">Read Me</span>
-    </a>
-</div>
-            </nav>
-            <asp:ContentPlaceHolder ID="mainContentPlaceHolder" runat="server"></asp:ContentPlaceHolder>
+                <nav>
+                    <asp:ContentPlaceHolder ID="navContent" runat="server"></asp:ContentPlaceHolder>
+                    <div class="nav-container">
+                        <a href="Dashboard.aspx" class="nav-card">
+                            <img src="Images/home (1).png" alt="Hierarchy Icon" class="nav-icon" />
+                            <span class="nav-title">Home</span>
+                        </a>
+                        <a href="Hierarchy.aspx" class="nav-card">
+                            <img src="Images/diagram.png" alt="Hierarchy Icon" class="nav-icon" />
+                            <span class="nav-title">Hierarchy</span>
+                        </a>
+                        <asp:PlaceHolder ID="phAddEmployee" runat="server" Visible="false">
+                            <a href="AddEmployee.aspx" class="nav-card">
+                                <img src="Images/employees.png" alt="Add employee" class="nav-icon" />
+                                <span class="nav-title">Add employee</span>
+                            </a>
+                        </asp:PlaceHolder>
+                        <a href="ReadMe.aspx" class="nav-card">
+                            <img src="Images/google-docs.png" alt="Read Me Icon" class="nav-icon" />
+                            <span class="nav-title">Read Me</span>
+                        </a>
+                    </div>
+                </nav>
+                <asp:ContentPlaceHolder ID="mainContentPlaceHolder" runat="server"></asp:ContentPlaceHolder>
             </div>
         </div>
     </form>
-</body>
 
+    <!-- Scripts at bottom of body -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+</body>
 </html>

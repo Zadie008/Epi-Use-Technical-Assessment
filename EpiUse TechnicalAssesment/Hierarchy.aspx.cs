@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Web.Services;
@@ -16,49 +17,117 @@ namespace EpiUse_TechnicalAssesment
 
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public static object GetHierarchyData()
+        public static string GetHierarchyData()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString;
-            var employees = new List<dynamic>();
+            var employees = new Dictionary<string, dynamic>();
+            var reportingLines = new Dictionary<string, List<string>>();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                string query = @"
-            SELECT e.EmployeeNumber, e.FirstName, e.LastName, e.Role, e.ManagerID,
-                   e.Email, e.ProfilePhotoBase64, e.PositionID,
-                   p.PositionName, p.Ranking,
-                   l.LocationName, d.DepartmentName
-            FROM Employees e
-            LEFT JOIN Position p ON e.PositionID = p.PositionID
-            LEFT JOIN Locations l ON e.LocationID = l.LocationID
-            LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
-            ORDER BY p.Ranking DESC, e.LastName, e.FirstName";
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                // 1. Load all reporting relationships
+                using (var cmd = new SqlCommand("SELECT ManagerEmployeeID, ReportEmployeeID FROM REPORTING_LINE", conn))
+                using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        employees.Add(new
+                        string managerId = reader["ManagerEmployeeID"].ToString();
+                        string reportId = reader["ReportEmployeeID"].ToString();
+
+                        if (!reportingLines.ContainsKey(managerId))
+                            reportingLines[managerId] = new List<string>();
+
+                        reportingLines[managerId].Add(reportId);
+                    }
+                }
+
+                // 2. Load all employees
+                using (var cmd = new SqlCommand(
+                    @"SELECT e.EmployeeID, e.FirstName, e.LastName, p.PositionName, d.DepartmentName 
+              FROM Employees e
+              LEFT JOIN Position p ON e.PositionID = p.PositionID
+              LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID", conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string empId = reader["EmployeeID"].ToString();
+                        employees[empId] = new
                         {
-                            id = reader["EmployeeNumber"].ToString(), // This is crucial for D3.js
-                            EmployeeNumber = reader["EmployeeNumber"].ToString(),
-                            Name = reader["FirstName"].ToString() + " " + reader["LastName"].ToString(),
-                            Role = reader["Role"].ToString(),
-                            ManagerID = reader["ManagerID"] != DBNull.Value ? reader["ManagerID"].ToString() : null,
-                            Email = reader["Email"].ToString(),
-                            Photo = reader["ProfilePhotoBase64"].ToString(),
-                            Position = reader["PositionName"].ToString(),
-                            PositionID = Convert.ToInt32(reader["PositionID"]),
-                            Ranking = reader["Ranking"] != DBNull.Value ? Convert.ToInt32(reader["Ranking"]) : 0,
-                            Location = reader["LocationName"].ToString(),
-                            Department = reader["DepartmentName"].ToString()
-                        });
+                            id = empId,
+                            EmployeeID = empId,
+                            Name = $"{reader["FirstName"]} {reader["LastName"]}",
+                            Position = reader["PositionName"]?.ToString() ?? "",
+                            Department = reader["DepartmentName"]?.ToString() ?? "",
+                            Email = "", // Will be added if needed
+                            children = new List<dynamic>() // Initialize empty children list
+                        };
                     }
                 }
             }
-            return employees;
+
+            // 3. Build the hierarchy
+            var rootNodes = new List<dynamic>();
+
+            // Find all employees who don't report to anyone (potential CEOs)
+            foreach (var employee in employees.Values)
+            {
+                bool hasManager = reportingLines.Any(x => x.Value.Contains(employee.EmployeeID));
+                if (!hasManager)
+                {
+                    rootNodes.Add(employee);
+                }
+            }
+
+            // Add all reporting relationships
+            foreach (var relationship in reportingLines)
+            {
+                if (employees.TryGetValue(relationship.Key, out var manager))
+                {
+                    foreach (var reportId in relationship.Value)
+                    {
+                        if (employees.TryGetValue(reportId, out var subordinate))
+                        {
+                            manager.children.Add(subordinate);
+                        }
+                    }
+                }
+            }
+
+            // 4. Create the root node
+            dynamic hierarchyData;
+            if (rootNodes.Count == 1)
+            {
+                hierarchyData = rootNodes[0];
+            }
+            else if (rootNodes.Count > 1)
+            {
+                // If multiple roots (shouldn't happen in proper hierarchy)
+                hierarchyData = new
+                {
+                    id = "org-root",
+                    Name = "Organization",
+                    Position = "",
+                    Department = "",
+                    children = rootNodes
+                };
+            }
+            else
+            {
+                // Fallback if no roots found (shouldn't happen)
+                hierarchyData = new
+                {
+                    id = "org-root",
+                    Name = "Organization",
+                    Position = "",
+                    Department = "",
+                    children = employees.Values.ToList()
+                };
+            }
+
+            return new JavaScriptSerializer().Serialize(hierarchyData);
         }
     }
 }

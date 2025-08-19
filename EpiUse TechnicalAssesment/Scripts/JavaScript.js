@@ -4,30 +4,35 @@ function md5(string) {
 }
 
 // ========== Main D3 Hierarchy ==========
-var zoom;
-
 function renderD3(rootData) {
+    console.log("Rendering hierarchy with data:", rootData);
+
     const container = document.getElementById("hierarchy-container");
+    if (!container) {
+        console.error("Container element not found");
+        return;
+    }
+
     const width = container.clientWidth;
     const height = container.clientHeight;
 
+    // Clear previous visualization
     d3.select("#hierarchy-container").selectAll("*").remove();
 
+    // Create tree layout
     const treeLayout = d3.tree()
         .size([height - 100, width - 200])
-        .nodeSize([150, 250])
-        .separation((a, b) => (a.parent === b.parent ? 0.8 : 1.5));
+        .nodeSize([150, 250]);
 
+    // Create hierarchy
     const root = d3.hierarchy(rootData);
     treeLayout(root);
 
+    // Create SVG
     const svg = d3.select("#hierarchy-container")
         .append("svg")
         .attr("width", width)
-        .attr("height", height)
-        .call(zoom = d3.zoom()
-            .scaleExtent([0.3, 3])
-            .on("zoom", zoomed));
+        .attr("height", height);
 
     const g = svg.append("g");
 
@@ -47,169 +52,67 @@ function renderD3(rootData) {
         .attr("class", "node")
         .attr("transform", d => `translate(${d.y},${d.x})`);
 
-    // Make nodes clickable
-    node.on("click", function (event, d) {
-        // Check both possible property names for maximum compatibility
-        var empId = d.data.id || d.data.EmployeeNumber;
-        if (empId) {
-            window.location.href = "ViewEmployee.aspx?empId=" + encodeURIComponent(empId);
-        } else {
-            console.error("No employee ID found in data:", d.data);
-        }
-    });
-
-    // Clip path for circular images
-    svg.append("defs").append("clipPath")
-        .attr("id", "circle-clip")
-        .append("circle")
+    // Node circles
+    node.append("circle")
         .attr("r", 45)
-        .attr("cx", 0)
-        .attr("cy", 0);
+        .attr("fill", "#fff")
+        .attr("stroke", "#999")
+        .attr("stroke-width", 2);
 
-    // Profile image (Gravatar fallback)
-    node.append("image")
-        .attr("xlink:href", d => {
-            if (d.data.Photo && d.data.Photo.trim() !== "") {
-                return "data:image/png;base64," + d.data.Photo;
-            } else {
-                const email = d.data.Email ? d.data.Email.trim().toLowerCase() : "";
-                const hash = md5(email);
-                return `https://www.gravatar.com/avatar/${hash}?s=70&d=identicon`;
-            }
-        })
-        .attr("x", -45)
-        .attr("y", -45)
-        .attr("width", 90)
-        .attr("height", 90)
-        .attr("clip-path", "url(#circle-clip)");
-
-    // Name
+    // Name text
     node.append("text")
-        .attr("dy", "5em")
-        .attr("class", "name")
-        .style("text-anchor", "middle")
-        .style("font-weight", "600")
-        .text(d => d.data.Name);
+        .attr("dy", "0.31em")
+        .attr("text-anchor", "middle")
+        .text(d => d.data.Name.split(" ")[0]) // First name
+        .attr("font-weight", "bold");
 
-    // Role
     node.append("text")
-        .attr("dy", "6.5em")
-        .attr("class", "title")
-        .style("text-anchor", "middle")
-        .text(d => d.data.Role);
+        .attr("dy", "1.5em")
+        .attr("text-anchor", "middle")
+        .text(d => d.data.Name.split(" ")[1]); // Last name
 
-    // Tooltip
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
+    // Position text
+    node.append("text")
+        .attr("dy", "2.7em")
+        .attr("text-anchor", "middle")
+        .text(d => d.data.Position)
+        .attr("font-size", "0.8em")
+        .attr("fill", "#555");
 
-    node.on("mouseover", function (event, d) {
-        tooltip.transition().duration(200).style("opacity", .9);
-        tooltip.html(`
-            <strong>${d.data.Name}</strong><br/>
-            ${d.data.Role}<br/>
-            ${d.data.Department} - ${d.data.Location}<br/>
-            ${d.data.Email}
-        `)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 28) + "px");
-    })
-        .on("mouseout", function () {
-            tooltip.transition().duration(500).style("opacity", 0);
-        });
+    // Center the view
+    const bounds = root.descendants().reduce((acc, d) => ({
+        x: [Math.min(acc.x[0], d.x), Math.max(acc.x[1], d.x)],
+        y: [Math.min(acc.y[0], d.y), Math.max(acc.y[1], d.y)]
+    }), { x: [0, 0], y: [0, 0] });
 
-    // Center and zoom to fit
-    centerAndZoom(svg, g, root, width, height);
-}
+    const dx = bounds.x[1] - bounds.x[0];
+    const dy = bounds.y[1] - bounds.y[0];
+    const scale = Math.min(0.9 * width / dx, 0.9 * height / dy);
 
-// Zoom handler
-function zoomed(event) {
-    d3.select("#hierarchy-container g").attr("transform", event.transform);
-}
-
-// Center tree on load
-function centerAndZoom(svg, g, root, width, height) {
-    const nodes = root.descendants();
-    const xExtent = d3.extent(nodes, d => d.x);
-    const yExtent = d3.extent(nodes, d => d.y);
-
-    const treeWidth = yExtent[1] - yExtent[0];
-    const treeHeight = xExtent[1] - xExtent[0];
-
-    const scale = 0.9 / Math.max(treeWidth / width, treeHeight / height);
-
-    const translateX = (width - treeWidth * scale) / 2 - yExtent[0] * scale;
-    const translateY = (height - treeHeight * scale) / 2 - xExtent[0] * scale + 50;
-
-    svg.transition()
-        .duration(500)
-        .call(zoom.transform, d3.zoomIdentity
-            .translate(translateX, translateY)
-            .scale(scale));
-}
-
-// Handle resize
-let resizeTimer;
-window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
-        const currentData = window.currentHierarchyData;
-        if (currentData) {
-            renderD3(currentData);
-        }
-    }, 250);
-});
-
-// ========== Build Hierarchy from Flat Data ==========
-function buildHierarchy(data) {
-    if (!data || !Array.isArray(data)) {
-        console.error("Invalid data format:", data);
-        return;
-    }
-
-    const map = {};
-    data.forEach(emp => {
-        map[emp.EmployeeNumber] = { ...emp, children: [] };
-    });
-
-    let rootNodes = [];
-    data.forEach(emp => {
-        if (emp.ManagerID && map[emp.ManagerID]) {
-            map[emp.ManagerID].children.push(map[emp.EmployeeNumber]);
-        } else {
-            rootNodes.push(map[emp.EmployeeNumber]);
-        }
-    });
-
-    let rootData;
-    if (rootNodes.length > 1) {
-        rootData = {
-            Name: "Organization",
-            Role: "",
-            children: rootNodes
-        };
-    } else {
-        rootData = rootNodes[0] || data[0];
-    }
-
-    renderD3(rootData);
+    g.attr("transform", `translate(${(width - dx * scale) / 2},${(height - dy * scale) / 2})scale(${scale})`);
 }
 
 // ========== Page Load ==========
 document.addEventListener("DOMContentLoaded", function () {
-    PageMethods.GetHierarchyData(
-        function (data) {
-            try {
-                window.currentHierarchyData = data;
-                buildHierarchy(data);
-            } catch (e) {
-                console.error("Error:", e);
-                alert("Error loading hierarchy. Check console for details.");
+    if (typeof PageMethods !== 'undefined') {
+        PageMethods.GetHierarchyData(
+            function (response) {
+                try {
+                    const data = JSON.parse(response);
+                    console.log("Data received:", data);
+                    renderD3(data);
+                } catch (e) {
+                    console.error("Error:", e, "\nResponse:", response);
+                    alert("Error displaying hierarchy");
+                }
+            },
+            function (error) {
+                console.error("AJAX Error:", error);
+                alert("Failed to load data");
             }
-        },
-        function (error) {
-            console.error("AJAX error:", error);
-            alert("Failed to load data from server.");
-        }
-    );
+        );
+    } else {
+        console.error("PageMethods not available");
+        alert("ScriptManager configuration error");
+    }
 });
