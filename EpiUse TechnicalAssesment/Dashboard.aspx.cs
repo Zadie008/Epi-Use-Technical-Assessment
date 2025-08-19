@@ -35,13 +35,8 @@ namespace EpiUse_TechnicalAssesment
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = @"SELECT DepartmentID, DepartmentName 
+                string query = @"SELECT DISTINCT DepartmentID, DepartmentName 
                                 FROM DEPARTMENT 
-                                WHERE DepartmentID IN (
-                                    
-                                    GROUP BY DepartmentName
-ORDER BY DepartmentName
-                                )
                                 ORDER BY DepartmentName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -73,15 +68,15 @@ ORDER BY DepartmentName
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = @"SELECT PositionName
+                string query = @"SELECT PositionID, PositionName
                                 FROM POSITION
-                               ";
+                                ORDER BY PositionName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
                 ddlPositions.DataSource = cmd.ExecuteReader();
-                ddlPositions.DataTextField = "SeniorName";
-                ddlPositions.DataValueField = "EmployeeID";
+                ddlPositions.DataTextField = "PositionName";
+                ddlPositions.DataValueField = "PositionID";
                 ddlPositions.DataBind();
                 ddlPositions.Items.Insert(0, new ListItem("Select a position", ""));
             }
@@ -92,47 +87,45 @@ ORDER BY DepartmentName
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"
-                SELECT 
-                    e.EmployeeID, 
-                    e.FirstName, 
-                    e.LastName, 
-                    e.Email, 
-                    p.PositionName AS Role,  -- Now shows proper role names (CEO, Head of Cape Town, etc.)
-                    l.LocationName, 
-                    d.DepartmentName,
-                    m.FirstName + ' ' + m.LastName AS ManagerName,
-                    e.Salary
-                FROM Employees e
-                LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
-                LEFT JOIN Locations l ON e.LocationID = l.LocationID
-                LEFT JOIN Position p ON e.PositionID = p.PositionID  -- NEW JOIN
-                LEFT JOIN Employees m ON e.ManagerID = m.EmployeeID
-                WHERE (@FirstName = '' OR e.FirstName LIKE @FirstNamePattern)
-                  AND (@LastName = '' OR e.LastName LIKE @LastNamePattern)
-                  AND (@ManagerID = '' OR e.ManagerID = @ManagerID)
-                  AND (@DepartmentID = '' OR d.DepartmentID = @DepartmentID)
-                  AND (@LocationID = '' OR e.LocationID = @LocationID)
-                  AND ((@MinSalary IS NULL OR e.Salary >= @MinSalary)
-                      AND (@MaxSalary IS NULL OR e.Salary <= @MaxSalary))
-                ORDER BY e.EmployeeID";
+       SELECT 
+    EMPLOYEES.EmployeeID, 
+    EMPLOYEES.FirstName, 
+    EMPLOYEES.LastName, 
+    EMPLOYEES.Email, 
+    POSITION.PositionName AS Role,
+    LOCATION.LocationName, 
+    DEPARTMENT.DepartmentName,
+    MANAGER.FirstName + ' ' + MANAGER.LastName AS ManagerName,
+    SALARY.Amount AS Salary
+FROM EMPLOYEES
+LEFT JOIN DEPARTMENT ON EMPLOYEES.DepartmentID = DEPARTMENT.DepartmentID
+LEFT JOIN LOCATION ON DEPARTMENT.LocationID = LOCATION.LocationID
+LEFT JOIN POSITION ON EMPLOYEES.PositionID = POSITION.PositionID
+LEFT JOIN REPORTING_LINE ON EMPLOYEES.EmployeeID = REPORTING_LINE.ReportEmployeeID
+LEFT JOIN EMPLOYEES AS MANAGER ON REPORTING_LINE.ManagerEmployeeID = MANAGER.EmployeeID
+LEFT JOIN SALARY ON EMPLOYEES.EmployeeID = SALARY.EmployeeID
+WHERE (@FirstName = '' OR EMPLOYEES.FirstName LIKE '%' + @FirstName + '%')
+  AND (@LastName = '' OR EMPLOYEES.LastName LIKE '%' + @LastName + '%')
+  AND (@PositionID = '' OR EMPLOYEES.PositionID = @PositionID)
+  AND (@DepartmentID = '' OR EMPLOYEES.DepartmentID = @DepartmentID)
+  AND (@LocationID = '' OR DEPARTMENT.LocationID = @LocationID)
+  AND ((@MinSalary IS NULL OR SALARY.Amount >= @MinSalary)
+      AND (@MaxSalary IS NULL OR SALARY.Amount <= @MaxSalary))
+ORDER BY EMPLOYEES.EmployeeID";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
-                // Set parameters
+                // Set parameters (unchanged from your original code)
                 cmd.Parameters.AddWithValue("@FirstName", txtFirstName.Text.Trim());
                 cmd.Parameters.AddWithValue("@FirstNamePattern", "%" + txtFirstName.Text.Trim() + "%");
                 cmd.Parameters.AddWithValue("@LastName", txtLastName.Text.Trim());
                 cmd.Parameters.AddWithValue("@LastNamePattern", "%" + txtLastName.Text.Trim() + "%");
-
-                // Handle dropdown selections
-                cmd.Parameters.AddWithValue("@ManagerID",
+                cmd.Parameters.AddWithValue("@PositionID",
                     string.IsNullOrEmpty(ddlPositions.SelectedValue) ? "" : ddlPositions.SelectedValue);
                 cmd.Parameters.AddWithValue("@DepartmentID",
                     string.IsNullOrEmpty(ddlDepartments.SelectedValue) ? "" : ddlDepartments.SelectedValue);
                 cmd.Parameters.AddWithValue("@LocationID",
                     string.IsNullOrEmpty(ddlLocations.SelectedValue) ? "" : ddlLocations.SelectedValue);
-
-                // Handle salary filters
                 cmd.Parameters.AddWithValue("@MinSalary",
                     decimal.TryParse(txtMinSalary.Text, out decimal minSalary) ? minSalary : (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@MaxSalary",
@@ -159,10 +152,10 @@ ORDER BY DepartmentName
             }
         }
 
-        //protected void btnSearch_Click(object sender, EventArgs e)
-        //{
-        //    LoadEmployees();
-        //}
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            LoadEmployees();
+        }
 
         protected void btnReset_Click(object sender, EventArgs e)
         {
@@ -177,11 +170,6 @@ ORDER BY DepartmentName
             LoadEmployees();
         }
 
-        //protected void ddlDepartments_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    LoadEmployees();
-        //}
-
         protected void EmployeeGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             EmployeeGridView.PageIndex = e.NewPageIndex;
@@ -192,9 +180,17 @@ ORDER BY DepartmentName
         {
             if (e.CommandName == "View")
             {
-                string empNumber = e.CommandArgument.ToString();
-                Response.Redirect($"ViewEmployee.aspx?empId={empNumber}");
+                // Check if session is still valid
+                if (Session["EmployeeID"] == null)
+                {
+                    Response.Redirect("Login.aspx?returnUrl=" + Server.UrlEncode(Request.Url.ToString()));
+                    return;
+                }
+
+                string empId = e.CommandArgument.ToString();
+                Response.Redirect($"ViewEmployee.aspx?empId={empId}");
             }
         }
+
     }
 }

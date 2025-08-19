@@ -24,7 +24,7 @@ namespace EpiUse_TechnicalAssesment
         {
             if (!IsPostBack)
             {
-                if (Session["EmployeeNumber"] == null)
+                if (Session["EmployeeID"] == null)
                 {
                     Response.Redirect("Login.aspx");
                     return;
@@ -46,7 +46,12 @@ namespace EpiUse_TechnicalAssesment
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string query = "SELECT FirstName, LastName, Email, ProfilePhotoBase64 FROM Employees WHERE EmployeeNumber = @EmployeeNumber";
+                // Changed from @EmployeeID to @EmployeeNumber to match the parameter you're adding
+                string query = @"SELECT e.FirstName, e.LastName, e.Email, ep.Picture 
+                       FROM EMPLOYEES e
+                       LEFT JOIN EMPLOYEE_PICTURE ep ON e.EmployeeID = ep.EmployeeID
+                       WHERE e.EmployeeID = @EmployeeNumber";
+
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@EmployeeNumber", employeeNumber);
                 con.Open();
@@ -57,11 +62,13 @@ namespace EpiUse_TechnicalAssesment
                     employeeName = reader["FirstName"].ToString() + " " + reader["LastName"].ToString();
                     lblEmployeeHeaderName.Text = employeeName;
                     employeeEmail = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : "";
-                    string profilePhotoBase64 = reader["ProfilePhotoBase64"] != DBNull.Value ? reader["ProfilePhotoBase64"].ToString() : "";
 
-                    if (!string.IsNullOrEmpty(profilePhotoBase64))
+                    // Handle the picture (stored as byte[] in the database)
+                    if (reader["Picture"] != DBNull.Value)
                     {
-                        imgEmployeePhoto.ImageUrl = "data:image/jpeg;base64," + profilePhotoBase64;
+                        byte[] imageBytes = (byte[])reader["Picture"];
+                        string base64String = Convert.ToBase64String(imageBytes);
+                        imgEmployeePhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
                     }
                     else if (!string.IsNullOrEmpty(employeeEmail))
                     {
@@ -133,11 +140,32 @@ namespace EpiUse_TechnicalAssesment
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string query = "UPDATE Employees SET ProfilePhotoBase64 = @ProfilePhotoBase64 WHERE EmployeeNumber = @EmployeeNumber";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@ProfilePhotoBase64", base64Image);
-                cmd.Parameters.AddWithValue("@EmployeeNumber", employeeNumber);
+                // Convert base64 string back to byte array
+                byte[] imageBytes = Convert.FromBase64String(base64Image);
+
+                // Check if the employee already has a picture record
+                string checkQuery = "SELECT COUNT(*) FROM EMPLOYEE_PICTURE WHERE EmployeeID = @EmployeeNumber";
+                SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+                checkCmd.Parameters.AddWithValue("@EmployeeNumber", employeeNumber);
+
                 con.Open();
+                int count = (int)checkCmd.ExecuteScalar();
+
+                string query;
+                if (count > 0)
+                {
+                    // Update existing record
+                    query = "UPDATE EMPLOYEE_PICTURE SET Picture = @Picture WHERE EmployeeID = @EmployeeNumber";
+                }
+                else
+                {
+                    // Insert new record
+                    query = "INSERT INTO EMPLOYEE_PICTURE (EmployeeID, Picture) VALUES (@EmployeeNumber, @Picture)";
+                }
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@EmployeeNumber", employeeNumber);
+                cmd.Parameters.AddWithValue("@Picture", imageBytes);
                 cmd.ExecuteNonQuery();
             }
         }

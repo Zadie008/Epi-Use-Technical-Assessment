@@ -36,13 +36,11 @@ namespace EpiUse_TechnicalAssesment
             {
                 using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString))
                 {
-                    // DEBUG: Output the values being checked
-                    System.Diagnostics.Debug.WriteLine($"Attempting login for EmployeeID: {employeeId}");
-                    System.Diagnostics.Debug.WriteLine($"Using hashed password: {hashedPassword}");
-
-                    string query = @"SELECT EmployeeID, RoleID 
-                            FROM USER_AUTH 
-                            WHERE EmployeeID = @EmpID AND Password = @Password";
+                    string query = @"SELECT ua.EmployeeID, ua.RoleID, d.LocationID
+                      FROM USER_AUTH ua
+                      JOIN EMPLOYEES e ON ua.EmployeeID = e.EmployeeID
+                      JOIN DEPARTMENT d ON e.DepartmentID = d.DepartmentID
+                      WHERE ua.EmployeeID = @EmpID AND ua.Password = @Password";
 
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@EmpID", employeeId);
@@ -53,30 +51,16 @@ namespace EpiUse_TechnicalAssesment
                     {
                         if (reader.Read())
                         {
-                            // DEBUG: Confirm we found a matching user
-                            string foundEmployeeID = reader["EmployeeID"].ToString();
-                            string foundRoleID = reader["RoleID"].ToString();
-                            System.Diagnostics.Debug.WriteLine($"Login successful for EmployeeID: {foundEmployeeID}, RoleID: {foundRoleID}");
-
                             // Set session variables
-                            Session["EmployeeID"] = foundEmployeeID;
-                            Session["RoleID"] = foundRoleID;
+                            Session["EmployeeID"] = reader["EmployeeID"].ToString();
+                            Session["RoleID"] = reader["RoleID"].ToString();
+                            Session["LocationID"] = reader["LocationID"].ToString();
+                            Session.Timeout = 30;
 
-                            // DEBUG: Verify session variables are set
-                            System.Diagnostics.Debug.WriteLine($"Session variables set - EmployeeID: {Session["EmployeeID"]}, RoleID: {Session["RoleID"]}");
-
-                            // Clear any error message
-                            lblLoginMessage.Text = "";
-
-                            // Redirect to Dashboard
-                            System.Diagnostics.Debug.WriteLine("Attempting redirect to Dashboard.aspx");
-                            Response.Redirect("Dashboard.aspx", false);
-                            Context.ApplicationInstance.CompleteRequest();
-                            return; // Explicit return after redirect
+                            Response.Redirect("Dashboard.aspx");
                         }
                         else
                         {
-                            System.Diagnostics.Debug.WriteLine("No matching user found");
                             lblLoginMessage.Text = "Invalid employee ID or password";
                             ScriptManager.RegisterStartupScript(this, GetType(), "showPopup", "showPopup();", true);
                         }
@@ -88,7 +72,6 @@ namespace EpiUse_TechnicalAssesment
                 System.Diagnostics.Debug.WriteLine($"Login error: {ex.ToString()}");
                 lblLoginMessage.Text = "System error. Please try again later.";
                 ScriptManager.RegisterStartupScript(this, GetType(), "showPopup", "showPopup();", true);
-                LogError(ex);
             }
         }
 

@@ -33,22 +33,22 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.HiddenField hdnOriginalSalary;
 
         /// <summary>
-        /// lblEmployeeNumber control.
+        /// lblEmployeeID control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEmployeeNumber;
+        protected global::System.Web.UI.WebControls.Label lblEmployeeID;
 
         /// <summary>
-        /// txtEmployeeNumber control.
+        /// txtEmployeeID control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEmployeeNumber;
+        protected global::System.Web.UI.WebControls.TextBox txtEmployeeID;
 
         /// <summary>
         /// lblFirstName control.
@@ -159,13 +159,13 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.RangeValidator rvSalary;
 
         /// <summary>
-        /// lblRole control.
+        /// lblPosition control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRole;
+        protected global::System.Web.UI.WebControls.Label lblPosition;
 
         /// <summary>
         /// ddlRole control.
@@ -204,6 +204,15 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Label lblManager;
 
         /// <summary>
+        /// ddlManager control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlManager;
+
+        /// <summary>
         /// lblLocation control.
         /// </summary>
         /// <remarks>
@@ -220,6 +229,24 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlLocation;
+
+        /// <summary>
+        /// lblAccess control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblAccess;
+
+        /// <summary>
+        /// ddlAccess control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlAccess;
 
         /// <summary>
         /// imgGravatar control.

@@ -33,8 +33,7 @@
 
                 <div class="search-group">
                     <asp:Label ID="lblDepartment" runat="server" Text="Department:" AssociatedControlID="ddlDepartments" CssClass="search-label" />
-                    <asp:DropDownList ID="ddlDepartments" runat="server" CssClass="search-input"
-                        AutoPostBack="true" OnSelectedIndexChanged="ddlDepartments_SelectedIndexChanged">
+                    <asp:DropDownList ID="ddlDepartments" runat="server" CssClass="search-input">
                     </asp:DropDownList>
                 </div>
             </div>
@@ -99,24 +98,25 @@
                 ShowSummary="true" ShowMessageBox="false" DisplayMode="BulletList"
                 ForeColor="Red" CssClass="validation-summary" ValidationGroup="SearchGroup" />
         </asp:Panel>
-       <div class="table-container">
+        <div class="table-container">
             <asp:Label ID="lblNoRecords" runat="server" Text="" CssClass="no-records-message" Visible="false"></asp:Label>
             <asp:GridView ID="EmployeeGridView" runat="server" AutoGenerateColumns="false" CssClass="table"
                 OnRowCommand="EmployeeGridView_RowCommand"
-                DataKeyNames="EmployeeNumber">
+                DataKeyNames="EmployeeID">
                 <Columns>
                     <asp:BoundField DataField="FirstName" HeaderText="First Name" />
                     <asp:BoundField DataField="LastName" HeaderText="Last Name" />
                     <asp:BoundField DataField="Email" HeaderText="Email" />
-                    <asp:BoundField DataField="Role" HeaderText="Role" />
-                    <asp:BoundField DataField="LocationName" HeaderText="Location" />
+                    <asp:BoundField DataField="Role" HeaderText="Position" />
+
                     <asp:BoundField DataField="DepartmentName" HeaderText="Department" />
                     <asp:BoundField DataField="ManagerName" HeaderText="Manager" />
 
                     <asp:TemplateField HeaderText="Actions">
                         <ItemTemplate>
+                            
                             <asp:Button ID="btnView" runat="server" Text="View" CommandName="View"
-                                CommandArgument='<%# Eval("EmployeeNumber") %>' CssClass="btn btn-view-green" />
+                                CommandArgument='<%# Eval("EmployeeID") %>' CssClass="btn btn-view-green" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
