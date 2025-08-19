@@ -1,51 +1,35 @@
-﻿// ========== Tab information (No Changes) ==========
-function openTab(tabName) {
-    let i, tabContent, tabButtons;
-    tabContent = document.getElementsByClassName("tab-content");
-    for (i = 0; i < tabContent.length; i++) {
-        tabContent[i].style.display = "none";
+﻿function openTab(evt, tabName) {
+    var i, tabcontent, tabbuttons;
+
+    // Hide all tab content
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+        tabcontent[i].classList.remove("active");
     }
-    tabButtons = document.getElementsByClassName("tab-button");
-    for (i = 0; i < tabButtons.length; i++) {
-        tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+
+    // Remove active class from all buttons
+    tabbuttons = document.getElementsByClassName("tab-button");
+    for (i = 0; i < tabbuttons.length; i++) {
+        tabbuttons[i].classList.remove("active");
     }
+
+    // Show the specific tab content
     document.getElementById(tabName).style.display = "block";
-    event.currentTarget.className += " active";
+    document.getElementById(tabName).classList.add("active");
+
+    // Add active class to the button that opened the tab
+    evt.currentTarget.classList.add("active");
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const defaultTab = document.querySelector(".tab-content");
-    if (defaultTab) {
-        defaultTab.style.display = "block";
-    }
+// Show modal functions
+function showDeleteConfirmModal() {
+    $('#deleteConfirmModal').modal('show');
+}
 
-    const defaultButton = document.querySelector(".tab-button");
-    if (defaultButton) {
-        defaultButton.className += " active";
-    }
-
-    if (typeof PageMethods !== 'undefined') {
-        PageMethods.GetHierarchyData(
-            function (response) {
-                try {
-                    const data = JSON.parse(response);
-                    console.log("Data received:", data);
-                    renderD3(data);
-                } catch (e) {
-                    console.error("Error:", e, "\nResponse:", response);
-                    alert("Error displaying hierarchy");
-                }
-            },
-            function (error) {
-                console.error("AJAX Error:", error);
-                alert("Failed to load data");
-            }
-        );
-    } else {
-        console.error("PageMethods not available");
-        alert("ScriptManager configuration error");
-    }
-});
+function showSuccessModal(message) {
+    $('#lblSuccessMessage').text(message);
+    $('#successModal').modal('show');
 
 // ========== Main D3 Hierarchy ==========
 function renderD3(rootData) {
