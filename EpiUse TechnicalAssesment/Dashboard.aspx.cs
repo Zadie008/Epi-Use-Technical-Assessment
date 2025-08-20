@@ -35,9 +35,10 @@ namespace EpiUse_TechnicalAssesment
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = @"SELECT DISTINCT DepartmentID, DepartmentName 
-                                FROM DEPARTMENT 
-                                ORDER BY DepartmentName";
+                string query = @"SELECT MIN(DepartmentID) as DepartmentID, DepartmentName 
+                        FROM DEPARTMENT 
+                        GROUP BY DepartmentName
+                        ORDER BY DepartmentName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
@@ -64,7 +65,7 @@ namespace EpiUse_TechnicalAssesment
             }
         }
 
-        private void LoadPositions()
+        private void LoadPositions() //known as Title on the dashboard page
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -87,35 +88,34 @@ namespace EpiUse_TechnicalAssesment
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"
-       SELECT 
-    EMPLOYEES.EmployeeID, 
-    EMPLOYEES.FirstName, 
-    EMPLOYEES.LastName, 
-    EMPLOYEES.Email, 
-    POSITION.PositionName AS Role,
-    LOCATION.LocationName, 
-    DEPARTMENT.DepartmentName,
-    MANAGER.FirstName + ' ' + MANAGER.LastName AS ManagerName,
-    SALARY.Amount AS Salary
-FROM EMPLOYEES
-LEFT JOIN DEPARTMENT ON EMPLOYEES.DepartmentID = DEPARTMENT.DepartmentID
-LEFT JOIN LOCATION ON DEPARTMENT.LocationID = LOCATION.LocationID
-LEFT JOIN POSITION ON EMPLOYEES.PositionID = POSITION.PositionID
-LEFT JOIN REPORTING_LINE ON EMPLOYEES.EmployeeID = REPORTING_LINE.ReportEmployeeID
-LEFT JOIN EMPLOYEES AS MANAGER ON REPORTING_LINE.ManagerEmployeeID = MANAGER.EmployeeID
-LEFT JOIN SALARY ON EMPLOYEES.EmployeeID = SALARY.EmployeeID
-WHERE (@FirstName = '' OR EMPLOYEES.FirstName LIKE '%' + @FirstName + '%')
-  AND (@LastName = '' OR EMPLOYEES.LastName LIKE '%' + @LastName + '%')
-  AND (@PositionID = '' OR EMPLOYEES.PositionID = @PositionID)
-  AND (@DepartmentID = '' OR EMPLOYEES.DepartmentID = @DepartmentID)
-  AND (@LocationID = '' OR DEPARTMENT.LocationID = @LocationID)
-  AND ((@MinSalary IS NULL OR SALARY.Amount >= @MinSalary)
-      AND (@MaxSalary IS NULL OR SALARY.Amount <= @MaxSalary))
-ORDER BY EMPLOYEES.EmployeeID";
+                   SELECT 
+                EMPLOYEES.EmployeeID, 
+                EMPLOYEES.FirstName, 
+                EMPLOYEES.LastName, 
+                EMPLOYEES.Email, 
+                POSITION.PositionName AS Role,
+                LOCATION.LocationName, 
+                DEPARTMENT.DepartmentName,
+                MANAGER.FirstName + ' ' + MANAGER.LastName AS ManagerName,
+                SALARY.Amount AS Salary
+            FROM EMPLOYEES
+            LEFT JOIN DEPARTMENT ON EMPLOYEES.DepartmentID = DEPARTMENT.DepartmentID
+            LEFT JOIN LOCATION ON DEPARTMENT.LocationID = LOCATION.LocationID
+            LEFT JOIN POSITION ON EMPLOYEES.PositionID = POSITION.PositionID
+            LEFT JOIN REPORTING_LINE ON EMPLOYEES.EmployeeID = REPORTING_LINE.ReportEmployeeID
+            LEFT JOIN EMPLOYEES AS MANAGER ON REPORTING_LINE.ManagerEmployeeID = MANAGER.EmployeeID
+            LEFT JOIN SALARY ON EMPLOYEES.EmployeeID = SALARY.EmployeeID
+            WHERE (@FirstName = '' OR EMPLOYEES.FirstName LIKE '%' + @FirstName + '%')
+              AND (@LastName = '' OR EMPLOYEES.LastName LIKE '%' + @LastName + '%')
+              AND (@PositionID = '' OR EMPLOYEES.PositionID = @PositionID)
+              AND (@DepartmentID = '' OR EMPLOYEES.DepartmentID = @DepartmentID)
+              AND (@LocationID = '' OR DEPARTMENT.LocationID = @LocationID)
+              AND ((@MinSalary IS NULL OR SALARY.Amount >= @MinSalary)
+                  AND (@MaxSalary IS NULL OR SALARY.Amount <= @MaxSalary))
+            ORDER BY EMPLOYEES.EmployeeID";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
-                // Set parameters (unchanged from your original code)
                 cmd.Parameters.AddWithValue("@FirstName", txtFirstName.Text.Trim());
                 cmd.Parameters.AddWithValue("@FirstNamePattern", "%" + txtFirstName.Text.Trim() + "%");
                 cmd.Parameters.AddWithValue("@LastName", txtLastName.Text.Trim());

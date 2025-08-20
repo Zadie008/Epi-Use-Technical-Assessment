@@ -114,7 +114,7 @@
 
                     <asp:TemplateField HeaderText="Actions">
                         <ItemTemplate>
-                            
+
                             <asp:Button ID="btnView" runat="server" Text="View" CommandName="View"
                                 CommandArgument='<%# Eval("EmployeeID") %>' CssClass="btn btn-view-green" />
                         </ItemTemplate>
@@ -130,7 +130,7 @@
     </div>
 
     <script type="text/javascript">
-        // Ensure table header stays aligned with content during scroll
+        // Table header stays inline with the content
         function syncScrollHeaders() {
             const container = document.querySelector('.table-container');
             const header = container.querySelector('thead');

@@ -34,12 +34,9 @@ namespace EpiUse_TechnicalAssesment
                     // Set access controls first
                     SetAccessControls(empId);
 
-                    // Then load data
+                    // load data
                     PopulateRoleDropdown();
-                    PopulateManagerDropdown();
                     LoadEmployee(empId);
-
-                    // Set initial button visibility
                     btnEditEmployee.Visible = (bool)ViewState["ShowEditButton"];
                 }
                 else
@@ -49,40 +46,40 @@ namespace EpiUse_TechnicalAssesment
                 }
             }
         }
-
         private void LoadEmployee(string empId)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 string query = @"
-            SELECT 
-                e.EmployeeID,
-                e.FirstName, 
-                e.LastName, 
-                e.DateOfBirth,
-                e.Email,
-                d.DepartmentName,
-                p.PositionName AS PositionTitle,
-                l.LocationName AS Location,
-                m.FirstName + ' ' + m.LastName AS ManagerName,
-                s.Amount AS Salary,
-                ep.Picture AS ProfilePicture,
-                e.DepartmentID,
-                e.PositionID,
-                l.LocationID,
-                r.RoleDesc,
-                ua.RoleID
-            FROM EMPLOYEES e
-            LEFT JOIN DEPARTMENT d ON e.DepartmentID = d.DepartmentID
-            LEFT JOIN LOCATION l ON d.LocationID = l.LocationID
-            LEFT JOIN POSITION p ON e.PositionID = p.PositionID
-            LEFT JOIN REPORTING_LINE rl ON e.EmployeeID = rl.ReportEmployeeID
-            LEFT JOIN EMPLOYEES m ON rl.ManagerEmployeeID = m.EmployeeID
-            LEFT JOIN SALARY s ON e.EmployeeID = s.EmployeeID
-            LEFT JOIN EMPLOYEE_PICTURE ep ON e.EmployeeID = ep.EmployeeID
-            LEFT JOIN USER_AUTH ua ON e.EmployeeID = ua.EmployeeID
-            LEFT JOIN ROLE r ON ua.RoleID = r.RoleID
-            WHERE e.EmployeeID = @EmployeeID";
+        SELECT 
+            e.EmployeeID,
+            e.FirstName, 
+            e.LastName, 
+            e.DateOfBirth,
+            e.Email,
+            d.DepartmentName,
+            p.PositionName AS PositionTitle,
+            l.LocationName AS Location,
+            m.FirstName + ' ' + m.LastName AS ManagerName,
+            m.EmployeeID AS ManagerID, 
+            s.Amount AS Salary,
+            ep.Picture AS ProfilePicture,
+            e.DepartmentID,
+            e.PositionID,
+            l.LocationID,
+            r.RoleDesc,
+            ua.RoleID
+        FROM EMPLOYEES e
+        LEFT JOIN DEPARTMENT d ON e.DepartmentID = d.DepartmentID
+        LEFT JOIN LOCATION l ON d.LocationID = l.LocationID
+        LEFT JOIN POSITION p ON e.PositionID = p.PositionID
+        LEFT JOIN REPORTING_LINE rl ON e.EmployeeID = rl.ReportEmployeeID
+        LEFT JOIN EMPLOYEES m ON rl.ManagerEmployeeID = m.EmployeeID
+        LEFT JOIN SALARY s ON e.EmployeeID = s.EmployeeID
+        LEFT JOIN EMPLOYEE_PICTURE ep ON e.EmployeeID = ep.EmployeeID
+        LEFT JOIN USER_AUTH ua ON e.EmployeeID = ua.EmployeeID
+        LEFT JOIN ROLE r ON ua.RoleID = r.RoleID
+        WHERE e.EmployeeID = @EmployeeID";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@EmployeeID", empId);
@@ -112,9 +109,13 @@ namespace EpiUse_TechnicalAssesment
                     lblLocation.Text = reader["Location"] != DBNull.Value
                         ? reader["Location"].ToString()
                         : "N/A";
-                    lblManager.Text = reader["ManagerName"] != DBNull.Value
-                        ? reader["ManagerName"].ToString()
-                        : "N/A";
+
+                    string managerId = reader["ManagerID"] != DBNull.Value ? reader["ManagerID"].ToString() : "";
+                    string managerName = reader["ManagerName"] != DBNull.Value ? reader["ManagerName"].ToString() : "N/A";
+
+                    lblManager.Text = managerName;
+                    ViewState["CurrentManagerId"] = managerId; // managerId stored to check that an employee can not be thier own manager
+
                     lblAccess.Text = reader["RoleDesc"] != DBNull.Value
                         ? reader["RoleDesc"].ToString()
                         : "N/A";
@@ -123,8 +124,9 @@ namespace EpiUse_TechnicalAssesment
                         ? reader["RoleID"].ToString()
                         : "";
 
-                    // Handle salary display
-                    if (reader["Salary"] != DBNull.Value)
+                    // Access rights for salary
+                    bool canViewSalary = ViewState["CanViewSalary"] != null && (bool)ViewState["CanViewSalary"];
+                    if (canViewSalary && reader["Salary"] != DBNull.Value)
                     {
                         decimal salary = Convert.ToDecimal(reader["Salary"]);
                         lblSalary.Text = string.Format("{0:C}", salary);
@@ -132,11 +134,11 @@ namespace EpiUse_TechnicalAssesment
                     }
                     else
                     {
-                        lblSalary.Text = "N/A";
+                        lblSalary.Text = "****";
                         hdnOriginalSalary.Value = "0";
                     }
 
-                    // Handle profile picture
+                    // profile photo
                     if (reader["ProfilePicture"] != DBNull.Value && !string.IsNullOrEmpty(reader["ProfilePicture"].ToString()))
                     {
                         byte[] imageBytes = (byte[])reader["ProfilePicture"];
@@ -152,7 +154,7 @@ namespace EpiUse_TechnicalAssesment
                         imgGravatar.ImageUrl = "~/Images/default-profile.png";
                     }
 
-                    // Store original values for editing
+                    // Store original values
                     ViewState["OriginalDepartmentId"] = reader["DepartmentID"] != DBNull.Value
                         ? reader["DepartmentID"].ToString()
                         : "";
@@ -250,40 +252,56 @@ namespace EpiUse_TechnicalAssesment
             int currentUserRoleId = Convert.ToInt32(Session["RoleID"]);
             int currentUserLocationId = Convert.ToInt32(Session["LocationID"]);
 
-            // Get target employee's location
+            // target employees location
             int targetLocationId = GetEmployeeLocation(targetEmployeeId);
             bool isSelf = currentUserId == targetEmployeeId;
             bool sameLocation = currentUserLocationId == targetLocationId;
 
-            // Initialize all access controls with default values
+            // default values for access controls
             ViewState["CanViewSalary"] = false;
             ViewState["CanEditRoleDepartment"] = false;
             ViewState["ShowEditButton"] = false;
+            ViewState["CanEditAccessLevel"] = false; 
 
             // Set access based on role
             switch (currentUserRoleId)
             {
-                case 1: // Admin - full access
+                case 1: // full access
                     ViewState["CanViewSalary"] = true;
                     ViewState["CanEditRoleDepartment"] = true;
                     ViewState["ShowEditButton"] = true;
+                    ViewState["CanEditAccessLevel"] = true; 
                     break;
-                case 2: // Manager - can edit same location
-                    ViewState["CanViewSalary"] = sameLocation;
+                case 2: // access to users in same location
+                    ViewState["CanViewSalary"] = sameLocation && GetEmployeeRoleId(targetEmployeeId) != 1;
                     ViewState["CanEditRoleDepartment"] = sameLocation;
                     ViewState["ShowEditButton"] = sameLocation;
+                    ViewState["CanEditAccessLevel"] = sameLocation; 
                     break;
-                case 3: // Regular user - can edit only self
-                    ViewState["CanViewSalary"] = false;
+                case 3: // access to self
+                    ViewState["CanViewSalary"] = isSelf;
                     ViewState["CanEditRoleDepartment"] = false;
                     ViewState["ShowEditButton"] = isSelf;
+                    ViewState["CanEditAccessLevel"] = false; 
                     break;
             }
 
-            // Store additional access info
             ViewState["IsSelf"] = isSelf;
             ViewState["SameLocation"] = sameLocation;
             ViewState["CurrentUserRoleId"] = currentUserRoleId;
+        }
+
+        private int GetEmployeeRoleId(string employeeId)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT RoleID FROM USER_AUTH WHERE EmployeeID = @EmployeeID";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
+                con.Open();
+                object result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : 3; //defualt regular user
+            }
         }
 
         private int GetEmployeeLocation(string employeeId)
@@ -307,6 +325,11 @@ namespace EpiUse_TechnicalAssesment
         {
             try
             {
+                if ((bool)ViewState["CanEditRoleDepartment"])
+                {
+                    PopulateManagerDropdown();
+                }
+
                 ToggleEditMode(true);
             }
             catch (Exception ex)
@@ -325,11 +348,11 @@ namespace EpiUse_TechnicalAssesment
         {
             bool canViewSalary = ViewState["CanViewSalary"] != null && (bool)ViewState["CanViewSalary"];
             bool canEditRoleDept = ViewState["CanEditRoleDepartment"] != null && (bool)ViewState["CanEditRoleDepartment"];
+            bool canEditAccessLevel = ViewState["CanEditAccessLevel"] != null && (bool)ViewState["CanEditAccessLevel"];
             bool isSelf = ViewState["IsSelf"] != null && (bool)ViewState["IsSelf"];
             bool sameLocation = ViewState["SameLocation"] != null && (bool)ViewState["SameLocation"];
             int currentUserRoleId = ViewState["CurrentUserRoleId"] != null ? (int)ViewState["CurrentUserRoleId"] : 3;
 
-            // Basic info - always editable if you have edit access
             lblFirstName.Visible = !isEdit;
             txtFirstName.Visible = isEdit;
             txtFirstName.Text = lblFirstName.Text;
@@ -346,7 +369,6 @@ namespace EpiUse_TechnicalAssesment
             txtEmail.Visible = isEdit;
             txtEmail.Text = lblEmail.Text;
 
-            // Role/department info
             lblPosition.Visible = !isEdit || !canEditRoleDept;
             ddlRole.Visible = isEdit && canEditRoleDept;
             lblDepartment.Visible = !isEdit || !canEditRoleDept;
@@ -355,24 +377,23 @@ namespace EpiUse_TechnicalAssesment
             ddlLocation.Visible = isEdit && canEditRoleDept;
 
             // Salary info
-            lblSalary.Visible = canEditRoleDept;
-            txtSalary.Visible = isEdit && canEditRoleDept;
+            lblSalary.Visible = canViewSalary;
+            txtSalary.Visible = isEdit && canEditRoleDept && canViewSalary;
             if (txtSalary.Visible)
             {
                 txtSalary.Text = hdnOriginalSalary.Value == "0" ? "" : hdnOriginalSalary.Value;
             }
 
-            // Manager dropdown
             lblManager.Visible = !isEdit || !canEditRoleDept;
             ddlManager.Visible = isEdit && canEditRoleDept;
-            if (ddlManager.Visible && !IsPostBack)
+            if (ddlManager.Visible)
             {
-                PopulateManagerDropdown();
+                PopulateManagerDropdown(); // Always populate when visible
             }
 
-            // Access info
+
             lblAccess.Visible = !isEdit;
-            ddlAccess.Visible = isEdit && currentUserRoleId == 1;
+            ddlAccess.Visible = isEdit && canEditAccessLevel;
 
             // Buttons
             btnEditEmployee.Visible = !isEdit && (bool)ViewState["ShowEditButton"];
@@ -384,13 +405,14 @@ namespace EpiUse_TechnicalAssesment
         private void PopulateManagerDropdown()
         {
             string currentEmployeeId = lblEmployeeID.Text;
+            string currentManagerId = ViewState["CurrentManagerId"] != null ? ViewState["CurrentManagerId"].ToString() : "";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 string query = @"SELECT e.EmployeeID, e.FirstName + ' ' + e.LastName AS ManagerName 
-                               FROM EMPLOYEES e
-                               WHERE e.EmployeeID <> @CurrentEmployeeID
-                               ORDER BY ManagerName";
+                       FROM EMPLOYEES e
+                       WHERE e.EmployeeID <> @CurrentEmployeeID
+                       ORDER BY ManagerName";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@CurrentEmployeeID", currentEmployeeId);
@@ -405,8 +427,8 @@ namespace EpiUse_TechnicalAssesment
                 ddlManager.Items.Insert(0, new ListItem("-- No Manager --", ""));
 
                 // Set current manager if exists
-                string currentManagerId = GetCurrentManagerId();
-                if (!string.IsNullOrEmpty(currentManagerId))
+                if (!string.IsNullOrEmpty(currentManagerId) &&
+                    ddlManager.Items.FindByValue(currentManagerId) != null)
                 {
                     ddlManager.SelectedValue = currentManagerId;
                 }
@@ -420,8 +442,8 @@ namespace EpiUse_TechnicalAssesment
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 string query = @"SELECT ManagerEmployeeID 
-                               FROM REPORTING_LINE 
-                               WHERE ReportEmployeeID = @EmployeeID";
+                       FROM REPORTING_LINE 
+                       WHERE ReportEmployeeID = @EmployeeID";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@EmployeeID", currentEmployeeId);
@@ -443,7 +465,6 @@ namespace EpiUse_TechnicalAssesment
             string birthDate = txtBirthDate.Text;
             string email = txtEmail.Text;
 
-            // Handle salary
             decimal salary = 0;
             if (canViewSalary && canEditRoleDept)
             {
@@ -466,7 +487,6 @@ namespace EpiUse_TechnicalAssesment
                 decimal.TryParse(hdnOriginalSalary.Value, out salary);
             }
 
-            // Get selected department and role
             int departmentId = Convert.ToInt32(ddlDepartment.SelectedValue);
             int positionId = Convert.ToInt32(ddlRole.SelectedValue);
 
@@ -490,16 +510,15 @@ namespace EpiUse_TechnicalAssesment
 
                 try
                 {
-                    // Update basic employee info
                     string employeeQuery = @"
-                UPDATE EMPLOYEES SET 
-                    FirstName = @FirstName,
-                    LastName = @LastName,
-                    DateOfBirth = @DateOfBirth,
-                    Email = @Email,
-                    DepartmentID = @DepartmentID,
-                    PositionID = @PositionID
-                WHERE EmployeeID = @EmployeeID";
+            UPDATE EMPLOYEES SET 
+                FirstName = @FirstName,
+                LastName = @LastName,
+                DateOfBirth = @DateOfBirth,
+                Email = @Email,
+                DepartmentID = @DepartmentID,
+                PositionID = @PositionID
+            WHERE EmployeeID = @EmployeeID";
 
                     SqlCommand cmd = new SqlCommand(employeeQuery, con, transaction);
                     cmd.Parameters.AddWithValue("@FirstName", firstName);
@@ -518,10 +537,10 @@ namespace EpiUse_TechnicalAssesment
                         if (txtSalary.Visible)
                         {
                             string salaryQuery = @"
-                        IF EXISTS (SELECT 1 FROM SALARY WHERE EmployeeID = @EmployeeID)
-                            UPDATE SALARY SET Amount = @Amount WHERE EmployeeID = @EmployeeID
-                        ELSE
-                            INSERT INTO SALARY (EmployeeID, Amount) VALUES (@EmployeeID, @Amount)";
+                    IF EXISTS (SELECT 1 FROM SALARY WHERE EmployeeID = @EmployeeID)
+                        UPDATE SALARY SET Amount = @Amount WHERE EmployeeID = @EmployeeID
+                    ELSE
+                        INSERT INTO SALARY (EmployeeID, Amount) VALUES (@EmployeeID, @Amount)";
 
                             cmd = new SqlCommand(salaryQuery, con, transaction);
                             cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
@@ -529,13 +548,33 @@ namespace EpiUse_TechnicalAssesment
                             cmd.ExecuteNonQuery();
                         }
 
-                        // Update manager relationship if changed
+                        // Update reporting structure
                         if (ddlManager.Visible && ddlManager.SelectedIndex >= 0)
                         {
                             string newManagerId = ddlManager.SelectedValue;
                             if (!string.IsNullOrEmpty(newManagerId) && newManagerId != employeeId)
                             {
                                 UpdateManagerRelationship(con, transaction, employeeId, newManagerId);
+                            }
+                        }
+
+                        // Update access level if changed and user has permission
+                        bool canEditAccessLevel = ViewState["CanEditAccessLevel"] != null && (bool)ViewState["CanEditAccessLevel"];
+                        if (canEditAccessLevel && ddlAccess.Visible && ddlAccess.SelectedIndex >= 0)
+                        {
+                            string newRoleId = ddlAccess.SelectedValue;
+                            if (!string.IsNullOrEmpty(newRoleId))
+                            {
+                                string accessQuery = @"
+                        IF EXISTS (SELECT 1 FROM USER_AUTH WHERE EmployeeID = @EmployeeID)
+                            UPDATE USER_AUTH SET RoleID = @RoleID WHERE EmployeeID = @EmployeeID
+                        ELSE
+                            INSERT INTO USER_AUTH (EmployeeID, RoleID) VALUES (@EmployeeID, @RoleID)";
+
+                                cmd = new SqlCommand(accessQuery, con, transaction);
+                                cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
+                                cmd.Parameters.AddWithValue("@RoleID", newRoleId);
+                                cmd.ExecuteNonQuery();
                             }
                         }
 
@@ -560,13 +599,11 @@ namespace EpiUse_TechnicalAssesment
         private void UpdateManagerRelationship(SqlConnection con, SqlTransaction transaction,
      string employeeId, string newManagerId)
         {
-            // Delete existing relationship if any
             string deleteQuery = "DELETE FROM REPORTING_LINE WHERE ReportEmployeeID = @EmployeeID";
             SqlCommand cmd = new SqlCommand(deleteQuery, con, transaction);
             cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
             cmd.ExecuteNonQuery();
 
-            // Add new relationship if manager selected
             if (!string.IsNullOrEmpty(newManagerId))
             {
                 string insertQuery = @"INSERT INTO REPORTING_LINE (ReportEmployeeID, ManagerEmployeeID) 
@@ -607,55 +644,7 @@ namespace EpiUse_TechnicalAssesment
             }
         }
 
-        private bool IsValidRoleTransition(int currentPositionId, int newPositionId)
-        {
-            if (currentPositionId == newPositionId) return true;
-            if (currentPositionId == 1) return false;
-
-            int[] roleHierarchy = { 1, 2, 3, 4, 10, 11, 12 };
-
-            int currentIndex = Array.IndexOf(roleHierarchy, currentPositionId);
-            int newIndex = Array.IndexOf(roleHierarchy, newPositionId);
-
-            if (currentIndex == -1 || newIndex == -1) return false;
-            return newIndex == currentIndex - 1;
-        }
-
-        private bool IsUniqueRoleAllowed(int positionId, int departmentId, int locationId, string currentEmployeeId)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                string query = "";
-                if (positionId == 1)
-                {
-                    query = @"SELECT COUNT(*) FROM EMPLOYEES 
-                           WHERE PositionID = @PositionID 
-                           AND LocationID = @LocationID
-                           AND EmployeeID <> @EmployeeID";
-                }
-                else if (positionId == 2 || positionId == 3 || positionId == 4)
-                {
-                    query = @"SELECT COUNT(*) FROM EMPLOYEES 
-                           WHERE PositionID = @PositionID 
-                           AND LocationID = @LocationID
-                           AND EmployeeID <> @EmployeeID";
-                }
-                else
-                {
-                    return true;
-                }
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@PositionID", positionId);
-                cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);
-                cmd.Parameters.AddWithValue("@EmployeeID", currentEmployeeId);
-
-                con.Open();
-                int count = (int)cmd.ExecuteScalar();
-                return count == 0;
-            }
-        }
+        
 
         private string GetGravatarUrl(string email)
         {
