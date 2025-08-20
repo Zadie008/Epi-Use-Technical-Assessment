@@ -987,7 +987,7 @@ select.form-control {
 }
 /* ========================================
            Hierarchy Styles
-========================================*/
+        ========================================*/
 /* Hierarchy Container */
 #hierarchy-container {
     width: 100%;
@@ -999,43 +999,45 @@ select.form-control {
     overflow: hidden;
     cursor: grab;
 }
+
 .node {
     cursor: pointer;
     transition: transform 0.3s ease;
 }
-/* Node Styles */
-.node circle {
-    fill: #fff;
-    stroke: black;
-    stroke-width: 3px;
-    transition: all 0.3s ease;
-}
-
-    .node circle.ranking1 {
-        stroke: #1a4f8b;
-        stroke-width: 5px;
+    /* Node Styles */
+    .node circle {
+        fill: #fff;
+        stroke: black;
+        stroke-width: 3px;
+        transition: all 0.3s ease;
     }
 
-    .node circle.ranking2 {
+        .node circle.ranking1 {
+            stroke: #1a4f8b;
+            stroke-width: 5px;
+        }
+
+        .node circle.ranking2 {
+            stroke: #2a6fbb;
+            stroke-width: 4px;
+        }
+
+    .node text.name {
+        font: 12px 'Segoe UI', Arial, sans-serif;
+        font-weight: 600;
+        fill: #333;
+    }
+
+    .node text.title {
+        font: 10px 'Segoe UI', Arial, sans-serif;
+        fill: #666;
+    }
+
+    .node:hover circle {
         stroke: #2a6fbb;
         stroke-width: 4px;
     }
 
-.node text.name {
-    font: 12px 'Segoe UI', Arial, sans-serif;
-    font-weight: 600;
-    fill: #333;
-}
-
-.node text.title {
-    font: 10px 'Segoe UI', Arial, sans-serif;
-    fill: #666;
-}
-
-.node:hover circle {
-    stroke: #2a6fbb;
-    stroke-width: 4px;
-}
 .node-image {
     transition: all 0.3s ease;
 }
@@ -1073,15 +1075,16 @@ svg defs clipPath circle {
     max-width: 250px;
 }
 
-.tooltip div {
-    margin: 3px 0;
-    line-height: 1.4;
-}
+    .tooltip div {
+        margin: 3px 0;
+        line-height: 1.4;
+    }
 
-.tooltip strong {
-    color: #4a90e2;
-    font-weight: 600;
-}
+    .tooltip strong {
+        color: #4a90e2;
+        font-weight: 600;
+    }
+
 #hierarchy-container svg {
     display: block;
     margin: 0 auto;
@@ -1101,16 +1104,19 @@ svg defs clipPath circle {
     pointer-events: none;
     transform: translateY(10px);
 }
+
 .node:hover {
-  /*  transform: scale(1.05);*/
+    /*  transform: scale(1.05);*/
     filter: drop-shadow(0 0 4px rgba(74, 144, 226, 0.5));
 }
+
 .link {
     fill: none;
     stroke: #ccc;
     stroke-width: 2px;
     stroke-opacity: 0.7;
 }
+
 .node circle.intern {
     stroke-dasharray: 5, 5;
     stroke: #888;
@@ -1120,7 +1126,6 @@ svg defs clipPath circle {
     stroke: #ff9800;
     fill: #fff8e1;
 }
-
 
 /* Better link styling for visibility */
 .link {
@@ -1134,6 +1139,100 @@ svg defs clipPath circle {
 .node:hover circle {
     stroke-width: 4px;
     filter: drop-shadow(0 0 4px rgba(0,0,0,0.2));
+}
+
+/* Search Panel Styles */
+.search-panel {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: end;
+}
+
+.search-field {
+    flex: 1;
+    min-width: 200px;
+}
+
+    .search-field label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .search-field input,
+    .search-field select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+.search-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+    .search-buttons button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+
+.btn-search {
+    background-color: #4a90e2;
+    color: white;
+}
+
+    .btn-search:hover {
+        background-color: #3a80d2;
+    }
+
+.btn-clear {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+    .btn-clear:hover {
+        background-color: #e0e0e0;
+    }
+
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Highlighted search results */
+.node.highlighted circle {
+    stroke: #ff5722;
+    stroke-width: 4px;
+    filter: drop-shadow(0 0 6px rgba(255, 87, 34, 0.7));
+}
+
+.node.highlighted text {
+    fill: #ff5722;
+    font-weight: 700;
+}
+
+.link.highlighted {
+    stroke: #ff5722;
+    stroke-width: 3px;
+    stroke-opacity: 1;
 }
 /* ========================================
     Editing the database

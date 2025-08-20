@@ -139,7 +139,7 @@
                                     <asp:BoundField DataField="Email" HeaderText="Email" />
                                     <asp:BoundField DataField="DepartmentName" HeaderText="Department" />
                                     <asp:BoundField DataField="PositionName" HeaderText="Position" />
-                                    <asp:CommandField ShowDeleteButton="True" ButtonType="Button" DeleteText="Delete" ControlStyle-CssClass="btn btn-danger btn-sm" />
+                                 
                                 </Columns>
                             </asp:GridView>
                         </div>
@@ -149,9 +149,11 @@
             <Triggers>
                 <asp:AsyncPostBackTrigger ControlID="submitButton" EventName="Click" />
                 <asp:AsyncPostBackTrigger ControlID="btnDeleteEmployee" EventName="Click" />
-                <asp:AsyncPostBackTrigger ControlID="gvEmployees" EventName="RowDeleting" />
+                <asp:AsyncPostBackTrigger ControlID="btnConfirmDelete" EventName="Click" />
+                <asp:AsyncPostBackTrigger ControlID="btnCancelDelete" EventName="Click" />
             </Triggers>
         </asp:UpdatePanel>
+
 
         <!-- Department Tab -->
         <asp:Panel ID="departmentTab" runat="server" CssClass="tab-content">
@@ -174,8 +176,9 @@
                 </div>
 
                 <div class="form-group">
-                    <asp:Button ID="btnAddDepartment" runat="server" Text="Add Department"
-                        CssClass="btn btn-primary" OnClick="btnAddDepartment_Click" />
+                   <asp:Button ID="btnAddDepartment" runat="server" Text="Add Department"
+    CssClass="btn btn-primary" OnClick="btnAddDepartment_Click" 
+    OnClientClick="return validateDepartmentForm();" />
                 </div>
 
                 <div class="form-group">
@@ -367,26 +370,26 @@
     </div>
 
     <!-- Success Modal -->
-   <asp:UpdatePanel ID="upSuccessModal" runat="server" UpdateMode="Conditional">
-    <ContentTemplate>
-        <asp:Panel ID="pnlSuccessModal" runat="server" CssClass="modal-panel" style="display: none;">
-            <div class="modal-panel-content">
-                <div class="modal-header" style="background-color: #28a745;">
-                    <h5 style="color: white;">Success</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-success">
-                        <strong>Success!</strong> 
-                        <asp:Label ID="lblSuccessMessage" runat="server" Text=""></asp:Label>
+    <asp:UpdatePanel ID="upSuccessModal" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <asp:Panel ID="pnlSuccessModal" runat="server" CssClass="modal-panel" Style="display: none;">
+                <div class="modal-panel-content">
+                    <div class="modal-header" style="background-color: #28a745;">
+                        <h5 style="color: white;">Success</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-success">
+                            <strong>Success!</strong>
+                            <asp:Label ID="lblSuccessMessage" runat="server" Text=""></asp:Label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <asp:Button ID="btnSuccessOK" runat="server" Text="OK" CssClass="btn btn-success" OnClientClick="hideSuccessModal(); return false;" />
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <asp:Button ID="btnSuccessOK" runat="server" Text="OK" CssClass="btn btn-success" OnClientClick="hideSuccessModal(); return false;" />
-                </div>
-            </div>
-        </asp:Panel>
-    </ContentTemplate>
-</asp:UpdatePanel>
+            </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
 
     <!-- Delete Confirmation Panel -->
     <asp:UpdatePanel ID="upDeleteConfirm" runat="server" UpdateMode="Conditional">
@@ -415,178 +418,312 @@
 
     <asp:HiddenField ID="activeTabHidden" runat="server" Value="employeeTab" />
 
-    <script type="text/javascript">
-        function showSuccessModal() {
-            var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
-    if (modal) {
-        modal.style.display = 'block';
-    }
-}
+   <script type="text/javascript">
+       // Success Modal Functions
+       function showSuccessModal() {
+           var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+           if (modal) {
+               modal.style.display = 'block';
+               // Add backdrop
+               var backdrop = document.createElement('div');
+               backdrop.className = 'modal-backdrop fade show';
+               backdrop.style.position = 'fixed';
+               backdrop.style.top = '0';
+               backdrop.style.left = '0';
+               backdrop.style.width = '100%';
+               backdrop.style.height = '100%';
+               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
+               backdrop.style.zIndex = '1040';
+               document.body.appendChild(backdrop);
+               document.body.style.overflow = 'hidden'; // Prevent scrolling
+           }
+       }
 
-function hideSuccessModal() {
-    var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
+       function hideSuccessModal() {
+           var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+           if (modal) {
+               modal.style.display = 'none';
+           }
+           // Remove backdrop
+           var backdrops = document.querySelectorAll('.modal-backdrop');
+           backdrops.forEach(function (backdrop) {
+               document.body.removeChild(backdrop);
+           });
+           document.body.style.overflow = ''; // Re-enable scrolling
+       }
 
-        function showDeletePanel() {
-            var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
-            if (panel) {
-                panel.style.display = 'block';
-            }
+       // Delete Confirmation Modal Functions
+       function showDeletePanel() {
+           var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
+           if (panel) {
+               panel.style.display = 'block';
+               // Add backdrop
+               var backdrop = document.createElement('div');
+               backdrop.className = 'modal-backdrop fade show';
+               backdrop.style.position = 'fixed';
+               backdrop.style.top = '0';
+               backdrop.style.left = '0';
+               backdrop.style.width = '100%';
+               backdrop.style.height = '100%';
+               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
+               backdrop.style.zIndex = '1040';
+               backdrop.onclick = function () {
+                   // Don't hide on backdrop click - force user to make a decision
+               };
+               document.body.appendChild(backdrop);
+               document.body.style.overflow = 'hidden'; // Prevent scrolling
+           }
+       }
+
+       function hideDeletePanel() {
+           var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
+           if (panel) {
+               panel.style.display = 'none';
+           }
+           // Remove backdrop
+           var backdrops = document.querySelectorAll('.modal-backdrop');
+           backdrops.forEach(function (backdrop) {
+               document.body.removeChild(backdrop);
+           });
+           document.body.style.overflow = ''; // Re-enable scrolling
+       }
+
+       // Department Reassignment Modal Functions
+       function showReassignmentModal() {
+           var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
+           if (modal) {
+               modal.style.display = 'block';
+               // Add backdrop
+               var backdrop = document.createElement('div');
+               backdrop.className = 'modal-backdrop fade show';
+               backdrop.style.position = 'fixed';
+               backdrop.style.top = '0';
+               backdrop.style.left = '0';
+               backdrop.style.width = '100%';
+               backdrop.style.height = '100%';
+               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
+               backdrop.style.zIndex = '1040';
+               document.body.appendChild(backdrop);
+               document.body.style.overflow = 'hidden'; // Prevent scrolling
+           }
+       }
+
+       function hideReassignmentModal() {
+           var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
+           if (modal) {
+               modal.style.display = 'none';
+           }
+           // Remove backdrop
+           var backdrops = document.querySelectorAll('.modal-backdrop');
+           backdrops.forEach(function (backdrop) {
+               document.body.removeChild(backdrop);
+           });
+           document.body.style.overflow = ''; // Re-enable scrolling
+       }
+
+       // Position Delete Modal Functions
+       function showPositionDeleteModal() {
+           var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
+           if (modal) {
+               modal.style.display = 'block';
+               // Add backdrop
+               var backdrop = document.createElement('div');
+               backdrop.className = 'modal-backdrop fade show';
+               backdrop.style.position = 'fixed';
+               backdrop.style.top = '0';
+               backdrop.style.left = '0';
+               backdrop.style.width = '100%';
+               backdrop.style.height = '100%';
+               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
+               backdrop.style.zIndex = '1040';
+               document.body.appendChild(backdrop);
+               document.body.style.overflow = 'hidden'; // Prevent scrolling
+           }
+       }
+
+       function hidePositionDeleteModal() {
+           var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
+           if (modal) {
+               modal.style.display = 'none';
+           }
+           // Remove backdrop
+           var backdrops = document.querySelectorAll('.modal-backdrop');
+           backdrops.forEach(function (backdrop) {
+               document.body.removeChild(backdrop);
+           });
+           document.body.style.overflow = ''; // Re-enable scrolling
+       }
+
+       // Location Delete Modal Functions
+       function showLocationDeleteModal() {
+           var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
+        if (modal) {
+            modal.style.display = 'block';
+            // Add backdrop
+            var backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            backdrop.style.position = 'fixed';
+            backdrop.style.top = '0';
+            backdrop.style.left = '0';
+            backdrop.style.width = '100%';
+            backdrop.style.height = '100%';
+            backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            backdrop.style.zIndex = '1040';
+            document.body.appendChild(backdrop);
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
         }
+    }
 
-        function hideDeletePanel() {
-            var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
-            if (panel) {
-                panel.style.display = 'none';
-            }
+    function hideLocationDeleteModal() {
+        var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
+        if (modal) {
+            modal.style.display = 'none';
         }
-
-
-        // Close panels when clicking outside
-        document.addEventListener('click', function (e) {
-            // Existing code for other modals...
-
-            // Success Modal
-            var successModal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
-            if (successModal && successModal.style.display === 'block') {
-                var successContent = successModal.querySelector('.modal-panel-content');
-                if (successContent && !successContent.contains(e.target)) {
-                    hideSuccessModal();
-                }
-            }
+        // Remove backdrop
+        var backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(function(backdrop) {
+            document.body.removeChild(backdrop);
         });
-        document.addEventListener('click', function (e) {
-            // Delete Panel
-            var deletePanel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
-            if (deletePanel && deletePanel.style.display === 'block') {
-                var deleteContent = deletePanel.querySelector('.modal-panel-content');
-                if (deleteContent && !deleteContent.contains(e.target)) {
-                    hideDeletePanel();
-                }
-            }
+        document.body.style.overflow = ''; // Re-enable scrolling
+    }
+
+    // Auto-close success panel after 5 seconds
+    function autoCloseSuccessPanel() {
+        setTimeout(function() {
+            hideSuccessModal();
+        }, 5000);
+    }
+
+    // Client-side tab switching
+    function bindTabEvents() {
+        $('.tab-button').off('click').on('click', function (e) {
+            e.preventDefault();
+            $('.tab-button').removeClass('active');
+            $(this).addClass('active');
+            $('.tab-content').hide();
+            var tabName = $(this).attr('data-tab');
+            $('#' + tabName).show();
+            $('#<%= activeTabHidden.ClientID %>').val(tabName);
         });
 
-        // Auto-close success panel after 5 seconds
-        function autoCloseSuccessPanel() {
-            setTimeout(function () {
-                hideSuccessPanel();
-            }, 5000);
-        }
-
-        // Client-side tab switching
-        $(document).ready(function () {
-            bindTabEvents();
-        });
-
-        function bindTabEvents() {
-            $('.tab-button').off('click').on('click', function (e) {
-                e.preventDefault();
-                $('.tab-button').removeClass('active');
-                $(this).addClass('active');
-                $('.tab-content').hide();
-                var tabName = $(this).attr('data-tab');
-                $('#' + tabName).show();
-                $('#<%= activeTabHidden.ClientID %>').val(tabName);
-            });
-
-            // Set initial tab
-            var activeTab = $('#<%= activeTabHidden.ClientID %>').val();
-            if (activeTab) {
-                $('.tab-content').hide();
-                $('#' + activeTab).show();
-                $('.tab-button').removeClass('active');
-                $('.tab-button[data-tab="' + activeTab + '"]').addClass('active');
-            }
-        }
-
-        // Re-bind events after AJAX update
-        var prm = Sys.WebForms.PageRequestManager.getInstance();
-        prm.add_endRequest(function () {
-            bindTabEvents();
-        });
-        function showReassignmentModal() {
-            var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
-            if (modal) {
-                modal.style.display = 'block';
-            }
-        }
-
-        function hideReassignmentModal() {
-            var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-        function showLocationDeleteModal() {
-            var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
-            if (modal) {
-                modal.style.display = 'block';
-            }
-        }
-
-        function hideLocationDeleteModal() {
-            var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        // Add to your existing click outside handler
-        document.addEventListener('click', function (e) {
-            // Existing code for other modals...
-
-            // Location Delete Panel
-            var locationDeletePanel = document.getElementById('<%= pnlLocationDelete.ClientID %>');
-    if (locationDeletePanel && locationDeletePanel.style.display === 'block') {
-        var locationDeleteContent = locationDeletePanel.querySelector('.modal-panel-content');
-        if (locationDeleteContent && !locationDeleteContent.contains(e.target)) {
-            hideLocationDeleteModal();
+        // Set initial tab
+        var activeTab = $('#<%= activeTabHidden.ClientID %>').val();
+        if (activeTab) {
+            $('.tab-content').hide();
+            $('#' + activeTab).show();
+            $('.tab-button').removeClass('active');
+            $('.tab-button[data-tab="' + activeTab + '"]').addClass('active');
         }
     }
-});
-        // Add to your existing click outside handler
-        document.addEventListener('click', function (e) {
-            // Existing code for other modals...
 
-            // Reassignment Panel
-            var reassignmentPanel = document.getElementById('<%= pnlReassignment.ClientID %>');
-    if (reassignmentPanel && reassignmentPanel.style.display === 'block') {
-        var reassignmentContent = reassignmentPanel.querySelector('.modal-panel-content');
-        if (reassignmentContent && !reassignmentContent.contains(e.target)) {
-            hideReassignmentModal();
-        }
-    }
-});
-        function showPositionDeleteModal() {
-            var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
-            if (modal) {
-                modal.style.display = 'block';
+    // Close modals when clicking outside (except for delete confirmation which requires explicit action)
+    document.addEventListener('click', function (e) {
+        // Success Modal
+        var successModal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+        if (successModal && successModal.style.display === 'block') {
+            var successContent = successModal.querySelector('.modal-panel-content');
+            if (successContent && !successContent.contains(e.target)) {
+                hideSuccessModal();
             }
         }
 
-        function hidePositionDeleteModal() {
-            var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
-            if (modal) {
-                modal.style.display = 'none';
+        // Department Reassignment Modal
+        var reassignmentModal = document.getElementById('<%= pnlReassignment.ClientID %>');
+        if (reassignmentModal && reassignmentModal.style.display === 'block') {
+            var reassignmentContent = reassignmentModal.querySelector('.modal-panel-content');
+            if (reassignmentContent && !reassignmentContent.contains(e.target)) {
+                hideReassignmentModal();
             }
         }
 
-        // Add to your existing click outside handler
-        document.addEventListener('click', function (e) {
-            // Existing code for other modals...
-
-            // Position Delete Panel
-            var positionDeletePanel = document.getElementById('<%= pnlPositionDelete.ClientID %>');
-    if (positionDeletePanel && positionDeletePanel.style.display === 'block') {
-        var positionDeleteContent = positionDeletePanel.querySelector('.modal-panel-content');
-        if (positionDeleteContent && !positionDeleteContent.contains(e.target)) {
-            hidePositionDeleteModal();
+        // Position Delete Modal
+        var positionDeleteModal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
+        if (positionDeleteModal && positionDeleteModal.style.display === 'block') {
+            var positionDeleteContent = positionDeleteModal.querySelector('.modal-panel-content');
+            if (positionDeleteContent && !positionDeleteContent.contains(e.target)) {
+                hidePositionDeleteModal();
+            }
         }
-    }
-});
 
-    </script>
+        // Location Delete Modal
+        var locationDeleteModal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
+        if (locationDeleteModal && locationDeleteModal.style.display === 'block') {
+            var locationDeleteContent = locationDeleteModal.querySelector('.modal-panel-content');
+            if (locationDeleteContent && !locationDeleteContent.contains(e.target)) {
+                hideLocationDeleteModal();
+            }
+        }
+        
+        // Delete confirmation modal intentionally doesn't close on outside click to force user to make a decision
+        
+    });
+
+    // Name validation function
+    function validateName(input) {
+        var nameRegex = /^[a-zA-Z\-\s]+$/;
+        return nameRegex.test(input.value);
+    }
+
+    function setupNameValidation() {
+        var firstNameInput = document.getElementById('<%= firstNameTextbox.ClientID %>');
+        var lastNameInput = document.getElementById('<%= lastNameTextbox.ClientID %>');
+
+           if (firstNameInput) {
+               firstNameInput.addEventListener('input', function () {
+                   if (!validateName(this)) {
+                       this.style.borderColor = 'red';
+                   } else {
+                       this.style.borderColor = '';
+                   }
+               });
+           }
+
+           if (lastNameInput) {
+               lastNameInput.addEventListener('input', function () {
+                   if (!validateName(this)) {
+                       this.style.borderColor = 'red';
+                   } else {
+                       this.style.borderColor = '';
+                   }
+               });
+           }
+       }
+       function validateDepartmentForm() {
+           var departmentName = document.getElementById('<%= txtDepartmentName.ClientID %>').value.trim();
+           var locationId = document.getElementById('<%= ddlDepartmentLocation.ClientID %>').value;
+
+           if (departmentName === "") {
+               alert("Please enter a department name.");
+               return false;
+           }
+
+           if (locationId === "" || locationId === "0") {
+               alert("Please select a location for the department.");
+               return false;
+           }
+
+           return true;
+       }
+       // Initialize on page load
+       $(document).ready(function () {
+           bindTabEvents();
+           setupNameValidation();
+
+           // Set up modal close buttons
+           $('[data-dismiss="modal"]').on('click', function () {
+               var modal = $(this).closest('.modal-panel');
+               modal.hide();
+               // Remove backdrop
+               $('.modal-backdrop').remove();
+               document.body.style.overflow = '';
+           });
+       });
+
+       // Re-bind events after AJAX update
+       var prm = Sys.WebForms.PageRequestManager.getInstance();
+       prm.add_endRequest(function () {
+           bindTabEvents();
+           setupNameValidation();
+       });
+   </script>
 </asp:Content>
