@@ -12,7 +12,7 @@
 </asp:Content>
 
 <asp:Content ID="Content4" ContentPlaceHolderID="mainContentPlaceHolder" runat="server">
-   
+
     <div class="tab-container">
         <div class="tabs">
             <asp:LinkButton ID="lbEmployeeTab" runat="server" CssClass="tab-button active" OnClick="SwitchTab" CommandArgument="employeeTab">Employee Management</asp:LinkButton>
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Employee Tab -->
-         <asp:UpdatePanel ID="upEmployeeTab" runat="server" UpdateMode="Conditional">
+        <asp:UpdatePanel ID="upEmployeeTab" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
                 <asp:Panel ID="employeeTab" runat="server" CssClass="tab-content active">
                     <h2>Employee Management</h2>
@@ -144,7 +144,7 @@
                             </asp:GridView>
                         </div>
                     </div>
-         </asp:Panel>
+                </asp:Panel>
             </ContentTemplate>
             <Triggers>
                 <asp:AsyncPostBackTrigger ControlID="submitButton" EventName="Click" />
@@ -154,50 +154,71 @@
         </asp:UpdatePanel>
 
         <!-- Department Tab -->
-        <asp:UpdatePanel ID="upDepartmentTab" runat="server" UpdateMode="Conditional">
-            <ContentTemplate>
-                <asp:Panel ID="departmentTab" runat="server" CssClass="tab-content">
-                    <h2>Department Management</h2>
+        <asp:Panel ID="departmentTab" runat="server" CssClass="tab-content">
+            <h2>Department Management</h2>
 
-                    <!-- Add Department Form -->
-                    <div class="form-section">
-                        <h3>Add New Department</h3>
-                        <div id="departmentValidationMessageDiv">
-                            <asp:Label ID="departmentValidationMessage" runat="server" ForeColor="Red"></asp:Label>
-                        </div>
+            <div class="form-section">
+                <h3>Add New Department</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="txtDepartmentName">Department Name:</label>
+                        <asp:TextBox ID="txtDepartmentName" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="txtDepartmentName">Department Name:</label>
-                                <asp:TextBox ID="txtDepartmentName" runat="server" CssClass="form-control"></asp:TextBox>
-                            </div>
-                        </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ddlDepartmentLocation">Location:</label>
+                        <asp:DropDownList ID="ddlDepartmentLocation" runat="server" CssClass="form-control"></asp:DropDownList>
+                    </div>
+                </div>
 
+                <div class="form-group">
+                    <asp:Button ID="btnAddDepartment" runat="server" Text="Add Department"
+                        CssClass="btn btn-primary" OnClick="btnAddDepartment_Click" />
+                </div>
+
+                <div class="form-group">
+                    <asp:Label ID="departmentValidationMessage" runat="server" CssClass="validation-message"></asp:Label>
+                </div>
+            </div>
+
+            <div class="grid-section">
+                <h3>Current Departments</h3>
+                <asp:GridView ID="gvDepartments" runat="server" AutoGenerateColumns="False"
+                    CssClass="table table-striped table-bordered"
+                    DataKeyNames="DepartmentID" OnRowDeleting="gvDepartments_RowDeleting">
+                    <Columns>
+
+                        <asp:BoundField DataField="DepartmentName" HeaderText="Department Name" SortExpression="DepartmentName" />
+                        <asp:BoundField DataField="LocationName" HeaderText="Location" SortExpression="LocationName" />
+                        <asp:BoundField DataField="EmployeeCount" HeaderText="Number of Employees" SortExpression="EmployeeCount"
+                            ItemStyle-HorizontalAlign="Center" />
+                        <asp:CommandField ShowDeleteButton="True" HeaderText="Actions" ButtonType="Button" DeleteText="Delete"
+                            ItemStyle-HorizontalAlign="Center" />
+                    </Columns>
+                </asp:GridView>
+            </div>
+            <asp:Panel ID="pnlReassignment" runat="server" CssClass="modal-panel" Style="display: none;">
+                <div class="modal-panel-content">
+                    <div class="modal-header">
+                        <h5>Department Has Employees</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>This department contains employees. Please select where to reassign them:</p>
                         <div class="form-group">
-                            <asp:Button ID="btnAddDepartment" runat="server" Text="Add Department"
-                                CssClass="btn btn-primary" OnClick="btnAddDepartment_Click" />
+                            <label for="ddlTargetDepartment">Move employees to:</label>
+                            <asp:DropDownList ID="ddlTargetDepartment" runat="server" CssClass="form-control"></asp:DropDownList>
                         </div>
                     </div>
-
-                    <!-- Department List -->
-                    <div class="form-section">
-                        <h3>Department List</h3>
-                        <asp:GridView ID="gvDepartments" runat="server" AutoGenerateColumns="false" CssClass="table table-striped"
-                            OnRowDeleting="gvDepartments_RowDeleting" DataKeyNames="DepartmentID">
-                            <Columns>
-                                <asp:BoundField DataField="DepartmentID" HeaderText="ID" />
-                                <asp:BoundField DataField="DepartmentName" HeaderText="Department Name" />
-                                <asp:CommandField ShowDeleteButton="True" ButtonType="Button" DeleteText="Delete" ControlStyle-CssClass="btn btn-danger btn-sm" />
-                            </Columns>
-                        </asp:GridView>
+                    <div class="modal-footer">
+                        <asp:Button ID="btnCancelReassignment" runat="server" Text="Cancel" CssClass="btn btn-secondary" OnClientClick="hideReassignmentModal(); return false;" />
+                        <asp:Button ID="btnConfirmReassignment" runat="server" Text="Reassign and Delete" CssClass="btn btn-primary" OnClick="btnConfirmReassignment_Click" />
                     </div>
-                </asp:Panel>
-            </ContentTemplate>
-            <Triggers>
-                <asp:AsyncPostBackTrigger ControlID="btnAddDepartment" EventName="Click" />
-                <asp:AsyncPostBackTrigger ControlID="gvDepartments" EventName="RowDeleting" />
-            </Triggers>
-        </asp:UpdatePanel>
+                </div>
+            </asp:Panel>
+        </asp:Panel>
+
 
         <!-- Position Tab -->
         <asp:UpdatePanel ID="upPositionTab" runat="server" UpdateMode="Conditional">
@@ -243,6 +264,33 @@
                 <asp:AsyncPostBackTrigger ControlID="btnAddPosition" EventName="Click" />
                 <asp:AsyncPostBackTrigger ControlID="gvPositions" EventName="RowDeleting" />
             </Triggers>
+
+        </asp:UpdatePanel>
+        <asp:UpdatePanel ID="upPositionModal" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <asp:Panel ID="pnlPositionDelete" runat="server" CssClass="modal-panel" Style="display: none;">
+                    <div class="modal-panel-content">
+                        <div class="modal-header">
+                            <h5>Confirm Position Deletion</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-warning">
+                                <strong>Warning!</strong> This position has employees assigned to it.
+                            </div>
+                            <p>
+                                Employees with this position will be moved to: 
+                        <strong>
+                            <asp:Label ID="lblNextPosition" runat="server" Text=""></asp:Label></strong>
+                            </p>
+                            <p class="text-danger"><strong>This action cannot be undone!</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                            <asp:Button ID="btnCancelPositionDelete" runat="server" Text="Cancel" CssClass="btn btn-secondary" OnClientClick="hidePositionDeleteModal(); return false;" />
+                            <asp:Button ID="btnConfirmPositionDelete" runat="server" Text="Reassign and Delete" CssClass="btn btn-primary" OnClick="btnConfirmPositionDelete_Click" />
+                        </div>
+                    </div>
+                </asp:Panel>
+            </ContentTemplate>
         </asp:UpdatePanel>
 
         <!-- Location Tab -->
@@ -290,32 +338,60 @@
                 <asp:AsyncPostBackTrigger ControlID="gvLocations" EventName="RowDeleting" />
             </Triggers>
         </asp:UpdatePanel>
+        <asp:UpdatePanel ID="upLocationModal" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <asp:Panel ID="pnlLocationDelete" runat="server" CssClass="modal-panel" Style="display: none;">
+                    <div class="modal-panel-content">
+                        <div class="modal-header">
+                            <h5>Confirm Location Deletion</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-warning">
+                                <strong>Warning!</strong> This location has departments assigned to it.
+                            </div>
+                            <p>
+                                Departments at this location will be moved to: 
+                        <strong>
+                            <asp:Label ID="lblNextLocation" runat="server" Text=""></asp:Label></strong>
+                            </p>
+                            <p class="text-danger"><strong>This action cannot be undone!</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                            <asp:Button ID="btnCancelLocationDelete" runat="server" Text="Cancel" CssClass="btn btn-secondary" OnClientClick="hideLocationDeleteModal(); return false;" />
+                            <asp:Button ID="btnConfirmLocationDelete" runat="server" Text="Reassign and Delete" CssClass="btn btn-primary" OnClick="btnConfirmLocationDelete_Click" />
+                        </div>
+                    </div>
+                </asp:Panel>
+            </ContentTemplate>
+        </asp:UpdatePanel>
     </div>
 
-    <!-- Success Panel -->
-    <asp:UpdatePanel ID="upSuccess" runat="server" UpdateMode="Conditional">
-        <ContentTemplate>
-            <asp:Panel ID="pnlSuccess" runat="server" CssClass="success-panel" style="display: none;">
-                <div class="success-panel-content">
-                    <div class="success-header">
-                        <span class="success-icon">✓</span>
-                        <h5>Success</h5>
-                    </div>
-                    <div class="success-body">
+    <!-- Success Modal -->
+   <asp:UpdatePanel ID="upSuccessModal" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
+        <asp:Panel ID="pnlSuccessModal" runat="server" CssClass="modal-panel" style="display: none;">
+            <div class="modal-panel-content">
+                <div class="modal-header" style="background-color: #28a745;">
+                    <h5 style="color: white;">Success</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success">
+                        <strong>Success!</strong> 
                         <asp:Label ID="lblSuccessMessage" runat="server" Text=""></asp:Label>
                     </div>
-                    <div class="success-footer">
-                        <asp:Button ID="btnSuccessOK" runat="server" Text="OK" CssClass="btn btn-primary" OnClientClick="hideSuccessPanel(); return false;" />
-                    </div>
                 </div>
-            </asp:Panel>
-        </ContentTemplate>
-    </asp:UpdatePanel>
+                <div class="modal-footer">
+                    <asp:Button ID="btnSuccessOK" runat="server" Text="OK" CssClass="btn btn-success" OnClientClick="hideSuccessModal(); return false;" />
+                </div>
+            </div>
+        </asp:Panel>
+    </ContentTemplate>
+</asp:UpdatePanel>
 
     <!-- Delete Confirmation Panel -->
     <asp:UpdatePanel ID="upDeleteConfirm" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <asp:Panel ID="pnlDeleteConfirm" runat="server" CssClass="modal-panel" style="display: none;">
+            <asp:Panel ID="pnlDeleteConfirm" runat="server" CssClass="modal-panel" Style="display: none;">
                 <div class="modal-panel-content">
                     <div class="modal-header">
                         <h5>Confirm Delete</h5>
@@ -340,19 +416,19 @@
     <asp:HiddenField ID="activeTabHidden" runat="server" Value="employeeTab" />
 
     <script type="text/javascript">
-        function showSuccessPanel() {
-            var panel = document.getElementById('<%= pnlSuccess.ClientID %>');
-            if (panel) {
-                panel.style.display = 'block';
-            }
-        }
+        function showSuccessModal() {
+            var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
 
-        function hideSuccessPanel() {
-            var panel = document.getElementById('<%= pnlSuccess.ClientID %>');
-            if (panel) {
-                panel.style.display = 'none';
-            }
-        }
+function hideSuccessModal() {
+    var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
 
         function showDeletePanel() {
             var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
@@ -371,15 +447,18 @@
 
         // Close panels when clicking outside
         document.addEventListener('click', function (e) {
-            // Success Panel
-            var successPanel = document.getElementById('<%= pnlSuccess.ClientID %>');
-            if (successPanel && successPanel.style.display === 'block') {
-                var successContent = successPanel.querySelector('.success-panel-content');
+            // Existing code for other modals...
+
+            // Success Modal
+            var successModal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+            if (successModal && successModal.style.display === 'block') {
+                var successContent = successModal.querySelector('.modal-panel-content');
                 if (successContent && !successContent.contains(e.target)) {
-                    hideSuccessPanel();
+                    hideSuccessModal();
                 }
             }
-
+        });
+        document.addEventListener('click', function (e) {
             // Delete Panel
             var deletePanel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
             if (deletePanel && deletePanel.style.display === 'block') {
@@ -428,5 +507,86 @@
         prm.add_endRequest(function () {
             bindTabEvents();
         });
+        function showReassignmentModal() {
+            var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
+            if (modal) {
+                modal.style.display = 'block';
+            }
+        }
+
+        function hideReassignmentModal() {
+            var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        function showLocationDeleteModal() {
+            var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
+            if (modal) {
+                modal.style.display = 'block';
+            }
+        }
+
+        function hideLocationDeleteModal() {
+            var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Add to your existing click outside handler
+        document.addEventListener('click', function (e) {
+            // Existing code for other modals...
+
+            // Location Delete Panel
+            var locationDeletePanel = document.getElementById('<%= pnlLocationDelete.ClientID %>');
+    if (locationDeletePanel && locationDeletePanel.style.display === 'block') {
+        var locationDeleteContent = locationDeletePanel.querySelector('.modal-panel-content');
+        if (locationDeleteContent && !locationDeleteContent.contains(e.target)) {
+            hideLocationDeleteModal();
+        }
+    }
+});
+        // Add to your existing click outside handler
+        document.addEventListener('click', function (e) {
+            // Existing code for other modals...
+
+            // Reassignment Panel
+            var reassignmentPanel = document.getElementById('<%= pnlReassignment.ClientID %>');
+    if (reassignmentPanel && reassignmentPanel.style.display === 'block') {
+        var reassignmentContent = reassignmentPanel.querySelector('.modal-panel-content');
+        if (reassignmentContent && !reassignmentContent.contains(e.target)) {
+            hideReassignmentModal();
+        }
+    }
+});
+        function showPositionDeleteModal() {
+            var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
+            if (modal) {
+                modal.style.display = 'block';
+            }
+        }
+
+        function hidePositionDeleteModal() {
+            var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Add to your existing click outside handler
+        document.addEventListener('click', function (e) {
+            // Existing code for other modals...
+
+            // Position Delete Panel
+            var positionDeletePanel = document.getElementById('<%= pnlPositionDelete.ClientID %>');
+    if (positionDeletePanel && positionDeletePanel.style.display === 'block') {
+        var positionDeleteContent = positionDeletePanel.querySelector('.modal-panel-content');
+        if (positionDeleteContent && !positionDeleteContent.contains(e.target)) {
+            hidePositionDeleteModal();
+        }
+    }
+});
+
     </script>
 </asp:Content>

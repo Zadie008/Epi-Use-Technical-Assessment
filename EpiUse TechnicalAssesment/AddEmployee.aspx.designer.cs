@@ -231,15 +231,6 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.GridView gvEmployees;
 
         /// <summary>
-        /// upDepartmentTab control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel upDepartmentTab;
-
-        /// <summary>
         /// departmentTab control.
         /// </summary>
         /// <remarks>
@@ -247,15 +238,6 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel departmentTab;
-
-        /// <summary>
-        /// departmentValidationMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label departmentValidationMessage;
 
         /// <summary>
         /// txtDepartmentName control.
@@ -267,6 +249,15 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.TextBox txtDepartmentName;
 
         /// <summary>
+        /// ddlDepartmentLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlDepartmentLocation;
+
+        /// <summary>
         /// btnAddDepartment control.
         /// </summary>
         /// <remarks>
@@ -276,6 +267,15 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Button btnAddDepartment;
 
         /// <summary>
+        /// departmentValidationMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label departmentValidationMessage;
+
+        /// <summary>
         /// gvDepartments control.
         /// </summary>
         /// <remarks>
@@ -283,6 +283,42 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvDepartments;
+
+        /// <summary>
+        /// pnlReassignment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlReassignment;
+
+        /// <summary>
+        /// ddlTargetDepartment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlTargetDepartment;
+
+        /// <summary>
+        /// btnCancelReassignment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelReassignment;
+
+        /// <summary>
+        /// btnConfirmReassignment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmReassignment;
 
         /// <summary>
         /// upPositionTab control.
@@ -339,6 +375,51 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.GridView gvPositions;
 
         /// <summary>
+        /// upPositionModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upPositionModal;
+
+        /// <summary>
+        /// pnlPositionDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlPositionDelete;
+
+        /// <summary>
+        /// lblNextPosition control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNextPosition;
+
+        /// <summary>
+        /// btnCancelPositionDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelPositionDelete;
+
+        /// <summary>
+        /// btnConfirmPositionDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmPositionDelete;
+
+        /// <summary>
         /// upLocationTab control.
         /// </summary>
         /// <remarks>
@@ -393,22 +474,67 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.GridView gvLocations;
 
         /// <summary>
-        /// upSuccess control.
+        /// upLocationModal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel upSuccess;
+        protected global::System.Web.UI.UpdatePanel upLocationModal;
 
         /// <summary>
-        /// pnlSuccess control.
+        /// pnlLocationDelete control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlSuccess;
+        protected global::System.Web.UI.WebControls.Panel pnlLocationDelete;
+
+        /// <summary>
+        /// lblNextLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNextLocation;
+
+        /// <summary>
+        /// btnCancelLocationDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelLocationDelete;
+
+        /// <summary>
+        /// btnConfirmLocationDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmLocationDelete;
+
+        /// <summary>
+        /// upSuccessModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upSuccessModal;
+
+        /// <summary>
+        /// pnlSuccessModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlSuccessModal;
 
         /// <summary>
         /// lblSuccessMessage control.
