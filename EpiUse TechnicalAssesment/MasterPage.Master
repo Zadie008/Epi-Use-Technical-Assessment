@@ -34,9 +34,9 @@
                                 <span class="nav-title">Add employee</span>
                             </a>
                         </asp:PlaceHolder>
-                        <a href="ReadMe.aspx" class="nav-card">
+                        <a href="References.aspx" class="nav-card">
                             <img src="Images/google-docs.png" alt="Read Me Icon" class="nav-icon" />
-                            <span class="nav-title">Read Me</span>
+                            <span class="nav-title">References</span>
                         </a>
                     </div>
                 </nav>

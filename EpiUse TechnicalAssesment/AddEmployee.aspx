@@ -296,6 +296,7 @@
             </ContentTemplate>
         </asp:UpdatePanel>
 
+
         <!-- Location Tab -->
         <asp:UpdatePanel ID="upLocationTab" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
@@ -506,8 +507,15 @@
                document.body.appendChild(backdrop);
                document.body.style.overflow = 'hidden'; // Prevent scrolling
            }
+       } execution
+               if (callback) {
+                   modal.dataset.callback = callback;
+               }
+           }
        }
-
+             eval(callback);
+           }
+       }
        function hideReassignmentModal() {
            var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
            if (modal) {
@@ -567,12 +575,11 @@
             backdrop.style.left = '0';
             backdrop.style.width = '100%';
             backdrop.style.height = '100%';
-            backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-            backdrop.style.zIndex = '1040';
-            document.body.appendChild(backdrop);
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-        }
-    }
+            backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)' backdrops.forEach(function (backdrop) {
+               document.body.removeChild(backdrop);
+           });
+           document.body.style.overflow = ''; // Re-enable scrolling
+       }
 
     function hideLocationDeleteModal() {
         var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');

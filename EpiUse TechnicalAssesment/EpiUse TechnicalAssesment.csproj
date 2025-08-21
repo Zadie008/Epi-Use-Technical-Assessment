@@ -79,7 +79,7 @@
     <Content Include="Web.config" />
     <Content Include="Login.aspx" />
     <Content Include="Dashboard.aspx" />
-    <Content Include="ReadMe.aspx" />
+    <Content Include="References.aspx" />
     <Content Include="ViewEmployee.aspx" />
     <Content Include="AddEmployee.aspx" />
     <Content Include="ChangeProfilePhoto.aspx" />
@@ -108,12 +108,12 @@
     <Compile Include="Dashboard.aspx.designer.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ReadMe.aspx.cs">
-      <DependentUpon>ReadMe.aspx</DependentUpon>
+    <Compile Include="References.aspx.cs">
+      <DependentUpon>References.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ReadMe.aspx.designer.cs">
-      <DependentUpon>ReadMe.aspx</DependentUpon>
+    <Compile Include="References.aspx.designer.cs">
+      <DependentUpon>References.aspx</DependentUpon>
     </Compile>
     <Compile Include="ViewEmployee.aspx.cs">
       <DependentUpon>ViewEmployee.aspx</DependentUpon>

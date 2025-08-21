@@ -694,7 +694,7 @@ namespace EpiUse_TechnicalAssesment
 
                     transaction.Commit();
 
-                    lblSuccessMessage.Text = "Your success message";
+                    lblSuccessMessage.Text = "Reassignment of employees departments was successful";
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
                     upSuccessModal.Update();
                     BindGridViews();
@@ -722,27 +722,20 @@ namespace EpiUse_TechnicalAssesment
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                // First get the maximum PositionID
-                string maxIdQuery = "SELECT ISNULL(MAX(PositionID), 0) FROM POSITION";
-                string insertQuery = "INSERT INTO POSITION (PositionID, PositionName) VALUES (@PositionID, @PositionName)";
+                // Remove the manual ID generation and let SQL Server handle it
+                string insertQuery = "INSERT INTO POSITION (PositionName) VALUES (@PositionName)";
 
-                using (SqlCommand cmdMaxId = new SqlCommand(maxIdQuery, connection))
                 using (SqlCommand cmdInsert = new SqlCommand(insertQuery, connection))
                 {
                     try
                     {
                         connection.Open();
-                        int newPositionId = Convert.ToInt32(cmdMaxId.ExecuteScalar()) + 1;
-
-                        cmdInsert.Parameters.AddWithValue("@PositionID", newPositionId);
                         cmdInsert.Parameters.AddWithValue("@PositionName", positionName);
                         cmdInsert.ExecuteNonQuery();
-                        lblSuccessMessage.Text = "Your success message";
+
+                        lblSuccessMessage.Text = "Position added successfully!";
                         ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
                         upSuccessModal.Update();
-
-                        UpdatePositionPanel();
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
 
                         txtPositionName.Text = "";
                         BindGridViews();
@@ -755,6 +748,7 @@ namespace EpiUse_TechnicalAssesment
                 }
             }
         }
+
         private bool PositionHasEmployees(int positionId)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -828,7 +822,7 @@ namespace EpiUse_TechnicalAssesment
 
                     transaction.Commit();
 
-                    lblSuccessMessage.Text = "Your success message";
+                    lblSuccessMessage.Text = "employees reassignment was successful";
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
                     upSuccessModal.Update();
                     BindGridViews();
@@ -913,7 +907,7 @@ namespace EpiUse_TechnicalAssesment
                         connection.Open();
                         cmd.ExecuteNonQuery();
 
-                        lblSuccessMessage.Text = "Your success message";
+                        lblSuccessMessage.Text = "The position was deleted successfully ";
                         ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
                         upSuccessModal.Update();
                         BindGridViews();
@@ -950,48 +944,131 @@ namespace EpiUse_TechnicalAssesment
 
             if (string.IsNullOrEmpty(locationName))
             {
-                locationValidationMessage.Text = "Location name is required.";
+                locationValidationMessage.Text = "Please enter a location name.";
+                locationValidationMessage.ForeColor = System.Drawing.Color.Red;
+                upLocationTab.Update(); // Update panel to show error
                 return;
             }
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            // Check if connection string exists
+            if (ConfigurationManager.ConnectionStrings["MyDbConnection"] == null)
             {
-                // First get the maximum LocationID
-                string maxIdQuery = "SELECT ISNULL(MAX(LocationID), 0) FROM LOCATION";
-                string insertQuery = "INSERT INTO LOCATION (LocationID, LocationName) VALUES (@LocationID, @LocationName)";
+                locationValidationMessage.Text = "Database connection not configured.";
+                locationValidationMessage.ForeColor = System.Drawing.Color.Red;
+                upLocationTab.Update(); // Update panel to show error
+                return;
+            }
 
-                using (SqlCommand cmdMaxId = new SqlCommand(maxIdQuery, connection))
-                using (SqlCommand cmdInsert = new SqlCommand(insertQuery, connection))
+            string connectionString = ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    try
+                    string query = "INSERT INTO LOCATION (LocationName) VALUES (@LocationName)";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        connection.Open();
-                        int newLocationId = Convert.ToInt32(cmdMaxId.ExecuteScalar()) + 1;
+                        cmd.Parameters.AddWithValue("@LocationName", locationName);
+                        conn.Open();
+                        int rowsAffected = cmd.ExecuteNonQuery();
 
-                        cmdInsert.Parameters.AddWithValue("@LocationID", newLocationId);
-                        cmdInsert.Parameters.AddWithValue("@LocationName", locationName);
-                        cmdInsert.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            // Success - clear form and show success message
+                            txtLocationName.Text = "";
+                            locationValidationMessage.Text = ""; // Clear any previous error messages
 
-                        lblSuccessMessage.Text = "Your success message";
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
-                        upSuccessModal.Update();
+                            // Refresh data
+                            BindLocations();
+                            PopulateDropdowns();
 
-                        UpdateLocationPanel();
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessPanel(); }, 5000);", true);
+                            // Show success modal
+                            lblSuccessMessage.Text = "Location added successfully!";
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
 
-                        txtLocationName.Text = "";
-                        BindGridViews();
-                        PopulateDropdowns();
-                    }
-                    catch (Exception ex)
-                    {
-                        locationValidationMessage.Text = "An error occurred: " + ex.Message;
+                            // Update success panel
+                            upSuccessModal.Update();
+                        }
+                        else
+                        {
+                            locationValidationMessage.Text = "Failed to add location.";
+                            locationValidationMessage.ForeColor = System.Drawing.Color.Red;
+                            upLocationTab.Update(); // Update panel to show error
+                        }
                     }
                 }
             }
+            catch (SqlException sqlEx)
+            {
+                locationValidationMessage.Text = "Database error: " + sqlEx.Message;
+                locationValidationMessage.ForeColor = System.Drawing.Color.Red;
+                upLocationTab.Update(); // Update panel to show error
+            }
+            catch (Exception ex)
+            {
+                locationValidationMessage.Text = "Error: " + ex.Message;
+                locationValidationMessage.ForeColor = System.Drawing.Color.Red;
+                upLocationTab.Update(); // Update panel to show error
+            }
+
+            // Always update the location tab panel
+            upLocationTab.Update();
         }
+        private void BindLocations()
+        {
+            try
+            {
+                if (ConfigurationManager.ConnectionStrings["MyDbConnection"] == null)
+                {
+                    throw new Exception("Database connection not configured.");
+                }
 
+                string connectionString = ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString;
 
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = "SELECT LocationID, LocationName FROM LOCATION ORDER BY LocationName";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        // Check if controls exist before binding
+                        if (gvLocations != null)
+                        {
+                            gvLocations.DataSource = dt;
+                            gvLocations.DataBind();
+                        }
+
+                        if (ddlDepartmentLocation != null && dt.Rows.Count > 0)
+                        {
+                            ddlDepartmentLocation.DataSource = dt;
+                            ddlDepartmentLocation.DataTextField = "LocationName";
+                            ddlDepartmentLocation.DataValueField = "LocationID";
+                            ddlDepartmentLocation.DataBind();
+                            ddlDepartmentLocation.Items.Insert(0, new ListItem("-- Select Location --", "0"));
+                        }
+
+                        if (locationDropdown != null && dt.Rows.Count > 0)
+                        {
+                            locationDropdown.DataSource = dt;
+                            locationDropdown.DataTextField = "LocationName";
+                            locationDropdown.DataValueField = "LocationID";
+                            locationDropdown.DataBind();
+                            locationDropdown.Items.Insert(0, new ListItem("-- Select Location --", "0"));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error or show message
+                System.Diagnostics.Debug.WriteLine("Error in BindLocations: " + ex.Message);
+            }
+        }
         protected void gvDepartments_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
             int departmentId = Convert.ToInt32(gvDepartments.DataKeys[e.RowIndex].Value);
@@ -1054,7 +1131,7 @@ namespace EpiUse_TechnicalAssesment
                         connection.Open();
                         cmd.ExecuteNonQuery();
 
-                        lblSuccessMessage.Text = "Your success message";
+                        lblSuccessMessage.Text = "Location deleted successfully";
                         ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
                         upSuccessModal.Update();
                         BindGridViews();
@@ -1098,7 +1175,7 @@ namespace EpiUse_TechnicalAssesment
                         connection.Open();
                         cmd.ExecuteNonQuery();
 
-                        lblSuccessMessage.Text = "Your success message";
+                        lblSuccessMessage.Text = "Department deleted successfully";
                         ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
                         upSuccessModal.Update();
                         BindGridViews();
@@ -1202,7 +1279,7 @@ namespace EpiUse_TechnicalAssesment
 
                     transaction.Commit();
 
-                    lblSuccessMessage.Text = "Your success message";
+                    lblSuccessMessage.Text = "Reassigned successfully";
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
                     upSuccessModal.Update();
                     BindGridViews();
@@ -1307,7 +1384,7 @@ namespace EpiUse_TechnicalAssesment
                             cmdLog.Parameters.AddWithValue("@DeletedByEmployeeID", loggedInEmployeeId);
                             cmdLog.ExecuteNonQuery();
 
-                            lblSuccessMessage.Text = "Your success message";
+                            lblSuccessMessage.Text = "Employee has been deleted";
                             ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
                             upSuccessModal.Update();
 
