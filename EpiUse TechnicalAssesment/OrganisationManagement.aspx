@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Database Management" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="AddEmployee.aspx.cs" Inherits="EpiUse_TechnicalAssesment.AddEmployee" %>
+﻿<%@ Page Title="Database Management" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="OrganisationManagement.aspx.cs" Inherits="EpiUse_TechnicalAssesment.AddEmployee" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="tab" runat="server">
     Database Management
@@ -33,76 +33,56 @@
                         <div id="validationMessageDiv">
                             <asp:Label ID="validationMessage" runat="server" ForeColor="Red"></asp:Label>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="firstNameTextbox">First Name:</label>
-                                <asp:TextBox ID="firstNameTextbox" runat="server" CssClass="form-control"></asp:TextBox>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastNameTextbox">Last Name:</label>
-                                <asp:TextBox ID="lastNameTextbox" runat="server" CssClass="form-control"></asp:TextBox>
-                            </div>
+                        <div class="form-group">
+                            <label for="firstNameTextbox">First Name:</label>
+                            <asp:TextBox ID="firstNameTextbox" runat="server" CssClass="form-control"></asp:TextBox>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="dobTextbox">Date of Birth:</label>
-                                <asp:TextBox ID="dobTextbox" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
-                            </div>
-                            <div class="form-group">
-                                <label for="emailTextbox">Email:</label>
-                                <asp:TextBox ID="emailTextbox" runat="server" TextMode="Email" CssClass="form-control"></asp:TextBox>
-                            </div>
+                        <div class="form-group">
+                            <label for="lastNameTextbox">Last Name:</label>
+                            <asp:TextBox ID="lastNameTextbox" runat="server" CssClass="form-control"></asp:TextBox>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="positionDropdown">Position:</label>
-                                <asp:DropDownList ID="positionDropdown" runat="server" CssClass="form-control"></asp:DropDownList>
-                            </div>
-                            <div class="form-group">
-                                <label for="departmentDropdown">Department:</label>
-                                <asp:DropDownList ID="departmentDropdown" runat="server" CssClass="form-control"></asp:DropDownList>
-                            </div>
+                        <div class="form-group">
+                            <label for="dobTextbox">Date of Birth:</label>
+                            <asp:TextBox ID="dobTextbox" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="locationDropdown">Location:</label>
-                                <asp:DropDownList ID="locationDropdown" runat="server" CssClass="form-control"></asp:DropDownList>
-                            </div>
-                            <div class="form-group">
-                                <label for="managerDropdown">Manager:</label>
-                                <asp:DropDownList ID="managerDropdown" runat="server" CssClass="form-control">
-                                    <asp:ListItem Value="0">-- No Manager --</asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
+                        <div class="form-group">
+                            <label for="emailTextbox">Email:</label>
+                            <asp:TextBox ID="emailTextbox" runat="server" TextMode="Email" CssClass="form-control"></asp:TextBox>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="passwordTextbox">Password:</label>
-                                <asp:TextBox ID="passwordTextbox" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
-                            </div>
-                            <div class="form-group">
-                                <label for="confirmPassword">Confirm Password:</label>
-                                <asp:TextBox ID="confirmPassword" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
-                            </div>
+                        <div class="form-group">
+                            <label for="positionDropdown">Position:</label>
+                            <asp:DropDownList ID="positionDropdown" runat="server" CssClass="form-control"></asp:DropDownList>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="salaryTextbox">Salary:</label>
-                                <asp:TextBox ID="salaryTextbox" runat="server" TextMode="Number" step="0.01" min="0" CssClass="form-control"></asp:TextBox>
-                            </div>
+                        <div class="form-group">
+                            <label for="departmentDropdown">Department:</label>
+                            <asp:DropDownList ID="departmentDropdown" runat="server" CssClass="form-control"></asp:DropDownList>
                         </div>
-
+                        <div class="form-group">
+                            <label for="locationDropdown">Location:</label>
+                            <asp:DropDownList ID="locationDropdown" runat="server" CssClass="form-control"></asp:DropDownList>
+                        </div>
+                        <div class="form-group">
+                            <label for="managerDropdown">Manager:</label>
+                            <asp:DropDownList ID="managerDropdown" runat="server" CssClass="form-control">
+                                <asp:ListItem Value="0">-- No Manager --</asp:ListItem>
+                            </asp:DropDownList>
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordTextbox">Password:</label>
+                            <asp:TextBox ID="passwordTextbox" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password:</label>
+                            <asp:TextBox ID="confirmPassword" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
+                        </div>
+                        <div class="form-group">
+                            <label for="salaryTextbox">Salary:</label>
+                            <asp:TextBox ID="salaryTextbox" runat="server" TextMode="Number" step="0.01" min="0" CssClass="form-control"></asp:TextBox>
+                        </div>
                         <div class="form-group">
                             <asp:Button ID="submitButton" runat="server" Text="Add Employee" OnClick="addEmployee" CssClass="btn btn-primary" />
                         </div>
                     </div>
-
                     <!-- Delete Employee Form -->
                     <div class="form-section">
                         <h3>Delete Employee</h3>
@@ -125,7 +105,6 @@
                             <asp:Button ID="btnDeleteEmployee" runat="server" Text="Delete Employee" CssClass="btn btn-danger" OnClick="deleteEmployee_Click" />
                         </div>
                     </div>
-
                     <!-- Employee List -->
                     <div class="form-section">
                         <h3>Employee List</h3>
@@ -139,7 +118,6 @@
                                     <asp:BoundField DataField="Email" HeaderText="Email" />
                                     <asp:BoundField DataField="DepartmentName" HeaderText="Department" />
                                     <asp:BoundField DataField="PositionName" HeaderText="Position" />
-                                 
                                 </Columns>
                             </asp:GridView>
                         </div>
@@ -153,7 +131,52 @@
                 <asp:AsyncPostBackTrigger ControlID="btnCancelDelete" EventName="Click" />
             </Triggers>
         </asp:UpdatePanel>
+      <!-- Reassign Manager Modal -->
+<div id="reassignManagerModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Reassign Employees</h3>
+        </div>
+        <div class="modal-body">
+            <asp:UpdatePanel ID="upReassignManager" runat="server" UpdateMode="Conditional">
+                <ContentTemplate>
+                    <asp:Label ID="lblReassignMessage" runat="server" Text="The employee you are deleting manages other employees. Please select a new manager for these employees:" />
+                    <br /><br />
+                    
+                    <asp:GridView ID="gvManagedEmployees" runat="server" AutoGenerateColumns="false" 
+                        CssClass="table table-striped" Width="100%">
+                        <Columns>
+                            <asp:BoundField DataField="EmployeeID" HeaderText="ID" />
+                            <asp:BoundField DataField="FirstName" HeaderText="First Name" />
+                            <asp:BoundField DataField="LastName" HeaderText="Last Name" />
+                            <asp:BoundField DataField="PositionName" HeaderText="Position" />
+                        </Columns>
+                    </asp:GridView>
+                    
+                    <div class="form-group">
+                        <label for="ddlNewManager">Select New Manager:</label>
+                        <asp:DropDownList ID="ddlNewManager" runat="server" CssClass="form-control">
+                            <asp:ListItem Value="0">-- Select Manager --</asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+                    
+                    <asp:Label ID="lblReassignError" runat="server" ForeColor="Red" Visible="false" />
+                </ContentTemplate>
+                <Triggers>
 
+    <asp:AsyncPostBackTrigger ControlID="btnConfirmReassign" EventName="Click" />
+    <asp:AsyncPostBackTrigger ControlID="btnCancelReassign" EventName="Click" />
+</Triggers>
+            </asp:UpdatePanel>
+        </div>
+        <div class="modal-footer">
+            <asp:Button ID="btnConfirmReassign" runat="server" Text="Confirm Reassignment" 
+                CssClass="btn btn-primary" OnClick="btnConfirmReassign_Click" />
+            <asp:Button ID="btnCancelReassign" runat="server" Text="Cancel" 
+                CssClass="btn btn-secondary" OnClick="btnCancelReassign_Click" />
+        </div>
+    </div>
+</div>
 
         <!-- Department Tab -->
         <asp:Panel ID="departmentTab" runat="server" CssClass="tab-content">
@@ -176,9 +199,9 @@
                 </div>
 
                 <div class="form-group">
-                   <asp:Button ID="btnAddDepartment" runat="server" Text="Add Department"
-    CssClass="btn btn-primary" OnClick="btnAddDepartment_Click" 
-    OnClientClick="return validateDepartmentForm();" />
+                    <asp:Button ID="btnAddDepartment" runat="server" Text="Add Department"
+                        CssClass="btn btn-primary" OnClick="btnAddDepartment_Click"
+                        OnClientClick="return validateDepartmentForm();" />
                 </div>
 
                 <div class="form-group">
@@ -419,214 +442,214 @@
 
     <asp:HiddenField ID="activeTabHidden" runat="server" Value="employeeTab" />
 
-   <script type="text/javascript">
-       // Success Modal Functions
-       function showSuccessModal() {
-           var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
-           if (modal) {
-               modal.style.display = 'block';
-               // Add backdrop
-               var backdrop = document.createElement('div');
-               backdrop.className = 'modal-backdrop fade show';
-               backdrop.style.position = 'fixed';
-               backdrop.style.top = '0';
-               backdrop.style.left = '0';
-               backdrop.style.width = '100%';
-               backdrop.style.height = '100%';
-               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-               backdrop.style.zIndex = '1040';
-               document.body.appendChild(backdrop);
-               document.body.style.overflow = 'hidden'; // Prevent scrolling
-           }
-       }
-
-       function hideSuccessModal() {
-           var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
-           if (modal) {
-               modal.style.display = 'none';
-           }
-           // Remove backdrop
-           var backdrops = document.querySelectorAll('.modal-backdrop');
-           backdrops.forEach(function (backdrop) {
-               document.body.removeChild(backdrop);
-           });
-           document.body.style.overflow = ''; // Re-enable scrolling
-       }
-
-       // Delete Confirmation Modal Functions
-       function showDeletePanel() {
-           var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
-           if (panel) {
-               panel.style.display = 'block';
-               // Add backdrop
-               var backdrop = document.createElement('div');
-               backdrop.className = 'modal-backdrop fade show';
-               backdrop.style.position = 'fixed';
-               backdrop.style.top = '0';
-               backdrop.style.left = '0';
-               backdrop.style.width = '100%';
-               backdrop.style.height = '100%';
-               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-               backdrop.style.zIndex = '1040';
-               backdrop.onclick = function () {
-                   // Don't hide on backdrop click - force user to make a decision
-               };
-               document.body.appendChild(backdrop);
-               document.body.style.overflow = 'hidden'; // Prevent scrolling
-           }
-       }
-
-       function hideDeletePanel() {
-           var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
-           if (panel) {
-               panel.style.display = 'none';
-           }
-           // Remove backdrop
-           var backdrops = document.querySelectorAll('.modal-backdrop');
-           backdrops.forEach(function (backdrop) {
-               document.body.removeChild(backdrop);
-           });
-           document.body.style.overflow = ''; // Re-enable scrolling
-       }
-
-       // Department Reassignment Modal Functions
-       function showReassignmentModal() {
-           var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
-           if (modal) {
-               modal.style.display = 'block';
-               // Add backdrop
-               var backdrop = document.createElement('div');
-               backdrop.className = 'modal-backdrop fade show';
-               backdrop.style.position = 'fixed';
-               backdrop.style.top = '0';
-               backdrop.style.left = '0';
-               backdrop.style.width = '100%';
-               backdrop.style.height = '100%';
-               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-               backdrop.style.zIndex = '1040';
-               document.body.appendChild(backdrop);
-               document.body.style.overflow = 'hidden'; // Prevent scrolling
-           }
-       } execution
-               if (callback) {
-                   modal.dataset.callback = callback;
-               }
-           }
-       }
-             eval(callback);
-           }
-       }
-       function hideReassignmentModal() {
-           var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
-           if (modal) {
-               modal.style.display = 'none';
-           }
-           // Remove backdrop
-           var backdrops = document.querySelectorAll('.modal-backdrop');
-           backdrops.forEach(function (backdrop) {
-               document.body.removeChild(backdrop);
-           });
-           document.body.style.overflow = ''; // Re-enable scrolling
-       }
-
-       // Position Delete Modal Functions
-       function showPositionDeleteModal() {
-           var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
-           if (modal) {
-               modal.style.display = 'block';
-               // Add backdrop
-               var backdrop = document.createElement('div');
-               backdrop.className = 'modal-backdrop fade show';
-               backdrop.style.position = 'fixed';
-               backdrop.style.top = '0';
-               backdrop.style.left = '0';
-               backdrop.style.width = '100%';
-               backdrop.style.height = '100%';
-               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-               backdrop.style.zIndex = '1040';
-               document.body.appendChild(backdrop);
-               document.body.style.overflow = 'hidden'; // Prevent scrolling
-           }
-       }
-
-       function hidePositionDeleteModal() {
-           var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
-           if (modal) {
-               modal.style.display = 'none';
-           }
-           // Remove backdrop
-           var backdrops = document.querySelectorAll('.modal-backdrop');
-           backdrops.forEach(function (backdrop) {
-               document.body.removeChild(backdrop);
-           });
-           document.body.style.overflow = ''; // Re-enable scrolling
-       }
-
-       // Location Delete Modal Functions
-       function showLocationDeleteModal() {
-           var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
-        if (modal) {
-            modal.style.display = 'block';
-            // Add backdrop
-            var backdrop = document.createElement('div');
-            backdrop.className = 'modal-backdrop fade show';
-            backdrop.style.position = 'fixed';
-            backdrop.style.top = '0';
-            backdrop.style.left = '0';
-            backdrop.style.width = '100%';
-            backdrop.style.height = '100%';
-            backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)' backdrops.forEach(function (backdrop) {
-               document.body.removeChild(backdrop);
-           });
-           document.body.style.overflow = ''; // Re-enable scrolling
-       }
-
-    function hideLocationDeleteModal() {
-        var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
-        if (modal) {
-            modal.style.display = 'none';
+    <script type="text/javascript">
+        // Success Modal Functions
+        function showSuccessModal() {
+            var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+            if (modal) {
+                modal.style.display = 'block';
+                // Add backdrop
+                var backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                backdrop.style.position = 'fixed';
+                backdrop.style.top = '0';
+                backdrop.style.left = '0';
+                backdrop.style.width = '100%';
+                backdrop.style.height = '100%';
+                backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                backdrop.style.zIndex = '1040';
+                document.body.appendChild(backdrop);
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
         }
-        // Remove backdrop
-        var backdrops = document.querySelectorAll('.modal-backdrop');
-        backdrops.forEach(function(backdrop) {
-            document.body.removeChild(backdrop);
-        });
-        document.body.style.overflow = ''; // Re-enable scrolling
-    }
 
-    // Auto-close success panel after 5 seconds
-    function autoCloseSuccessPanel() {
-        setTimeout(function() {
-            hideSuccessModal();
-        }, 5000);
-    }
+        function hideSuccessModal() {
+            var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            // Remove backdrop
+            var backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(function (backdrop) {
+                document.body.removeChild(backdrop);
+            });
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
 
-    // Client-side tab switching
-    function bindTabEvents() {
-        $('.tab-button').off('click').on('click', function (e) {
-            e.preventDefault();
-            $('.tab-button').removeClass('active');
-            $(this).addClass('active');
-            $('.tab-content').hide();
-            var tabName = $(this).attr('data-tab');
-            $('#' + tabName).show();
-            $('#<%= activeTabHidden.ClientID %>').val(tabName);
+        // Delete Confirmation Modal Functions
+        function showDeletePanel() {
+            var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
+            if (panel) {
+                panel.style.display = 'block';
+                // Add backdrop
+                var backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                backdrop.style.position = 'fixed';
+                backdrop.style.top = '0';
+                backdrop.style.left = '0';
+                backdrop.style.width = '100%';
+                backdrop.style.height = '100%';
+                backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                backdrop.style.zIndex = '1040';
+                backdrop.onclick = function () {
+                    // Don't hide on backdrop click - force user to make a decision
+                };
+                document.body.appendChild(backdrop);
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+        }
+
+        function hideDeletePanel() {
+            var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
+            if (panel) {
+                panel.style.display = 'none';
+            }
+            // Remove backdrop
+            var backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(function (backdrop) {
+                document.body.removeChild(backdrop);
+            });
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
+
+        // Department Reassignment Modal Functions
+        function showReassignmentModal() {
+            var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
+            if (modal) {
+                modal.style.display = 'block';
+                // Add backdrop
+                var backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                backdrop.style.position = 'fixed';
+                backdrop.style.top = '0';
+                backdrop.style.left = '0';
+                backdrop.style.width = '100%';
+                backdrop.style.height = '100%';
+                backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                backdrop.style.zIndex = '1040';
+                document.body.appendChild(backdrop);
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+        } execution
+        if (callback) {
+            modal.dataset.callback = callback;
+        }
+           }
+       }
+        eval(callback);
+           }
+       }
+        function hideReassignmentModal() {
+            var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            // Remove backdrop
+            var backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(function (backdrop) {
+                document.body.removeChild(backdrop);
+            });
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
+
+        // Position Delete Modal Functions
+        function showPositionDeleteModal() {
+            var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
+            if (modal) {
+                modal.style.display = 'block';
+                // Add backdrop
+                var backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                backdrop.style.position = 'fixed';
+                backdrop.style.top = '0';
+                backdrop.style.left = '0';
+                backdrop.style.width = '100%';
+                backdrop.style.height = '100%';
+                backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                backdrop.style.zIndex = '1040';
+                document.body.appendChild(backdrop);
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+        }
+
+        function hidePositionDeleteModal() {
+            var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            // Remove backdrop
+            var backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(function (backdrop) {
+                document.body.removeChild(backdrop);
+            });
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
+
+        // Location Delete Modal Functions
+        function showLocationDeleteModal() {
+            var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
+           if (modal) {
+               modal.style.display = 'block';
+               // Add backdrop
+               var backdrop = document.createElement('div');
+               backdrop.className = 'modal-backdrop fade show';
+               backdrop.style.position = 'fixed';
+               backdrop.style.top = '0';
+               backdrop.style.left = '0';
+               backdrop.style.width = '100%';
+               backdrop.style.height = '100%';
+               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)' backdrops.forEach(function (backdrop) {
+                   document.body.removeChild(backdrop);
+               });
+               document.body.style.overflow = ''; // Re-enable scrolling
+           }
+
+           function hideLocationDeleteModal() {
+               var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
+               if (modal) {
+                   modal.style.display = 'none';
+               }
+               // Remove backdrop
+               var backdrops = document.querySelectorAll('.modal-backdrop');
+               backdrops.forEach(function (backdrop) {
+                   document.body.removeChild(backdrop);
+               });
+               document.body.style.overflow = ''; // Re-enable scrolling
+           }
+
+           // Auto-close success panel after 5 seconds
+           function autoCloseSuccessPanel() {
+               setTimeout(function () {
+                   hideSuccessModal();
+               }, 5000);
+           }
+
+           // Client-side tab switching
+           function bindTabEvents() {
+               $('.tab-button').off('click').on('click', function (e) {
+                   e.preventDefault();
+                   $('.tab-button').removeClass('active');
+                   $(this).addClass('active');
+                   $('.tab-content').hide();
+                   var tabName = $(this).attr('data-tab');
+                   $('#' + tabName).show();
+                   $('#<%= activeTabHidden.ClientID %>').val(tabName);
         });
 
         // Set initial tab
         var activeTab = $('#<%= activeTabHidden.ClientID %>').val();
-        if (activeTab) {
-            $('.tab-content').hide();
-            $('#' + activeTab).show();
-            $('.tab-button').removeClass('active');
-            $('.tab-button[data-tab="' + activeTab + '"]').addClass('active');
-        }
-    }
+               if (activeTab) {
+                   $('.tab-content').hide();
+                   $('#' + activeTab).show();
+                   $('.tab-button').removeClass('active');
+                   $('.tab-button[data-tab="' + activeTab + '"]').addClass('active');
+               }
+           }
 
-    // Close modals when clicking outside (except for delete confirmation which requires explicit action)
-    document.addEventListener('click', function (e) {
-        // Success Modal
-        var successModal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+           // Close modals when clicking outside (except for delete confirmation which requires explicit action)
+           document.addEventListener('click', function (e) {
+               // Success Modal
+               var successModal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
         if (successModal && successModal.style.display === 'block') {
             var successContent = successModal.querySelector('.modal-panel-content');
             if (successContent && !successContent.contains(e.target)) {
@@ -660,77 +683,82 @@
                 hideLocationDeleteModal();
             }
         }
-        
-        // Delete confirmation modal intentionally doesn't close on outside click to force user to make a decision
-        
+
     });
 
-    // Name validation function
-    function validateName(input) {
-        var nameRegex = /^[a-zA-Z\-\s]+$/;
-        return nameRegex.test(input.value);
-    }
+           // Name validation function
+           function validateName(input) {
+               var nameRegex = /^[a-zA-Z\-\s]+$/;
+               return nameRegex.test(input.value);
+           }
 
-    function setupNameValidation() {
-        var firstNameInput = document.getElementById('<%= firstNameTextbox.ClientID %>');
+           function setupNameValidation() {
+               var firstNameInput = document.getElementById('<%= firstNameTextbox.ClientID %>');
         var lastNameInput = document.getElementById('<%= lastNameTextbox.ClientID %>');
 
-           if (firstNameInput) {
-               firstNameInput.addEventListener('input', function () {
-                   if (!validateName(this)) {
-                       this.style.borderColor = 'red';
-                   } else {
-                       this.style.borderColor = '';
-                   }
-               });
-           }
+               if (firstNameInput) {
+                   firstNameInput.addEventListener('input', function () {
+                       if (!validateName(this)) {
+                           this.style.borderColor = 'red';
+                       } else {
+                           this.style.borderColor = '';
+                       }
+                   });
+               }
 
-           if (lastNameInput) {
-               lastNameInput.addEventListener('input', function () {
-                   if (!validateName(this)) {
-                       this.style.borderColor = 'red';
-                   } else {
-                       this.style.borderColor = '';
-                   }
-               });
+               if (lastNameInput) {
+                   lastNameInput.addEventListener('input', function () {
+                       if (!validateName(this)) {
+                           this.style.borderColor = 'red';
+                       } else {
+                           this.style.borderColor = '';
+                       }
+                   });
+               }
            }
-       }
-       function validateDepartmentForm() {
-           var departmentName = document.getElementById('<%= txtDepartmentName.ClientID %>').value.trim();
+           function validateDepartmentForm() {
+               var departmentName = document.getElementById('<%= txtDepartmentName.ClientID %>').value.trim();
            var locationId = document.getElementById('<%= ddlDepartmentLocation.ClientID %>').value;
 
-           if (departmentName === "") {
-               alert("Please enter a department name.");
-               return false;
-           }
+                if (departmentName === "") {
+                    alert("Please enter a department name.");
+                    return false;
+                }
 
-           if (locationId === "" || locationId === "0") {
-               alert("Please select a location for the department.");
-               return false;
-           }
+                if (locationId === "" || locationId === "0") {
+                    alert("Please select a location for the department.");
+                    return false;
+                }
 
-           return true;
-       }
-       // Initialize on page load
-       $(document).ready(function () {
-           bindTabEvents();
-           setupNameValidation();
+                return true;
+            }
+            // Initialize on page load
+            $(document).ready(function () {
+                bindTabEvents();
+                setupNameValidation();
 
-           // Set up modal close buttons
-           $('[data-dismiss="modal"]').on('click', function () {
-               var modal = $(this).closest('.modal-panel');
-               modal.hide();
-               // Remove backdrop
-               $('.modal-backdrop').remove();
-               document.body.style.overflow = '';
-           });
-       });
+                // Set up modal close buttons
+                $('[data-dismiss="modal"]').on('click', function () {
+                    var modal = $(this).closest('.modal-panel');
+                    modal.hide();
+                    // Remove backdrop
+                    $('.modal-backdrop').remove();
+                    document.body.style.overflow = '';
+                });
+            });
 
-       // Re-bind events after AJAX update
-       var prm = Sys.WebForms.PageRequestManager.getInstance();
-       prm.add_endRequest(function () {
-           bindTabEvents();
-           setupNameValidation();
-       });
-   </script>
+            // Re-bind events after AJAX update
+            var prm = Sys.WebForms.PageRequestManager.getInstance();
+            prm.add_endRequest(function () {
+                bindTabEvents();
+                setupNameValidation();
+            });
+            function showReassignManagerModal() {
+                document.getElementById('reassignManagerModal').style.display = 'block';
+            }
+
+            function hideReassignManagerModal() {
+                document.getElementById('reassignManagerModal').style.display = 'none';
+            }
+    </script>
 </asp:Content>

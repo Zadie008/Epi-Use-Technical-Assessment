@@ -81,7 +81,7 @@
     <Content Include="Dashboard.aspx" />
     <Content Include="References.aspx" />
     <Content Include="ViewEmployee.aspx" />
-    <Content Include="AddEmployee.aspx" />
+    <Content Include="OrganisationManagement.aspx" />
     <Content Include="ChangeProfilePhoto.aspx" />
     <Content Include="Hierarchy.aspx" />
   </ItemGroup>
@@ -122,12 +122,12 @@
     <Compile Include="ViewEmployee.aspx.designer.cs">
       <DependentUpon>ViewEmployee.aspx</DependentUpon>
     </Compile>
-    <Compile Include="AddEmployee.aspx.cs">
-      <DependentUpon>AddEmployee.aspx</DependentUpon>
+    <Compile Include="OrganisationManagement.aspx.cs">
+      <DependentUpon>OrganisationManagement.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="AddEmployee.aspx.designer.cs">
-      <DependentUpon>AddEmployee.aspx</DependentUpon>
+    <Compile Include="OrganisationManagement.aspx.designer.cs">
+      <DependentUpon>OrganisationManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="ChangeProfilePhoto.aspx.cs">
       <DependentUpon>ChangeProfilePhoto.aspx</DependentUpon>
@@ -147,6 +147,7 @@
   <ItemGroup>
     <Content Include="MasterPage.Master" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\EPIUSE-Technical-Assessment - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -41,10 +41,20 @@ namespace EpiUse_TechnicalAssesment
                 }
                 else
                 {
-                    lblMessage.Text = "No Employee ID specified.";
+                    
                     pnlEmployee.Visible = false;
                 }
+                if (Session["SuccessMessage"] != null)
+                {
+                    ShowSuccessModal(Session["SuccessMessage"].ToString());
+                    Session["SuccessMessage"] = null; // Clear the session variable
+                }
             }
+        }
+        private void ShowSuccessModal(string message)
+        {
+            lblSuccessMessage.Text = message;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showSuccessModal('" + message + "');", true);
         }
         private void LoadEmployee(string empId)
         {
@@ -409,10 +419,14 @@ namespace EpiUse_TechnicalAssesment
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string query = @"SELECT e.EmployeeID, e.FirstName + ' ' + e.LastName AS ManagerName 
-                       FROM EMPLOYEES e
-                       WHERE e.EmployeeID <> @CurrentEmployeeID
-                       ORDER BY ManagerName";
+                string query = @"
+                                SELECT
+                                    e.EmployeeID,
+                                    e.FirstName + ' ' + e.LastName + ' (' + p.PositionName + ')' AS ManagerName
+                                FROM EMPLOYEES e
+                                JOIN POSITION p ON e.PositionID = p.PositionID
+                                WHERE e.EmployeeID <> @CurrentEmployeeID
+                                ORDER BY ManagerName";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@CurrentEmployeeID", currentEmployeeId);
@@ -579,8 +593,9 @@ namespace EpiUse_TechnicalAssesment
                         }
 
                         transaction.Commit();
-                        lblMessage.Text = "Employee updated successfully!";
-                        LoadEmployee(employeeId);
+                     
+                        Session["SuccessMessage"] = "Employee updated successfully!";
+                        Response.Redirect(Request.RawUrl);
                     }
                     else
                     {
@@ -689,17 +704,51 @@ namespace EpiUse_TechnicalAssesment
 
         protected void ddlLocation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ddlLocation.SelectedValue != ViewState["OriginalLocationId"].ToString())
+            // Get the new location and current department
+            int newLocationId = Convert.ToInt32(ddlLocation.SelectedValue);
+            int currentDepartmentId = Convert.ToInt32(ddlDepartment.SelectedValue);
+
+            if (!DepartmentExistsInLocation(currentDepartmentId, newLocationId))
             {
-                int newLocationId = Convert.ToInt32(ddlLocation.SelectedValue);
-                int currentDepartmentId = Convert.ToInt32(ddlDepartment.SelectedValue);
-                GetDepartmentLocation(currentDepartmentId);
-                if (!DepartmentExistsInLocation(currentDepartmentId, newLocationId))
+                if (ViewState["OriginalLocationId"] != null)
                 {
-                    lblMessage.Text = "Current department doesn't exist in the new location. Please select a different department.";
-                    PopulateDepartmentDropdown(newLocationId);
-                    ddlDepartment.SelectedIndex = 0;
+                    ddlLocation.SelectedValue = ViewState["OriginalLocationId"].ToString();
                 }
+                ShowErrorModal("The selected department does not exist in the new location. Please change the department or location.");
+                PopulateDepartmentDropdown(Convert.ToInt32(ViewState["OriginalLocationId"]));
+                lblMessage.Text = "Current department does not exist in the new location.";
+            }
+            else
+            {
+                ViewState["OriginalLocationId"] = newLocationId;
+                lblMessage.Text = string.Empty;
+                PopulateDepartmentDropdown(newLocationId);
+            }
+        }
+        private void ShowErrorModal(string message)
+        {
+            lblErrorMessage.Text = message;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showErrorModal", $"showErrorModal('{message}');", true);
+            upErrorModal.Update();
+        }
+        protected void ddlDepartment_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int currentDepartmentId = Convert.ToInt32(ddlDepartment.SelectedValue);
+            int currentLocationId = Convert.ToInt32(ddlLocation.SelectedValue);
+
+            if (!DepartmentExistsInLocation(currentDepartmentId, currentLocationId))
+            {
+                if (ViewState["OriginalDepartmentId"] != null)
+                {
+                    ddlDepartment.SelectedValue = ViewState["OriginalDepartmentId"].ToString();
+                }
+                ShowErrorModal("The selected department is not available at the current location. Please choose a different department or change the location.");
+                lblMessage.Text = "The selected department is not available at the current location.";
+            }
+            else
+            {
+                ViewState["OriginalDepartmentId"] = currentDepartmentId;
+                lblMessage.Text = string.Empty;
             }
         }
     }

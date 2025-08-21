@@ -38,7 +38,7 @@ namespace EpiUse_TechnicalAssesment
 
             // RoleID 1 & 2 (CEO, Heads) get full access
             // RoleID 3 (Regular employees) only see Dashboard, Hierarchy, ReadMe
-            phAddEmployee.Visible = (roleId == 1 || roleId == 2);
+            phOrganisationManagement.Visible = (roleId == 1 || roleId == 2);
         }
     }
 }

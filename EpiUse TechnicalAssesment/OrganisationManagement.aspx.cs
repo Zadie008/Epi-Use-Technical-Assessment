@@ -265,7 +265,7 @@ namespace EpiUse_TechnicalAssesment
         {
             validationMessage.Text = "";
 
-            
+
             string firstName = firstNameTextbox.Text.Trim();
             string lastName = lastNameTextbox.Text.Trim();
             string dobString = dobTextbox.Text.Trim();
@@ -424,13 +424,35 @@ namespace EpiUse_TechnicalAssesment
             Session["EmployeeToDelete"] = employeeIdToDelete;
             lblEmployeeIDConfirm.Text = employeeIdToDelete.ToString();
 
-            // Show the confirmation modal
+            // Check if employee has direct reports (manages other employees)
+            if (EmployeeHasReports(employeeIdToDelete))
+            {
+                // Get managed employees
+                DataTable managedEmployees = GetManagedEmployees(employeeIdToDelete);
+
+                if (managedEmployees.Rows.Count > 0)
+                {
+                    gvManagedEmployees.DataSource = managedEmployees;
+                    gvManagedEmployees.DataBind();
+
+                    // Populate manager dropdown (exclude the employee being deleted)
+                    PopulateNewManagerDropdown(employeeIdToDelete);
+
+                    // Show reassignment modal instead of delete confirmation
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowReassignManagerModal", "showReassignManagerModal();", true);
+                    upReassignManager.Update();
+                    return;
+                }
+            }
+
+            // If no reports, show the normal delete confirmation
             pnlDeleteConfirm.Style["display"] = "block";
             UpdateDeleteConfirmPanel();
 
             // Optional: Hide the validation message since we're showing the modal
             deleteValidationMessage.Text = "";
         }
+
 
         protected void btnConfirmDelete_Click(object sender, EventArgs e)
         {
@@ -466,7 +488,7 @@ namespace EpiUse_TechnicalAssesment
                             return;
                         }
 
-                       
+
                         string createLogTableQuery = @"
                     IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DELETION_LOG' AND xtype='U')
                     CREATE TABLE DELETION_LOG (
@@ -1439,6 +1461,130 @@ namespace EpiUse_TechnicalAssesment
                 }
             }
         }
+        private bool EmployeeHasReports(int employeeId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "SELECT COUNT(*) FROM REPORTING_LINE WHERE ManagerEmployeeID = @EmployeeID";
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
+                    connection.Open();
+                    int reportCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    return reportCount > 0;
+                }
+            }
+        }
+
+        // Get employees managed by the employee being deleted
+        private DataTable GetManagedEmployees(int managerId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT e.EmployeeID, e.FirstName, e.LastName, p.PositionName
+                        FROM EMPLOYEES e
+                        INNER JOIN REPORTING_LINE r ON e.EmployeeID = r.ReportEmployeeID
+                        LEFT JOIN POSITION p ON e.PositionID = p.PositionID
+                        WHERE r.ManagerEmployeeID = @ManagerID";
+
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@ManagerID", managerId);
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        return dt;
+                    }
+                }
+            }
+        }
+
+        private void PopulateNewManagerDropdown(int excludeEmployeeId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT EmployeeID, FirstName + ' ' + LastName AS FullName 
+                        FROM EMPLOYEES 
+                        WHERE EmployeeID != @ExcludeID
+                        AND EmployeeID != @SessionEmployeeID
+                        ORDER BY FirstName, LastName";
+
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@ExcludeID", excludeEmployeeId);
+                    cmd.Parameters.AddWithValue("@SessionEmployeeID", Session["EmployeeID"]);
+                    connection.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        ddlNewManager.Items.Clear();
+                        ddlNewManager.Items.Add(new ListItem("-- Select Manager --", "0"));
+                        while (reader.Read())
+                        {
+                            ddlNewManager.Items.Add(new ListItem(
+                                reader["FullName"].ToString(),
+                                reader["EmployeeID"].ToString()
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // Handle the reassignment confirmation
+        protected void btnConfirmReassign_Click(object sender, EventArgs e)
+        {
+            if (Session["EmployeeToDelete"] == null || ddlNewManager.SelectedValue == "0")
+            {
+                lblReassignError.Text = "Please select a new manager.";
+                lblReassignError.Visible = true;
+                upReassignManager.Update();
+                return;
+            }
+
+            int employeeIdToDelete = Convert.ToInt32(Session["EmployeeToDelete"]);
+            int newManagerId = Convert.ToInt32(ddlNewManager.SelectedValue);
+
+            // Reassign the employees to new manager
+            ReassignEmployeesToNewManager(employeeIdToDelete, newManagerId);
+
+            // Now show the delete confirmation modal
+            pnlDeleteConfirm.Style["display"] = "block";
+            UpdateDeleteConfirmPanel();
+
+            // Hide the reassignment modal
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "HideReassignManagerModal", "hideReassignManagerModal();", true);
+        }
+
+        // Reassign employees to new manager
+        private void ReassignEmployeesToNewManager(int oldManagerId, int newManagerId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE REPORTING_LINE SET ManagerEmployeeID = @NewManagerID WHERE ManagerEmployeeID = @OldManagerID";
+
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@NewManagerID", newManagerId);
+                    cmd.Parameters.AddWithValue("@OldManagerID", oldManagerId);
+
+                    connection.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    // You can log this or show a message if needed
+                    System.Diagnostics.Debug.WriteLine($"Reassigned {rowsAffected} employees from manager {oldManagerId} to {newManagerId}");
+                }
+            }
+        }
+
+        // Handle cancel reassignment
+        protected void btnCancelReassign_Click(object sender, EventArgs e)
+        {
+            // Clear the session and hide the modal
+            Session.Remove("EmployeeToDelete");
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "HideReassignManagerModal", "hideReassignManagerModal();", true);
+        }
 
         private void ClearForm()
         {
@@ -1460,36 +1606,15 @@ namespace EpiUse_TechnicalAssesment
         private void UpdateEmployeePanel()
         {
             upEmployeeTab.Update();
-          
+
             upDeleteConfirm.Update();
         }
 
-        private void UpdateDepartmentPanel()
-        {
-          
-           
-        }
-
-        private void UpdatePositionPanel()
-        {
-            upPositionTab.Update();
-           
-        }
-
-        private void UpdateLocationPanel()
-        {
-            upLocationTab.Update();
-         
-        }
 
         private void UpdateDeleteConfirmPanel()
         {
             upDeleteConfirm.Update();
         }
 
-        private void UpdateSuccessPanel()
-        {
-           
-        }
     }
 }

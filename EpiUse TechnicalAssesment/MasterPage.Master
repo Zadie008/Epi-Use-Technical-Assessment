@@ -28,10 +28,10 @@
                             <img src="Images/diagram.png" alt="Hierarchy Icon" class="nav-icon" />
                             <span class="nav-title">Hierarchy</span>
                         </a>
-                        <asp:PlaceHolder ID="phAddEmployee" runat="server" Visible="false">
-                            <a href="AddEmployee.aspx" class="nav-card">
-                                <img src="Images/employees.png" alt="Add employee" class="nav-icon" />
-                                <span class="nav-title">Add employee</span>
+                        <asp:PlaceHolder ID="phOrganisationManagement" runat="server" Visible="false">
+                            <a href="OrganisationManagement.aspx" class="nav-card">
+                                <img src="Images/employees.png" alt="Organisation Management" class="nav-icon" />
+                                <span class="nav-title">Organisation Management</span>
                             </a>
                         </asp:PlaceHolder>
                         <a href="References.aspx" class="nav-card">

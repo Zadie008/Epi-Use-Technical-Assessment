@@ -91,7 +91,8 @@
                         <td>
                             <asp:Label ID="lblDepartment" runat="server" CssClass="view-field" />
                             <asp:DropDownList ID="ddlDepartment" runat="server" Visible="false" CssClass="edit-field"
-                                DataTextField="DepartmentName" DataValueField="DepartmentID" />
+                                DataTextField="DepartmentName" DataValueField="DepartmentID"
+                                AutoPostBack="true" OnSelectedIndexChanged="ddlDepartment_SelectedIndexChanged" />
                         </td>
                     </tr>
                     <tr>
@@ -133,7 +134,52 @@
             <asp:Button ID="btnChangeProfile" runat="server" Text="Change Profile Image" CssClass="employee-button save" OnClick="btnChangeProfile_Click" Visible="false" />
         </div>
     </asp:Panel>
+
     <asp:Label ID="lblMessage" runat="server" Text="" ForeColor="Red"></asp:Label>
+
+    <asp:UpdatePanel ID="upSuccessModal" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <asp:Panel ID="pnlSuccessModal" runat="server" CssClass="modal-panel" Style="display: none;">
+                <div class="modal-panel-content">
+                    <div class="modal-header" style="background-color: #28a745;">
+                        <h5 style="color: white;">Success</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-success">
+                            <strong>Success!</strong>
+                            <asp:Label ID="lblSuccessMessage" runat="server" Text=""></asp:Label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <asp:Button ID="btnSuccessOK" runat="server" Text="OK" CssClass="btn btn-success" OnClientClick="hideSuccessModal(); return false;" />
+                    </div>
+                </div>
+            </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
+
+    <asp:UpdatePanel ID="upErrorModal" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <asp:Panel ID="pnlErrorModal" runat="server" CssClass="modal-panel" Style="display: none;">
+                <div class="modal-panel-content">
+                    <div class="modal-header" style="background-color: #dc3545;">
+                        <h5 style="color: white;">Error</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger">
+                            <strong>Error!</strong>
+                            <asp:Label ID="lblErrorMessage" runat="server" Text=""></asp:Label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <asp:Button ID="btnErrorOK" runat="server" Text="OK" CssClass="btn btn-danger" OnClientClick="hideErrorModal(); return false;" />
+                    </div>
+                </div>
+            </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
+
+
     <script type="text/javascript">
         function formatSalary(input) {
             // Remove all non-digit characters except decimal point
@@ -151,6 +197,41 @@
 
             // Rejoin and update the input
             input.value = parts[0] + (parts.length > 1 ? '.' + parts[1] : '');
+        }
+
+        function showSuccessModal(message) {
+            const modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+            const messageLabel = document.getElementById('<%= lblSuccessMessage.ClientID %>');
+            if (messageLabel) {
+                messageLabel.innerText = message;
+            }
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function hideSuccessModal() {
+            const modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        function showErrorModal(message) {
+            const modal = document.getElementById('<%= pnlErrorModal.ClientID %>');
+            const messageLabel = document.getElementById('<%= lblErrorMessage.ClientID %>');
+            if (messageLabel) {
+                messageLabel.innerText = message;
+            }
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function hideErrorModal() {
+            const modal = document.getElementById('<%= pnlErrorModal.ClientID %>');
+            if (modal) {
+                modal.style.display = 'none';
+            }
         }
     </script>
 </asp:Content>

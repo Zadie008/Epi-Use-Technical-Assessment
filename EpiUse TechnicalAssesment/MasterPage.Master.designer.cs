@@ -60,13 +60,13 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.ContentPlaceHolder navContent;
 
         /// <summary>
-        /// phAddEmployee control.
+        /// phOrganisationManagement control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder phAddEmployee;
+        protected global::System.Web.UI.WebControls.PlaceHolder phOrganisationManagement;
 
         /// <summary>
         /// mainContentPlaceHolder control.

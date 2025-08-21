@@ -34,7 +34,7 @@
         
              <asp:Button ID="btnLogin" runat="server" Text="Login" CssClass="login-button" OnClick="btnLogin_Click" />
         
-             <asp:Label ID="lblLoginMessage" runat="server" ForeColor="Red" CssClass="login-message"></asp:Label> <%--this displays if an error occurs, Database or user related--%> 
+             <asp:Label ID="lblLoginMessage" runat="server" ForeColor="white" CssClass="login-message"></asp:Label> <%--this displays if an error occurs, Database or user related--%> 
 
             </div>
         </div>
