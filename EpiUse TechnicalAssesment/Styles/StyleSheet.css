@@ -1381,7 +1381,245 @@ svg defs clipPath circle {
     border: 1px solid transparent;
     border-radius: 4px;
 }
+/* ===== MODAL STYLES ===== */
+/* Modal container - takes full screen with semi-transparent background */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
 
+/* Modal content - centered box */
+.modal-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 500px; /* Slightly wider for reassign modal */
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 10001;
+    position: relative;
+    animation: slideIn 0.3s;
+}
+
+/* Reassign modal specific styling */
+.reassign-modal .modal-header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 20px;
+    margin: -25px -25px 20px -25px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.reassign-modal .modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.reassign-modal .modal-body {
+    padding: 15px 0;
+}
+
+.reassign-modal .modal-footer {
+    text-align: right;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+}
+/* Department Reassign Modal Styles */
+.department-reassign-modal .modal-header {
+    background-color: #ffc107;
+    color: #212529;
+    padding: 15px 20px;
+    margin: -25px -25px 20px -25px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.department-reassign-modal .modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.department-reassign-modal .alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+}
+
+.department-reassign-modal .employee-count {
+    font-weight: bold;
+    color: #007bff;
+    margin: 10px 0;
+}
+/* Success modal specific styling */
+.success-modal .modal-header {
+    background-color: #28a745;
+    color: white;
+    padding: 15px 20px;
+    margin: -25px -25px 20px -25px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.success-modal .modal-header h5 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.success-modal .modal-body {
+    padding: 15px 0;
+}
+
+.success-modal .modal-footer {
+    text-align: right;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* Delete modal specific styling */
+.delete-modal .modal-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.delete-modal .modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.delete-modal .modal-body {
+    padding: 15px 0;
+}
+
+.delete-modal .modal-footer {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    margin-top: 15px;
+    text-align: right;
+}
+
+/* Form buttons */
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    justify-content: flex-end;
+}
+
+.form-row .btn {
+    min-width: 120px;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 9999;
+}
+
+/* Ensure body doesn't scroll when modal is open */
+.body-no-scroll {
+    overflow: hidden;
+}
+
+/* Reassign modal specific styles */
+.reassign-gridview {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.reassign-gridview table {
+    width: 100%;
+    margin: 0;
+}
+
+.reassign-gridview th {
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+}
+
+/* Form buttons */
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    justify-content: flex-end;
+}
+
+    .form-row .btn {
+        min-width: 120px;
+    }
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 9999;
+}
+
+/* Ensure body doesn't scroll when modal is open */
+.body-no-scroll {
+    overflow: hidden;
+}
 .btn-success {
     color: #fff;
     background-color: #28a745;

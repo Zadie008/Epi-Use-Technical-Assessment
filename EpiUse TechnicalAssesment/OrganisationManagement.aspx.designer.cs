@@ -483,6 +483,168 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Button btnConfirmPositionDelete;
 
         /// <summary>
+        /// upPositionReassignModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upPositionReassignModal;
+
+        /// <summary>
+        /// pnlPositionReassign control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlPositionReassign;
+
+        /// <summary>
+        /// lblPositionEmployeeCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPositionEmployeeCount;
+
+        /// <summary>
+        /// ddlTargetPosition control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlTargetPosition;
+
+        /// <summary>
+        /// lblPositionReassignError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPositionReassignError;
+
+        /// <summary>
+        /// hdnPositionToDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnPositionToDelete;
+
+        /// <summary>
+        /// btnCancelPositionReassign control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelPositionReassign;
+
+        /// <summary>
+        /// btnConfirmPositionReassign control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmPositionReassign;
+
+        /// <summary>
+        /// pnlDepartmentReassign control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlDepartmentReassign;
+
+        /// <summary>
+        /// upDepartmentReassign control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upDepartmentReassign;
+
+        /// <summary>
+        /// lblEmployeeCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEmployeeCount;
+
+        /// <summary>
+        /// lblDepartmentLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDepartmentLocation;
+
+        /// <summary>
+        /// DropDownList1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList DropDownList1;
+
+        /// <summary>
+        /// lblDepartmentReassignError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDepartmentReassignError;
+
+        /// <summary>
+        /// hdnDepartmentToDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnDepartmentToDelete;
+
+        /// <summary>
+        /// hdnDepartmentLocationId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnDepartmentLocationId;
+
+        /// <summary>
+        /// btnCancelDepartmentReassign control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelDepartmentReassign;
+
+        /// <summary>
+        /// btnConfirmDepartmentReassign control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmDepartmentReassign;
+
+        /// <summary>
         /// upLocationTab control.
         /// </summary>
         /// <remarks>
@@ -582,6 +744,33 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Button btnConfirmLocationDelete;
 
         /// <summary>
+        /// upLocationReassignInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upLocationReassignInfo;
+
+        /// <summary>
+        /// pnlLocationReassignInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlLocationReassignInfo;
+
+        /// <summary>
+        /// lblReassignInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblReassignInfo;
+
+        /// <summary>
         /// upSuccessModal control.
         /// </summary>
         /// <remarks>
@@ -618,13 +807,13 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Button btnSuccessOK;
 
         /// <summary>
-        /// upDeleteConfirm control.
+        /// upDeleteConfirmPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel upDeleteConfirm;
+        protected global::System.Web.UI.UpdatePanel upDeleteConfirmPanel;
 
         /// <summary>
         /// pnlDeleteConfirm control.
@@ -645,15 +834,6 @@ namespace EpiUse_TechnicalAssesment
         protected global::System.Web.UI.WebControls.Label lblEmployeeIDConfirm;
 
         /// <summary>
-        /// btnCancelDelete control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancelDelete;
-
-        /// <summary>
         /// btnConfirmDelete control.
         /// </summary>
         /// <remarks>
@@ -661,6 +841,15 @@ namespace EpiUse_TechnicalAssesment
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
+
+        /// <summary>
+        /// btnCancelDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelDelete;
 
         /// <summary>
         /// activeTabHidden control.

@@ -25,12 +25,12 @@
                             <input type="text" class="form-control" id="searchName" placeholder="Enter name">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                   <%-- <div class="col-md-4">
                         <div class="form-group">
                             <label for="searchPosition">Position</label>
                             <input type="text" class="form-control" id="searchPosition" placeholder="Enter position">
                         </div>
-                    </div>
+                    </div>--%>
                     <div class="col-md-4 d-flex align-items-end">
                         <button type="button" class="btn btn-primary me-2" onclick="performSearch()">Search</button>
                         <button type="button" class="btn btn-secondary" onclick="clearSearch()">Clear</button>

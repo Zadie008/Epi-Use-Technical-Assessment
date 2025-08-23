@@ -110,7 +110,7 @@
                         <h3>Employee List</h3>
                         <div class="scrollable-gridviewInTabs">
                             <asp:GridView ID="gvEmployees" runat="server" AutoGenerateColumns="false" CssClass="table table-striped"
-                                OnRowDeleting="gvEmployees_RowDeleting" DataKeyNames="EmployeeID">
+                                DataKeyNames="EmployeeID">
                                 <Columns>
                                     <asp:BoundField DataField="EmployeeID" HeaderText="ID" />
                                     <asp:BoundField DataField="FirstName" HeaderText="First Name" />
@@ -131,7 +131,7 @@
                 <asp:AsyncPostBackTrigger ControlID="btnCancelDelete" EventName="Click" />
             </Triggers>
         </asp:UpdatePanel>
-      <!-- Reassign Manager Modal -->
+       <!-- Reassign Manager Modal -->
 <div id="reassignManagerModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
@@ -143,15 +143,17 @@
                     <asp:Label ID="lblReassignMessage" runat="server" Text="The employee you are deleting manages other employees. Please select a new manager for these employees:" />
                     <br /><br />
                     
-                    <asp:GridView ID="gvManagedEmployees" runat="server" AutoGenerateColumns="false" 
-                        CssClass="table table-striped" Width="100%">
-                        <Columns>
-                            <asp:BoundField DataField="EmployeeID" HeaderText="ID" />
-                            <asp:BoundField DataField="FirstName" HeaderText="First Name" />
-                            <asp:BoundField DataField="LastName" HeaderText="Last Name" />
-                            <asp:BoundField DataField="PositionName" HeaderText="Position" />
-                        </Columns>
-                    </asp:GridView>
+                    <div class="reassign-gridview">
+                        <asp:GridView ID="gvManagedEmployees" runat="server" AutoGenerateColumns="false" 
+                            CssClass="table table-striped" Width="100%">
+                            <Columns>
+                                <asp:BoundField DataField="EmployeeID" HeaderText="ID" />
+                                <asp:BoundField DataField="FirstName" HeaderText="First Name" />
+                                <asp:BoundField DataField="LastName" HeaderText="Last Name" />
+                                <asp:BoundField DataField="PositionName" HeaderText="Position" />
+                            </Columns>
+                        </asp:GridView>
+                    </div>
                     
                     <div class="form-group">
                         <label for="ddlNewManager">Select New Manager:</label>
@@ -162,18 +164,15 @@
                     
                     <asp:Label ID="lblReassignError" runat="server" ForeColor="Red" Visible="false" />
                 </ContentTemplate>
-                <Triggers>
-
-    <asp:AsyncPostBackTrigger ControlID="btnConfirmReassign" EventName="Click" />
-    <asp:AsyncPostBackTrigger ControlID="btnCancelReassign" EventName="Click" />
-</Triggers>
             </asp:UpdatePanel>
         </div>
         <div class="modal-footer">
-            <asp:Button ID="btnConfirmReassign" runat="server" Text="Confirm Reassignment" 
-                CssClass="btn btn-primary" OnClick="btnConfirmReassign_Click" />
-            <asp:Button ID="btnCancelReassign" runat="server" Text="Cancel" 
-                CssClass="btn btn-secondary" OnClick="btnCancelReassign_Click" />
+            <div class="form-row">
+                <asp:Button ID="btnConfirmReassign" runat="server" Text="Confirm Reassignment" 
+                    CssClass="btn btn-primary" OnClick="btnConfirmReassign_Click" />
+                <asp:Button ID="btnCancelReassign" runat="server" Text="Cancel" 
+                    CssClass="btn btn-secondary" OnClick="btnCancelReassign_Click" />
+            </div>
         </div>
     </div>
 </div>
@@ -292,33 +291,114 @@
             </Triggers>
 
         </asp:UpdatePanel>
-        <asp:UpdatePanel ID="upPositionModal" runat="server" UpdateMode="Conditional">
-            <ContentTemplate>
-                <asp:Panel ID="pnlPositionDelete" runat="server" CssClass="modal-panel" Style="display: none;">
-                    <div class="modal-panel-content">
-                        <div class="modal-header">
-                            <h5>Confirm Position Deletion</h5>
-                        </div>
-                        <div class="modal-body">
-                            <div class="alert alert-warning">
-                                <strong>Warning!</strong> This position has employees assigned to it.
-                            </div>
-                            <p>
-                                Employees with this position will be moved to: 
-                        <strong>
-                            <asp:Label ID="lblNextPosition" runat="server" Text=""></asp:Label></strong>
-                            </p>
-                            <p class="text-danger"><strong>This action cannot be undone!</strong></p>
-                        </div>
-                        <div class="modal-footer">
-                            <asp:Button ID="btnCancelPositionDelete" runat="server" Text="Cancel" CssClass="btn btn-secondary" OnClientClick="hidePositionDeleteModal(); return false;" />
-                            <asp:Button ID="btnConfirmPositionDelete" runat="server" Text="Reassign and Delete" CssClass="btn btn-primary" OnClick="btnConfirmPositionDelete_Click" />
-                        </div>
+        <!-- Position Delete Modal -->
+<asp:UpdatePanel ID="upPositionModal" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
+        <asp:Panel ID="pnlPositionDelete" runat="server" CssClass="modal" Style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Confirm Position Deletion</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <strong>Warning!</strong> This position has employees assigned to it.
                     </div>
-                </asp:Panel>
-            </ContentTemplate>
-        </asp:UpdatePanel>
+                    <p>
+                        Employees with this position will be moved to: 
+                        <strong><asp:Label ID="lblNextPosition" runat="server" Text=""></asp:Label></strong>
+                    </p>
+                    <p class="text-danger"><strong>This action cannot be undone!</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-row">
+                        <asp:Button ID="btnCancelPositionDelete" runat="server" Text="Cancel" CssClass="btn btn-secondary" OnClientClick="hidePositionDeleteModal(); return false;" />
+                        <asp:Button ID="btnConfirmPositionDelete" runat="server" Text="Reassign and Delete" CssClass="btn btn-primary" OnClick="btnConfirmPositionDelete_Click" />
+                    </div>
+                </div>
+            </div>
+        </asp:Panel>
+    </ContentTemplate>
+</asp:UpdatePanel>
+<!-- Position Reassignment Modal -->
+<asp:UpdatePanel ID="upPositionReassignModal" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
+        <asp:Panel ID="pnlPositionReassign" runat="server" CssClass="modal" Style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Position Has Employees</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <strong>Warning!</strong> This position has 
+                        <asp:Label ID="lblPositionEmployeeCount" runat="server" CssClass="employee-count"></asp:Label> 
+                        employees assigned to it.
+                    </div>
+                    <p>Please select a new position for these employees:</p>
+                    
+                    <div class="form-group">
+                        <label for="ddlTargetPosition">Move employees to:</label>
+                        <asp:DropDownList ID="ddlTargetPosition" runat="server" CssClass="form-control">
+                            <asp:ListItem Value="0">-- Select Position --</asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+                    
+                    <asp:Label ID="lblPositionReassignError" runat="server" ForeColor="Red" Visible="false" />
+                    <asp:HiddenField ID="hdnPositionToDelete" runat="server" Value="0" />
+                </div>
+                <div class="modal-footer">
+                    <div class="form-row">
+                        <asp:Button ID="btnCancelPositionReassign" runat="server" Text="Cancel" 
+                            CssClass="btn btn-secondary" OnClientClick="hidePositionReassignModal(); return false;" />
+                        <asp:Button ID="btnConfirmPositionReassign" runat="server" Text="Reassign and Delete" 
+                            CssClass="btn btn-primary" OnClick="btnConfirmPositionReassign_Click" />
+                    </div>
+                </div>
+            </div>
+        </asp:Panel>
+    </ContentTemplate>
+</asp:UpdatePanel>
 
+<!-- Department Reassignment Modal -->
+<asp:Panel ID="pnlDepartmentReassign" runat="server" CssClass="modal" Style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Department Has Employees</h3>
+        </div>
+        <div class="modal-body">
+            <asp:UpdatePanel ID="upDepartmentReassign" runat="server" UpdateMode="Conditional">
+                <ContentTemplate>
+                    <div class="alert alert-warning">
+                        <strong>Warning!</strong> This department contains 
+                        <asp:Label ID="lblEmployeeCount" runat="server" CssClass="employee-count"></asp:Label> 
+                        employees at location: 
+                        <asp:Label ID="lblDepartmentLocation" runat="server" CssClass="employee-count"></asp:Label>
+                    </div>
+                    <p>Please select a department at the same location to move these employees to:</p>
+                    
+                    <div class="form-group">
+                        <label for="ddlTargetDepartment">Move employees to:</label>
+                        <asp:DropDownList ID="DropDownList1" runat="server" CssClass="form-control">
+                            <asp:ListItem Value="0">-- Select Department --</asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+                    
+                    <asp:Label ID="lblDepartmentReassignError" runat="server" ForeColor="Red" Visible="false" />
+                    <asp:HiddenField ID="hdnDepartmentToDelete" runat="server" Value="0" />
+                    <asp:HiddenField ID="hdnDepartmentLocationId" runat="server" Value="0" />
+                </ContentTemplate>
+            </asp:UpdatePanel>
+        </div>
+        <div class="modal-footer">
+            <div class="form-row">
+                <asp:Button ID="btnCancelDepartmentReassign" runat="server" Text="Cancel" 
+                    CssClass="btn btn-secondary" OnClientClick="hideDepartmentReassignModal(); return false;" />
+                <asp:Button ID="btnConfirmDepartmentReassign" runat="server" Text="Reassign and Delete" 
+                    CssClass="btn btn-primary" OnClick="btnConfirmDepartmentReassign_Click" />
+            </div>
+        </div>
+    </div>
+</asp:Panel>
+        
 
         <!-- Location Tab -->
         <asp:UpdatePanel ID="upLocationTab" runat="server" UpdateMode="Conditional">
@@ -391,374 +471,507 @@
                 </asp:Panel>
             </ContentTemplate>
         </asp:UpdatePanel>
+    
     </div>
-
-    <!-- Success Modal -->
-    <asp:UpdatePanel ID="upSuccessModal" runat="server" UpdateMode="Conditional">
-        <ContentTemplate>
-            <asp:Panel ID="pnlSuccessModal" runat="server" CssClass="modal-panel" Style="display: none;">
-                <div class="modal-panel-content">
-                    <div class="modal-header" style="background-color: #28a745;">
-                        <h5 style="color: white;">Success</h5>
+     <!-- Simpler Location Reassignment Info Panel -->
+<asp:UpdatePanel ID="upLocationReassignInfo" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
+        <asp:Panel ID="pnlLocationReassignInfo" runat="server" CssClass="modal" Style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h3>Location Reassignment</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Processing reassignment...</strong>
                     </div>
-                    <div class="modal-body">
-                        <div class="alert alert-success">
-                            <strong>Success!</strong>
-                            <asp:Label ID="lblSuccessMessage" runat="server" Text=""></asp:Label>
+                    <p>
+                        <asp:Label ID="lblReassignInfo" runat="server" Text=""></asp:Label>
+                    </p>
+                    <div style="text-align: center; margin: 15px 0;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <asp:Button ID="btnSuccessOK" runat="server" Text="OK" CssClass="btn btn-success" OnClientClick="hideSuccessModal(); return false;" />
-                    </div>
                 </div>
-            </asp:Panel>
-        </ContentTemplate>
+            </div>
+        </asp:Panel>
+    </ContentTemplate>
     </asp:UpdatePanel>
+<!-- Success Modal UpdatePanel -->
+<asp:UpdatePanel ID="upSuccessModal" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
+        <asp:Panel ID="pnlSuccessModal" runat="server" CssClass="modal" Style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Success</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success">
+                        <strong>Success!</strong>
+                        <asp:Label ID="lblSuccessMessage" runat="server" Text=""></asp:Label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <asp:Button ID="btnSuccessOK" runat="server" Text="OK" CssClass="btn btn-success" OnClientClick="hideSuccessModal(); return false;" />
+                </div>
+            </div>
+        </asp:Panel>
+    </ContentTemplate>
+    <Triggers>
+        <asp:AsyncPostBackTrigger ControlID="btnSuccessOK" EventName="Click" />
+    </Triggers>
+</asp:UpdatePanel>
 
-    <!-- Delete Confirmation Panel -->
-    <asp:UpdatePanel ID="upDeleteConfirm" runat="server" UpdateMode="Conditional">
+    <!-- Delete Confirmation Modal -->
+    <asp:UpdatePanel ID="upDeleteConfirmPanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <asp:Panel ID="pnlDeleteConfirm" runat="server" CssClass="modal-panel" Style="display: none;">
-                <div class="modal-panel-content">
-                    <div class="modal-header">
-                        <h5>Confirm Delete</h5>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete this employee?</p>
-                        <p>
-                            Employee ID: 
-                            <asp:Label ID="lblEmployeeIDConfirm" runat="server" Text="" Font-Bold="true"></asp:Label>
-                        </p>
-                        <p class="text-danger"><strong>This action cannot be undone!</strong></p>
-                    </div>
-                    <div class="modal-footer">
-                        <asp:Button ID="btnCancelDelete" runat="server" Text="Cancel" CssClass="btn btn-secondary" OnClientClick="hideDeletePanel(); return false;" />
-                        <asp:Button ID="btnConfirmDelete" runat="server" Text="Delete" CssClass="btn btn-danger" OnClick="btnConfirmDelete_Click" />
+            <!-- Delete Confirmation Modal -->
+            <asp:Panel ID="pnlDeleteConfirm" runat="server" CssClass="modal" Style="display: none;">
+                <div class="modal-content">
+                    <h3>Confirm Delete</h3>
+                    <p>Are you sure you want to delete employee ID:
+                        <asp:Label ID="lblEmployeeIDConfirm" runat="server" Font-Bold="true"></asp:Label>?</p>
+
+                    <div class="form-row">
+                        <asp:Button ID="btnConfirmDelete" runat="server" Text="Yes, Delete"
+                            CssClass="btn btn-danger" OnClick="btnConfirmDelete_Click" />
+                        <asp:Button ID="btnCancelDelete" runat="server" Text="Cancel"
+                            CssClass="btn btn-secondary" OnClientClick="hideDeleteConfirm(); return false;" />
                     </div>
                 </div>
             </asp:Panel>
         </ContentTemplate>
+        <Triggers>
+            <asp:AsyncPostBackTrigger ControlID="btnDeleteEmployee" EventName="Click" />
+            <asp:AsyncPostBackTrigger ControlID="btnConfirmDelete" EventName="Click" />
+            <asp:AsyncPostBackTrigger ControlID="btnCancelDelete" EventName="Click" />
+        </Triggers>
     </asp:UpdatePanel>
 
     <asp:HiddenField ID="activeTabHidden" runat="server" Value="employeeTab" />
 
-    <script type="text/javascript">
-        // Success Modal Functions
-        function showSuccessModal() {
-            var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
-            if (modal) {
-                modal.style.display = 'block';
-                // Add backdrop
-                var backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                backdrop.style.position = 'fixed';
-                backdrop.style.top = '0';
-                backdrop.style.left = '0';
-                backdrop.style.width = '100%';
-                backdrop.style.height = '100%';
-                backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-                backdrop.style.zIndex = '1040';
-                document.body.appendChild(backdrop);
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+<script type="text/javascript">
+    // Add this to your JavaScript section
+    console.log('JavaScript loaded successfully');
+
+    // Debug function to check if modal is being called
+    function debugModalShow() {
+        console.log('showDepartmentReassignModal() called');
+        var modal = document.getElementById('<%= pnlDepartmentReassign.ClientID %>');
+    console.log('Modal element found:', modal);
+    
+    if (modal) {
+        console.log('Modal current display:', modal.style.display);
+        console.log('Modal current visibility:', modal.style.visibility);
+        
+        // Force show the modal for testing
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        
+        console.log('Modal after setting display:', modal.style.display);
+        
+        // Check if modal content is visible
+        var modalContent = modal.querySelector('.modal-content');
+        console.log('Modal content found:', modalContent);
+    }
+}
+    // Add this function to debug dropdown on client side
+    function debugDropdown() {
+        var dropdown = document.getElementById('<%= ddlTargetDepartment.ClientID %>');
+        console.log('Dropdown debug:');
+        console.log('Dropdown element:', dropdown);
+
+        if (dropdown) {
+            console.log('Dropdown options length:', dropdown.options.length);
+            console.log('Dropdown innerHTML:', dropdown.innerHTML);
+
+            for (var i = 0; i < dropdown.options.length; i++) {
+                console.log('Option ' + i + ': ' + dropdown.options[i].text + ' = ' + dropdown.options[i].value);
+            }
+
+            // If dropdown is empty, try to see if it's a ViewState issue
+            if (dropdown.options.length <= 1) { // Only the default option
+                console.warn('Dropdown appears empty! Checking for ViewState issues...');
+            }
+        } else {
+            console.error('Dropdown not found!');
+        }
+    }
+
+    // Update your showDepartmentReassignModal to include dropdown debug
+    function showDepartmentReassignModal() {
+        console.log('showDepartmentReassignModal() called');
+
+        var modal = document.getElementById('<%= pnlDepartmentReassign.ClientID %>');
+    console.log('Modal element:', modal);
+
+    if (modal) {
+        // Debug dropdown first
+        debugDropdown();
+
+        // Show modal
+        modal.style.display = 'flex';
+
+        // Add backdrop
+        var backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+        document.body.appendChild(backdrop);
+        document.body.classList.add('body-no-scroll');
+    }
+}
+// Replace your current showDepartmentReassignModal function with this:
+function showDepartmentReassignModal() {
+    console.log('showDepartmentReassignModal() called');
+    
+    var modal = document.getElementById('<%= pnlDepartmentReassign.ClientID %>');
+    console.log('Modal element:', modal);
+
+    if (modal) {
+        // Add department reassign modal class for specific styling
+        var modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.classList.add('department-reassign-modal');
+        }
+
+        // Force the modal to be visible with multiple methods
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        modal.style.opacity = '1';
+        modal.style.zIndex = '10000';
+
+        console.log('Modal display set to flex');
+
+        // Add backdrop
+        var backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+        backdrop.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);z-index:9999;';
+        document.body.appendChild(backdrop);
+        document.body.classList.add('body-no-scroll');
+
+        // Debug: Check dropdown contents
+        var dropdown = document.getElementById('<%= ddlTargetDepartment.ClientID %>');
+        if (dropdown) {
+            console.log('Dropdown options count:', dropdown.options.length);
+            for (var i = 0; i < dropdown.options.length; i++) {
+                console.log('Option ' + i + ': ' + dropdown.options[i].text + ' = ' + dropdown.options[i].value);
             }
         }
 
-        function hideSuccessModal() {
-            var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-            // Remove backdrop
-            var backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(function (backdrop) {
-                document.body.removeChild(backdrop);
-            });
-            document.body.style.overflow = ''; // Re-enable scrolling
-        }
+        // Force a reflow to ensure display changes take effect
+        modal.offsetHeight;
 
-        // Delete Confirmation Modal Functions
-        function showDeletePanel() {
-            var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
-            if (panel) {
-                panel.style.display = 'block';
-                // Add backdrop
-                var backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                backdrop.style.position = 'fixed';
-                backdrop.style.top = '0';
-                backdrop.style.left = '0';
-                backdrop.style.width = '100%';
-                backdrop.style.height = '100%';
-                backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-                backdrop.style.zIndex = '1040';
-                backdrop.onclick = function () {
-                    // Don't hide on backdrop click - force user to make a decision
-                };
-                document.body.appendChild(backdrop);
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+    } else {
+        console.error('Modal not found! Check the ClientID:', '<%= pnlDepartmentReassign.ClientID %>');
+    }
+}
+    // Success Modal Functions
+    function showSuccessModal() {
+        var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+        if (modal) {
+            var modalContent = modal.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.classList.add('success-modal');
             }
-        }
 
-        function hideDeletePanel() {
-            var panel = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
-            if (panel) {
-                panel.style.display = 'none';
+            modal.style.display = 'flex';
+            var backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop';
+            document.body.appendChild(backdrop);
+            document.body.classList.add('body-no-scroll');
+        }
+    }
+
+    function hideSuccessModal() {
+        var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        var backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(function (backdrop) {
+            document.body.removeChild(backdrop);
+        });
+        document.body.classList.remove('body-no-scroll');
+    }
+
+    // Delete Confirmation Modal Functions
+    function showDeleteConfirm() {
+        var modal = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
+        if (modal) {
+            var modalContent = modal.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.classList.add('delete-modal');
             }
-            // Remove backdrop
-            var backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(function (backdrop) {
-                document.body.removeChild(backdrop);
-            });
-            document.body.style.overflow = ''; // Re-enable scrolling
-        }
 
-        // Department Reassignment Modal Functions
-        function showReassignmentModal() {
-            var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
-            if (modal) {
-                modal.style.display = 'block';
-                // Add backdrop
-                var backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                backdrop.style.position = 'fixed';
-                backdrop.style.top = '0';
-                backdrop.style.left = '0';
-                backdrop.style.width = '100%';
-                backdrop.style.height = '100%';
-                backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-                backdrop.style.zIndex = '1040';
-                document.body.appendChild(backdrop);
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            modal.style.display = 'flex';
+            var backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop';
+            document.body.appendChild(backdrop);
+            document.body.classList.add('body-no-scroll');
+        }
+    }
+
+    function hideDeleteConfirm() {
+        var modal = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        var backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(function (backdrop) {
+            document.body.removeChild(backdrop);
+        });
+        document.body.classList.remove('body-no-scroll');
+    }
+
+    // Reassign Manager Modal Functions
+    function showReassignManagerModal() {
+        var modal = document.getElementById('reassignManagerModal');
+        if (modal) {
+            var modalContent = modal.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.classList.add('reassign-modal');
             }
-        } execution
-        if (callback) {
-            modal.dataset.callback = callback;
-        }
-           }
-       }
-        eval(callback);
-           }
-       }
-        function hideReassignmentModal() {
-            var modal = document.getElementById('<%= pnlReassignment.ClientID %>');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-            // Remove backdrop
-            var backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(function (backdrop) {
-                document.body.removeChild(backdrop);
-            });
-            document.body.style.overflow = ''; // Re-enable scrolling
-        }
 
-        // Position Delete Modal Functions
-        function showPositionDeleteModal() {
-            var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
-            if (modal) {
-                modal.style.display = 'block';
-                // Add backdrop
-                var backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                backdrop.style.position = 'fixed';
-                backdrop.style.top = '0';
-                backdrop.style.left = '0';
-                backdrop.style.width = '100%';
-                backdrop.style.height = '100%';
-                backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-                backdrop.style.zIndex = '1040';
-                document.body.appendChild(backdrop);
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
-            }
+            modal.style.display = 'flex';
+            var backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop';
+            document.body.appendChild(backdrop);
+            document.body.classList.add('body-no-scroll');
         }
+    }
 
-        function hidePositionDeleteModal() {
-            var modal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-            // Remove backdrop
-            var backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(function (backdrop) {
-                document.body.removeChild(backdrop);
-            });
-            document.body.style.overflow = ''; // Re-enable scrolling
+    function hideReassignManagerModal() {
+        var modal = document.getElementById('reassignManagerModal');
+        if (modal) {
+            modal.style.display = 'none';
         }
+        var backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(function (backdrop) {
+            document.body.removeChild(backdrop);
+        });
+        document.body.classList.remove('body-no-scroll');
+    }
 
-        // Location Delete Modal Functions
-        function showLocationDeleteModal() {
-            var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
-           if (modal) {
-               modal.style.display = 'block';
-               // Add backdrop
-               var backdrop = document.createElement('div');
-               backdrop.className = 'modal-backdrop fade show';
-               backdrop.style.position = 'fixed';
-               backdrop.style.top = '0';
-               backdrop.style.left = '0';
-               backdrop.style.width = '100%';
-               backdrop.style.height = '100%';
-               backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)' backdrops.forEach(function (backdrop) {
-                   document.body.removeChild(backdrop);
-               });
-               document.body.style.overflow = ''; // Re-enable scrolling
-           }
+    // Department Reassign Modal Functions
+    function showDepartmentReassignModal() {
+        console.log('showDepartmentReassignModal() called');
 
-           function hideLocationDeleteModal() {
-               var modal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
-               if (modal) {
-                   modal.style.display = 'none';
+        var modal = document.getElementById('<%= pnlDepartmentReassign.ClientID %>');
+    console.log('Modal element:', modal);
+    
+    if (modal) {
+        // Add department reassign modal class for specific styling
+        var modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.classList.add('department-reassign-modal');
+        }
+        
+        // Force the modal to be visible
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        
+        console.log('Modal display set to flex');
+        
+        // Add backdrop
+        var backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+        document.body.appendChild(backdrop);
+        document.body.classList.add('body-no-scroll');
+        
+        // Debug: Check dropdown contents
+           var dropdown = document.getElementById('<%= ddlTargetDepartment.ClientID %>');
+           if (dropdown) {
+               console.log('Dropdown options count:', dropdown.options.length);
+               for (var i = 0; i < dropdown.options.length; i++) {
+                   console.log('Option ' + i + ': ' + dropdown.options[i].text + ' = ' + dropdown.options[i].value);
                }
-               // Remove backdrop
-               var backdrops = document.querySelectorAll('.modal-backdrop');
-               backdrops.forEach(function (backdrop) {
-                   document.body.removeChild(backdrop);
-               });
-               document.body.style.overflow = ''; // Re-enable scrolling
            }
+       } else {
+           console.error('Modal not found!');
+       }
+   }
 
-           // Auto-close success panel after 5 seconds
-           function autoCloseSuccessPanel() {
-               setTimeout(function () {
-                   hideSuccessModal();
-               }, 5000);
-           }
+    function hideDepartmentReassignModal() {
+        var modal = document.getElementById('<%= pnlDepartmentReassign.ClientID %>');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        var backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(function (backdrop) {
+            document.body.removeChild(backdrop);
+        });
+        document.body.classList.remove('body-no-scroll');
+    }
 
-           // Client-side tab switching
-           function bindTabEvents() {
-               $('.tab-button').off('click').on('click', function (e) {
-                   e.preventDefault();
-                   $('.tab-button').removeClass('active');
-                   $(this).addClass('active');
-                   $('.tab-content').hide();
-                   var tabName = $(this).attr('data-tab');
-                   $('#' + tabName).show();
-                   $('#<%= activeTabHidden.ClientID %>').val(tabName);
+    // Position Reassign Modal Functions
+    function showPositionReassignModal() {
+        console.log('showPositionReassignModal() called');
+
+        var modal = document.getElementById('<%= pnlPositionReassign.ClientID %>');
+    console.log('Modal element:', modal);
+
+    if (modal) {
+        // Add position reassign modal class for specific styling
+        var modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.classList.add('position-reassign-modal');
+        }
+
+        // Force the modal to be visible
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+
+        console.log('Modal display set to flex');
+
+        // Add backdrop
+        var backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+        document.body.appendChild(backdrop);
+        document.body.classList.add('body-no-scroll');
+
+        // Debug: Check dropdown contents
+        var dropdown = document.getElementById('<%= ddlTargetPosition.ClientID %>');
+            if (dropdown) {
+                console.log('Dropdown options count:', dropdown.options.length);
+                for (var i = 0; i < dropdown.options.length; i++) {
+                    console.log('Option ' + i + ': ' + dropdown.options[i].text + ' = ' + dropdown.options[i].value);
+                }
+            }
+        } else {
+            console.error('Position reassign modal not found!');
+        }
+    }
+
+    function hidePositionReassignModal() {
+        var modal = document.getElementById('<%= pnlPositionReassign.ClientID %>');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    var backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(function (backdrop) {
+        document.body.removeChild(backdrop);
+    });
+    document.body.classList.remove('body-no-scroll');
+}
+    // Location Reassign Info Panel Functions
+    function showLocationReassignInfo() {
+        console.log('showLocationReassignInfo() called');
+
+        var modal = document.getElementById('<%= pnlLocationReassignInfo.ClientID %>');
+    console.log('Info panel element:', modal);
+    
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        
+        console.log('Info panel display set to flex');
+        
+        // Add backdrop
+        var backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+        document.body.appendChild(backdrop);
+        document.body.classList.add('body-no-scroll');
+    } else {
+        console.error('Location reassign info panel not found!');
+    }
+}
+
+function hideLocationReassignInfo() {
+    var modal = document.getElementById('<%= pnlLocationReassignInfo.ClientID %>');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    var backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(function (backdrop) {
+        document.body.removeChild(backdrop);
+    });
+    document.body.classList.remove('body-no-scroll');
+
+    // Also hide the success modal if it's showing
+    hideSuccessModal();
+}
+
+    // Client-side tab switching
+    function bindTabEvents() {
+        $('.tab-button').off('click').on('click', function (e) {
+            e.preventDefault();
+            $('.tab-button').removeClass('active');
+            $(this).addClass('active');
+            $('.tab-content').hide();
+            var tabName = $(this).attr('data-tab');
+            $('#' + tabName).show();
+            $('#<%= activeTabHidden.ClientID %>').val(tabName);
         });
 
-        // Set initial tab
         var activeTab = $('#<%= activeTabHidden.ClientID %>').val();
-               if (activeTab) {
-                   $('.tab-content').hide();
-                   $('#' + activeTab).show();
-                   $('.tab-button').removeClass('active');
-                   $('.tab-button[data-tab="' + activeTab + '"]').addClass('active');
-               }
-           }
-
-           // Close modals when clicking outside (except for delete confirmation which requires explicit action)
-           document.addEventListener('click', function (e) {
-               // Success Modal
-               var successModal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
-        if (successModal && successModal.style.display === 'block') {
-            var successContent = successModal.querySelector('.modal-panel-content');
-            if (successContent && !successContent.contains(e.target)) {
-                hideSuccessModal();
-            }
+        if (activeTab) {
+            $('.tab-content').hide();
+            $('#' + activeTab).show();
+            $('.tab-button').removeClass('active');
+            $('.tab-button[data-tab="' + activeTab + '"]').addClass('active');
         }
+    }
 
-        // Department Reassignment Modal
-        var reassignmentModal = document.getElementById('<%= pnlReassignment.ClientID %>');
-        if (reassignmentModal && reassignmentModal.style.display === 'block') {
-            var reassignmentContent = reassignmentModal.querySelector('.modal-panel-content');
-            if (reassignmentContent && !reassignmentContent.contains(e.target)) {
-                hideReassignmentModal();
-            }
-        }
+    // Name validation function
+    function validateName(input) {
+        var nameRegex = /^[a-zA-Z\-\s]+$/;
+        return nameRegex.test(input.value);
+    }
 
-        // Position Delete Modal
-        var positionDeleteModal = document.getElementById('<%= pnlPositionDelete.ClientID %>');
-        if (positionDeleteModal && positionDeleteModal.style.display === 'block') {
-            var positionDeleteContent = positionDeleteModal.querySelector('.modal-panel-content');
-            if (positionDeleteContent && !positionDeleteContent.contains(e.target)) {
-                hidePositionDeleteModal();
-            }
-        }
-
-        // Location Delete Modal
-        var locationDeleteModal = document.getElementById('<%= pnlLocationDelete.ClientID %>');
-        if (locationDeleteModal && locationDeleteModal.style.display === 'block') {
-            var locationDeleteContent = locationDeleteModal.querySelector('.modal-panel-content');
-            if (locationDeleteContent && !locationDeleteContent.contains(e.target)) {
-                hideLocationDeleteModal();
-            }
-        }
-
-    });
-
-           // Name validation function
-           function validateName(input) {
-               var nameRegex = /^[a-zA-Z\-\s]+$/;
-               return nameRegex.test(input.value);
-           }
-
-           function setupNameValidation() {
-               var firstNameInput = document.getElementById('<%= firstNameTextbox.ClientID %>');
+    function setupNameValidation() {
+        var firstNameInput = document.getElementById('<%= firstNameTextbox.ClientID %>');
         var lastNameInput = document.getElementById('<%= lastNameTextbox.ClientID %>');
 
-               if (firstNameInput) {
-                   firstNameInput.addEventListener('input', function () {
-                       if (!validateName(this)) {
-                           this.style.borderColor = 'red';
-                       } else {
-                           this.style.borderColor = '';
-                       }
-                   });
-               }
-
-               if (lastNameInput) {
-                   lastNameInput.addEventListener('input', function () {
-                       if (!validateName(this)) {
-                           this.style.borderColor = 'red';
-                       } else {
-                           this.style.borderColor = '';
-                       }
-                   });
-               }
-           }
-           function validateDepartmentForm() {
-               var departmentName = document.getElementById('<%= txtDepartmentName.ClientID %>').value.trim();
-           var locationId = document.getElementById('<%= ddlDepartmentLocation.ClientID %>').value;
-
-                if (departmentName === "") {
-                    alert("Please enter a department name.");
-                    return false;
+        if (firstNameInput) {
+            firstNameInput.addEventListener('input', function () {
+                if (!validateName(this)) {
+                    this.style.borderColor = 'red';
+                } else {
+                    this.style.borderColor = '';
                 }
+            });
+        }
 
-                if (locationId === "" || locationId === "0") {
-                    alert("Please select a location for the department.");
-                    return false;
+        if (lastNameInput) {
+            lastNameInput.addEventListener('input', function () {
+                if (!validateName(this)) {
+                    this.style.borderColor = 'red';
+                } else {
+                    this.style.borderColor = '';
                 }
-
-                return true;
-            }
-            // Initialize on page load
-            $(document).ready(function () {
-                bindTabEvents();
-                setupNameValidation();
-
-                // Set up modal close buttons
-                $('[data-dismiss="modal"]').on('click', function () {
-                    var modal = $(this).closest('.modal-panel');
-                    modal.hide();
-                    // Remove backdrop
-                    $('.modal-backdrop').remove();
-                    document.body.style.overflow = '';
-                });
             });
+        }
+    }
 
-            // Re-bind events after AJAX update
-            var prm = Sys.WebForms.PageRequestManager.getInstance();
-            prm.add_endRequest(function () {
-                bindTabEvents();
-                setupNameValidation();
-            });
-            function showReassignManagerModal() {
-                document.getElementById('reassignManagerModal').style.display = 'block';
-            }
+    function validateDepartmentForm() {
+        var departmentName = document.getElementById('<%= txtDepartmentName.ClientID %>').value.trim();
+        var locationId = document.getElementById('<%= ddlDepartmentLocation.ClientID %>').value;
 
-            function hideReassignManagerModal() {
-                document.getElementById('reassignManagerModal').style.display = 'none';
-            }
-    </script>
-</asp:Content>
+        if (departmentName === "") {
+            alert("Please enter a department name.");
+            return false;
+        }
+
+        if (locationId === "" || locationId === "0") {
+            alert("Please select a location for the department.");
+            return false;
+        }
+
+        return true;
+    }
+
+    // Initialize on page load
+    $(document).ready(function () {
+        bindTabEvents();
+        setupNameValidation();
+    });
+
+    // Re-bind events after AJAX update
+    var prm = Sys.WebForms.PageRequestManager.getInstance();
+    prm.add_endRequest(function () {
+        bindTabEvents();
+        setupNameValidation();
+    });
+</script>
+    </asp:Content>
