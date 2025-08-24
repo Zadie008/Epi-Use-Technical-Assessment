@@ -23,20 +23,16 @@ namespace EpiUse_TechnicalAssesment
                 return;
             }
 
-            // Handle postback for department reassign modal - MUST be before !IsPostBack check
             if (IsPostBack)
             {
                 System.Diagnostics.Debug.WriteLine("=== PAGE IS POSTBACK ===");
 
-                // Check if we need to rebind the dropdown
                 if (ViewState["TargetDepartments"] != null)
                 {
                     DataTable targetDepartments = (DataTable)ViewState["TargetDepartments"];
                     System.Diagnostics.Debug.WriteLine("Rebinding dropdown from ViewState. Departments count: " + targetDepartments.Rows.Count);
 
                     BindTargetDepartmentsDropdown(targetDepartments);
-
-                    // Restore other values
                     if (ViewState["SourceDepartmentId"] != null)
                     {
                         int departmentId = Convert.ToInt32(ViewState["SourceDepartmentId"]);
@@ -54,7 +50,6 @@ namespace EpiUse_TechnicalAssesment
                     }
                 }
 
-                // DEBUG: Check dropdown state after postback
                 System.Diagnostics.Debug.WriteLine("Dropdown items count in Page_Load: " + ddlTargetDepartment.Items.Count);
             }
 
@@ -309,7 +304,6 @@ namespace EpiUse_TechnicalAssesment
             string confirmPass = confirmPassword.Text;
             string salaryString = salaryTextbox.Text.Trim();
 
-            // Validation logic
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) ||
                 string.IsNullOrEmpty(dobString) || string.IsNullOrEmpty(email) ||
                 string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPass) ||
@@ -357,10 +351,9 @@ namespace EpiUse_TechnicalAssesment
                 return;
             }
 
-            // Database Insertion
             int positionId = Convert.ToInt32(positionDropdown.SelectedValue);
             int departmentId = Convert.ToInt32(departmentDropdown.SelectedValue);
-            int locationId = Convert.ToInt32(locationDropdown.SelectedValue); // Add this line
+            int locationId = Convert.ToInt32(locationDropdown.SelectedValue); 
             int managerId = Convert.ToInt32(managerDropdown.SelectedValue);
             string hashedPassword = HashPassword(password);
 
@@ -611,12 +604,8 @@ namespace EpiUse_TechnicalAssesment
 
                             // Refresh the grid view
                             BindGridViews();
-
-                            // Update the panels
                             upEmployeeTab.Update();
                             upSuccessModal.Update();
-
-                            // Auto-close success panel
                             ScriptManager.RegisterStartupScript(this, this.GetType(), "autoCloseSuccess", "setTimeout(function() { hideSuccessModal(); }, 5000);", true);
                         }
                         else
@@ -653,14 +642,12 @@ namespace EpiUse_TechnicalAssesment
 
             string departmentName = txtDepartmentName.Text.Trim();
 
-            // Validate department name
             if (string.IsNullOrEmpty(departmentName))
             {
                 departmentValidationMessage.Text = "Department name cannot be empty.";
                 return;
             }
 
-            // Validate location selection
             if (string.IsNullOrEmpty(ddlDepartmentLocation.SelectedValue))
             {
                 departmentValidationMessage.Text = "Please select a location for the department.";
@@ -718,108 +705,7 @@ namespace EpiUse_TechnicalAssesment
                 departmentValidationMessage.Text = "Error adding department: " + ex.Message;
             }
         }
-        private bool DepartmentHasEmployees(int departmentId)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                string query = "SELECT COUNT(*) FROM EMPLOYEES WHERE DepartmentID = @DepartmentID";
-                using (SqlCommand cmd = new SqlCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
-                    connection.Open();
-                    int employeeCount = Convert.ToInt32(cmd.ExecuteScalar());
-                    return employeeCount > 0;
-                }
-            }
-        }
-        // Method to get departments at the same location (CORRECTED)
-        // Simpler alternative query
-        // Method to get departments at the same location with detailed debugging
-        private DataTable GetDepartmentsAtSameLocation(int departmentId)
-        {
-            System.Diagnostics.Debug.WriteLine($"=== GetDepartmentsAtSameLocation for DepartmentID: {departmentId} ===");
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-
-                    // First, get the current department's location
-                    string currentLocationQuery = "SELECT LocationID, DepartmentName FROM DEPARTMENT WHERE DepartmentID = @DepartmentID";
-                    int currentLocationId = 0;
-                    string currentDeptName = "";
-
-                    using (SqlCommand currentCmd = new SqlCommand(currentLocationQuery, connection))
-                    {
-                        currentCmd.Parameters.AddWithValue("@DepartmentID", departmentId);
-                        using (SqlDataReader currentReader = currentCmd.ExecuteReader())
-                        {
-                            if (currentReader.Read())
-                            {
-                                currentLocationId = Convert.ToInt32(currentReader["LocationID"]);
-                                currentDeptName = currentReader["DepartmentName"].ToString();
-                                System.Diagnostics.Debug.WriteLine($"Current department: {currentDeptName}, LocationID: {currentLocationId}");
-                            }
-                            currentReader.Close();
-                        }
-                    }
-
-                    // Now get other departments at the same location
-                    string query = @"SELECT DepartmentID, DepartmentName 
-                    FROM DEPARTMENT 
-                    WHERE LocationID = @LocationID 
-                    AND DepartmentID != @DepartmentID
-                    ORDER BY DepartmentName";
-
-                    using (SqlCommand cmd = new SqlCommand(query, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@LocationID", currentLocationId);
-                        cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
-
-                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
-                        {
-                            DataTable dt = new DataTable();
-                            da.Fill(dt);
-
-                            System.Diagnostics.Debug.WriteLine($"Found {dt.Rows.Count} departments at the same location:");
-                            foreach (DataRow row in dt.Rows)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"- {row["DepartmentName"]} (ID: {row["DepartmentID"]})");
-                            }
-
-                            if (dt.Rows.Count == 0)
-                            {
-                                System.Diagnostics.Debug.WriteLine("NO OTHER DEPARTMENTS FOUND AT THIS LOCATION!");
-
-                                // Let's see what departments ARE at this location
-                                string allAtLocationQuery = "SELECT DepartmentID, DepartmentName FROM DEPARTMENT WHERE LocationID = @LocationID ORDER BY DepartmentName";
-                                using (SqlCommand allCmd = new SqlCommand(allAtLocationQuery, connection))
-                                {
-                                    allCmd.Parameters.AddWithValue("@LocationID", currentLocationId);
-                                    using (SqlDataReader allReader = allCmd.ExecuteReader())
-                                    {
-                                        System.Diagnostics.Debug.WriteLine($"ALL departments at LocationID {currentLocationId}:");
-                                        while (allReader.Read())
-                                        {
-                                            System.Diagnostics.Debug.WriteLine($"- {allReader["DepartmentName"]} (ID: {allReader["DepartmentID"]})");
-                                        }
-                                        allReader.Close();
-                                    }
-                                }
-                            }
-
-                            return dt;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Error in GetDepartmentsAtSameLocation: {ex.Message}");
-                    return new DataTable();
-                }
-            }
-        }
         protected void ReassignEmployeesAndDeleteDepartment(int sourceDepartmentId, int targetDepartmentId)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -851,7 +737,6 @@ namespace EpiUse_TechnicalAssesment
 
                     transaction.Commit();
 
-                    // No need to show success message here - it's handled in the calling method
                 }
                 catch (Exception ex)
                 {
@@ -910,18 +795,15 @@ namespace EpiUse_TechnicalAssesment
 
         protected void btnCancelDepartmentReassign_Click(object sender, EventArgs e)
         {
-            // Hide modal and clear fields
             ScriptManager.RegisterStartupScript(this, this.GetType(), "HideDepartmentReassignModal",
                 "hideDepartmentReassignModal();", true);
 
-            // Clear ViewState and hidden fields
             ViewState.Remove("TargetDepartments");
             ViewState.Remove("SourceDepartmentId");
             hdnDepartmentToDelete.Value = "0";
             hdnDepartmentLocationId.Value = "0";
             lblDepartmentReassignError.Visible = false;
 
-            // Clear the dropdown
             ddlTargetDepartment.Items.Clear();
             ddlTargetDepartment.Items.Add(new ListItem("-- Select Department --", "0"));
         }
@@ -937,7 +819,6 @@ namespace EpiUse_TechnicalAssesment
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                // Remove the manual ID generation and let SQL Server handle it
                 string insertQuery = "INSERT INTO POSITION (PositionName) VALUES (@PositionName)";
 
                 using (SqlCommand cmdInsert = new SqlCommand(insertQuery, connection))
@@ -977,37 +858,7 @@ namespace EpiUse_TechnicalAssesment
                 }
             }
         }
-        private int GetNextPositionId(int currentPositionId)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                // Get the next higher position ID, or if it's the highest, get the lowest
-                string query = @"
-            DECLARE @NextPositionID INT;
-            
-            -- Try to get the next higher position
-            SELECT TOP 1 @NextPositionID = PositionID 
-            FROM POSITION 
-            WHERE PositionID > @CurrentPositionID 
-            ORDER BY PositionID ASC;
-            
-            -- If no higher position exists, get the lowest position
-            IF @NextPositionID IS NULL
-                SELECT TOP 1 @NextPositionID = PositionID 
-                FROM POSITION 
-                WHERE PositionID != @CurrentPositionID 
-                ORDER BY PositionID ASC;
-                
-            SELECT ISNULL(@NextPositionID, 0);";
-
-                using (SqlCommand cmd = new SqlCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@CurrentPositionID", currentPositionId);
-                    connection.Open();
-                    return Convert.ToInt32(cmd.ExecuteScalar());
-                }
-            }
-        }
+      
         private void ReassignEmployeesAndDeletePosition(int positionId, int targetPositionId)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -1018,7 +869,6 @@ namespace EpiUse_TechnicalAssesment
                     connection.Open();
                     transaction = connection.BeginTransaction();
 
-                    // Reassign employees
                     string reassignQuery = "UPDATE EMPLOYEES SET PositionID = @TargetPositionID WHERE PositionID = @PositionID";
                     using (SqlCommand cmd = new SqlCommand(reassignQuery, connection, transaction))
                     {
@@ -1029,7 +879,6 @@ namespace EpiUse_TechnicalAssesment
                         System.Diagnostics.Debug.WriteLine($"Reassigned {employeesReassigned} employees from position {positionId} to {targetPositionId}");
                     }
 
-                    // Delete position
                     string deleteQuery = "DELETE FROM POSITION WHERE PositionID = @PositionID";
                     using (SqlCommand cmd = new SqlCommand(deleteQuery, connection, transaction))
                     {
@@ -1054,25 +903,19 @@ namespace EpiUse_TechnicalAssesment
             int positionId = Convert.ToInt32(gvPositions.DataKeys[e.RowIndex].Value);
             string positionName = GetPositionName(positionId);
 
-            // Check if position has employees
             if (PositionHasEmployees(positionId))
             {
-                // Store position ID for later use
                 hdnPositionToDelete.Value = positionId.ToString();
 
-                // Get employee count for this position
                 int employeeCount = GetEmployeeCountInPosition(positionId);
                 lblPositionEmployeeCount.Text = employeeCount.ToString();
 
-                // Populate the target positions dropdown
                 PopulateTargetPositionsDropdown(positionId);
 
-                // Show the reassignment modal
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowPositionReassignModal",
                     "showPositionReassignModal();", true);
                 upPositionReassignModal.Update();
 
-                // Cancel the row deleting event since we're handling it through the modal
                 e.Cancel = true;
             }
             else
@@ -1155,7 +998,6 @@ namespace EpiUse_TechnicalAssesment
                 // Reassign employees and delete position
                 ReassignEmployeesAndDeletePosition(sourcePositionId, targetPositionId);
 
-                // Show success message with the stored count
                 lblSuccessMessage.Text = $"{employeeCount} employees from '{sourcePositionName}' position have been reassigned to '{targetPositionName}', and the position has been deleted.";
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
 
@@ -1163,7 +1005,6 @@ namespace EpiUse_TechnicalAssesment
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "HidePositionReassignModal",
                     "hidePositionReassignModal();", true);
 
-                // Refresh data
                 BindGridViews();
                 PopulateDropdowns();
 
@@ -1193,21 +1034,7 @@ namespace EpiUse_TechnicalAssesment
             }
         }
 
-        // Method to get department location
-        private int GetDepartmentLocation(int departmentId)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                string query = "SELECT LocationID FROM DEPARTMENT WHERE DepartmentID = @DepartmentID";
-                using (SqlCommand cmd = new SqlCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
-                    connection.Open();
-                    object result = cmd.ExecuteScalar();
-                    return result != null ? Convert.ToInt32(result) : 0;
-                }
-            }
-        }
+       
         private string GetPositionName(int positionId)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -1302,9 +1129,8 @@ namespace EpiUse_TechnicalAssesment
 
                         if (rowsAffected > 0)
                         {
-                            // Success - clear form and show success message
                             txtLocationName.Text = "";
-                            locationValidationMessage.Text = ""; // Clear any previous error messages
+                            locationValidationMessage.Text = ""; 
 
                             // Refresh data
                             BindLocations();
@@ -1339,7 +1165,6 @@ namespace EpiUse_TechnicalAssesment
                 upLocationTab.Update(); // Update panel to show error
             }
 
-            // Always update the location tab panel
             upLocationTab.Update();
         }
         private void BindLocations()
@@ -1392,7 +1217,6 @@ namespace EpiUse_TechnicalAssesment
             }
             catch (Exception ex)
             {
-                // Log error or show message
                 System.Diagnostics.Debug.WriteLine("Error in BindLocations: " + ex.Message);
             }
         }
@@ -1450,7 +1274,7 @@ namespace EpiUse_TechnicalAssesment
                 FROM DEPARTMENT 
                 WHERE LocationID = (SELECT LocationID FROM DEPARTMENT WHERE DepartmentID = @DepartmentID)
                 AND DepartmentID != @DepartmentID
-                ORDER BY DepartmentName"; // Or DepartmentID for consistent ordering
+                ORDER BY DepartmentName";
 
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
@@ -1464,24 +1288,15 @@ namespace EpiUse_TechnicalAssesment
         }
         private void BindTargetDepartmentsDropdown(DataTable targetDepartments)
         {
-            // Clear existing items first
             ddlTargetDepartment.Items.Clear();
-
-            // Add the default option
             ddlTargetDepartment.Items.Add(new ListItem("-- Select Department --", "0"));
-
-            // Add departments from the DataTable
             foreach (DataRow row in targetDepartments.Rows)
             {
                 string departmentId = row["DepartmentID"].ToString();
                 string departmentName = row["DepartmentName"].ToString();
                 ddlTargetDepartment.Items.Add(new ListItem(departmentName, departmentId));
             }
-
-            // Ensure ViewState is enabled
             ddlTargetDepartment.EnableViewState = true;
-
-            // DEBUG: Log what was added to the dropdown
             System.Diagnostics.Debug.WriteLine("Dropdown items after binding:");
             foreach (ListItem item in ddlTargetDepartment.Items)
             {
@@ -1522,35 +1337,7 @@ namespace EpiUse_TechnicalAssesment
             }
         }
 
-        private DataTable GetAllDepartments()
-{
-    using (SqlConnection connection = new SqlConnection(connectionString))
-    {
-        string query = @"SELECT d.DepartmentID, d.DepartmentName, l.LocationName, l.LocationID
-                FROM DEPARTMENT d
-                INNER JOIN LOCATION l ON d.LocationID = l.LocationID
-                ORDER BY l.LocationName, d.DepartmentName";
-
-        using (SqlCommand cmd = new SqlCommand(query, connection))
-        {
-            using (SqlDataAdapter da = new SqlDataAdapter(cmd))
-            {
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                
-                // DEBUG: Output all departments
-                System.Diagnostics.Debug.WriteLine("=== ALL DEPARTMENTS IN DATABASE ===");
-                foreach (DataRow row in dt.Rows)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Department: {row["DepartmentName"]} (ID: {row["DepartmentID"]}) at Location: {row["LocationName"]} (ID: {row["LocationID"]})");
-                }
-                
-                return dt;
-            }
-        }
-    }
-}
-        // Comprehensive test method to debug department data
+       
         private void DebugDepartmentData()
         {
             System.Diagnostics.Debug.WriteLine("=== COMPREHENSIVE DEPARTMENT DATA DEBUG ===");
@@ -1561,7 +1348,6 @@ namespace EpiUse_TechnicalAssesment
                 {
                     connection.Open();
 
-                    // 1. Check all locations
                     string locationQuery = "SELECT LocationID, LocationName FROM LOCATION ORDER BY LocationName";
                     using (SqlCommand locationCmd = new SqlCommand(locationQuery, connection))
                     {
@@ -1576,7 +1362,6 @@ namespace EpiUse_TechnicalAssesment
                         }
                     }
 
-                    // 2. Check all departments with their locations
                     string departmentQuery = @"SELECT d.DepartmentID, d.DepartmentName, d.LocationID, l.LocationName 
                               FROM DEPARTMENT d 
                               INNER JOIN LOCATION l ON d.LocationID = l.LocationID 
@@ -1595,7 +1380,6 @@ namespace EpiUse_TechnicalAssesment
                         }
                     }
 
-                    // 3. Check if any locations have multiple departments
                     string multiDeptQuery = @"SELECT l.LocationID, l.LocationName, COUNT(d.DepartmentID) as DepartmentCount
                              FROM LOCATION l
                              LEFT JOIN DEPARTMENT d ON l.LocationID = d.LocationID
@@ -1645,7 +1429,6 @@ namespace EpiUse_TechnicalAssesment
         }
         private void DeleteLocation(int locationId)
         {
-            // Double-check that the location has no departments before deleting
             if (LocationHasDepartments(locationId))
             {
                 throw new InvalidOperationException("Cannot delete location that has departments. Use reassignment instead.");
@@ -1688,7 +1471,6 @@ namespace EpiUse_TechnicalAssesment
 
             ReassignDepartmentsAndDeleteLocation(locationId, nextLocationId);
 
-            // Clear session
             Session.Remove("LocationToDelete");
             Session.Remove("NextLocationId");
             Session.Remove("NextLocationName");
@@ -1703,7 +1485,6 @@ namespace EpiUse_TechnicalAssesment
                     connection.Open();
                     transaction = connection.BeginTransaction();
 
-                    // Reassign departments to the new location
                     string reassignQuery = "UPDATE DEPARTMENT SET LocationID = @TargetLocationID WHERE LocationID = @SourceLocationID";
                     using (SqlCommand cmd = new SqlCommand(reassignQuery, connection, transaction))
                     {
@@ -1714,7 +1495,6 @@ namespace EpiUse_TechnicalAssesment
                         System.Diagnostics.Debug.WriteLine($"Reassigned {departmentsReassigned} departments from location {sourceLocationId} to {targetLocationId}");
                     }
 
-                    // Delete location
                     string deleteQuery = "DELETE FROM LOCATION WHERE LocationID = @LocationID";
                     using (SqlCommand cmd = new SqlCommand(deleteQuery, connection, transaction))
                     {
@@ -1769,7 +1549,6 @@ namespace EpiUse_TechnicalAssesment
 
             ReassignEmployeesAndDeleteDepartment(sourceDepartmentId, targetDepartmentId);
 
-            // Clear session
             Session.Remove("DepartmentToDelete");
         }
         private bool LocationHasDepartments(int locationId)
@@ -1786,40 +1565,7 @@ namespace EpiUse_TechnicalAssesment
             }
         }
 
-        private int GetNextLocationId(int currentLocationId)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                // Get the next higher location ID, or if it's the highest, get the lowest
-                string query = @"
-            DECLARE @NextLocationID INT;
-            
-            -- Try to get the next higher location
-            SELECT TOP 1 @NextLocationID = LocationID 
-            FROM LOCATION 
-            WHERE LocationID > @CurrentLocationID 
-            ORDER BY LocationID ASC;
-            
-            -- If no higher location exists, get the lowest location
-            IF @NextLocationID IS NULL
-                SELECT TOP 1 @NextLocationID = LocationID 
-                FROM LOCATION 
-                WHERE LocationID != @CurrentLocationID 
-                ORDER BY LocationID ASC;
-                
-            SELECT ISNULL(@NextLocationID, 0);";
-
-                using (SqlCommand cmd = new SqlCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@CurrentLocationID", currentLocationId);
-                    connection.Open();
-                    return Convert.ToInt32(cmd.ExecuteScalar());
-                }
-            }
-        }
-
-
-
+        
         protected void gvLocations_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
             int locationId = Convert.ToInt32(gvLocations.DataKeys[e.RowIndex].Value);
@@ -1830,7 +1576,6 @@ namespace EpiUse_TechnicalAssesment
             {
                 try
                 {
-                    // Get a random alternative location
                     int? randomLocationId = GetRandomAlternativeLocation(locationId);
 
                     if (randomLocationId.HasValue)
@@ -1839,8 +1584,6 @@ namespace EpiUse_TechnicalAssesment
 
                         // Get department count before reassignment
                         int departmentCount = GetDepartmentCountInLocation(locationId);
-
-                        // Show info panel with reassignment details
                         lblReassignInfo.Text = $"{departmentCount} departments from '{locationName}' are being moved to '{randomLocationName}' location.";
                         ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowLocationReassignInfo",
                             "showLocationReassignInfo();", true);
@@ -1849,11 +1592,9 @@ namespace EpiUse_TechnicalAssesment
                         // Reassign departments to random location and delete
                         ReassignDepartmentsAndDeleteLocation(locationId, randomLocationId.Value);
 
-                        // Update info panel with completion message
                         lblReassignInfo.Text = $"{departmentCount} departments from '{locationName}' have been successfully moved to '{randomLocationName}' location.";
                         upLocationReassignInfo.Update();
 
-                        // Show success message after a brief delay
                         ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessAfterReassign",
                             "setTimeout(function() { hideLocationReassignInfo(); showSuccessModal(); }, 2000);", true);
 
@@ -1870,7 +1611,6 @@ namespace EpiUse_TechnicalAssesment
                 }
                 catch (Exception ex)
                 {
-                    // Hide info panel if it was shown
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "HideLocationReassignInfo",
                         "hideLocationReassignInfo();", true);
 
@@ -1898,7 +1638,7 @@ namespace EpiUse_TechnicalAssesment
                 }
             }
 
-            // Refresh data
+           
             BindGridViews();
             PopulateDropdowns();
             upSuccessModal.Update();
@@ -1963,7 +1703,6 @@ namespace EpiUse_TechnicalAssesment
 
                 try
                 {
-                    // Step 1: Move employees
                     string updateEmployees = @"UPDATE EMPLOYEES 
                                        SET DepartmentID = @TargetDepartmentID 
                                        WHERE DepartmentID = @DepartmentID";
@@ -1973,17 +1712,13 @@ namespace EpiUse_TechnicalAssesment
                         cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
                         cmd.ExecuteNonQuery();
                     }
-
-                    // Step 2: Delete department
                     string deleteDept = "DELETE FROM DEPARTMENT WHERE DepartmentID = @DepartmentID";
                     using (SqlCommand cmd = new SqlCommand(deleteDept, connection, transaction))
                     {
                         cmd.Parameters.AddWithValue("@DepartmentID", departmentId);
                         cmd.ExecuteNonQuery();
                     }
-
                     transaction.Commit();
-
                     lblSuccessMessage.Text = "Department deleted and employees reassigned successfully.";
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowSuccessModal", "showSuccessModal();", true);
                     upSuccessModal.Update();
@@ -2121,14 +1856,10 @@ namespace EpiUse_TechnicalAssesment
                 upReassignManager.Update();
                 return;
             }
-
             int employeeIdToDelete = Convert.ToInt32(Session["EmployeeToDelete"]);
             int newManagerId = Convert.ToInt32(ddlNewManager.SelectedValue);
-
             // Reassign the employees to new manager
             ReassignEmployeesToNewManager(employeeIdToDelete, newManagerId);
-
-            // Now show the delete confirmation modal
             pnlDeleteConfirm.Style["display"] = "block";
             //UpdateDeleteConfirmPanel();
 
@@ -2151,16 +1882,16 @@ namespace EpiUse_TechnicalAssesment
                     connection.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
 
-                    // You can log this or show a message if needed
+                   
                     System.Diagnostics.Debug.WriteLine($"Reassigned {rowsAffected} employees from manager {oldManagerId} to {newManagerId}");
                 }
             }
         }
 
-        // Handle cancel reassignment
+       
         protected void btnCancelReassign_Click(object sender, EventArgs e)
         {
-            // Clear the session and hide the modal
+           
             Session.Remove("EmployeeToDelete");
             ScriptManager.RegisterStartupScript(this, this.GetType(), "HideReassignManagerModal", "hideReassignManagerModal();", true);
         }
@@ -2177,10 +1908,10 @@ namespace EpiUse_TechnicalAssesment
 
             if (positionDropdown.Items.Count > 0) positionDropdown.SelectedIndex = 0;
             if (departmentDropdown.Items.Count > 0) departmentDropdown.SelectedIndex = 0;
-            if (locationDropdown.Items.Count > 0) locationDropdown.SelectedIndex = 0; // Add this line
+            if (locationDropdown.Items.Count > 0) locationDropdown.SelectedIndex = 0; 
             if (managerDropdown.Items.Count > 0) managerDropdown.SelectedIndex = 0;
         }
 
-        // UpdatePanel methods
+       
             }
 }

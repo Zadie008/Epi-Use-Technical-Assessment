@@ -38,6 +38,10 @@
                             <img src="Images/google-docs.png" alt="Read Me Icon" class="nav-icon" />
                             <span class="nav-title">References</span>
                         </a>
+                        <a href="Login.aspx" class="nav-card">
+                            <img src="Images/return.png" alt="Logout" class="nav-icon" />
+                            <span class="nav-title">Logout</span>
+                        </a>
                     </div>
                 </nav>
                 <asp:ContentPlaceHolder ID="mainContentPlaceHolder" runat="server"></asp:ContentPlaceHolder>

@@ -473,7 +473,7 @@
         </asp:UpdatePanel>
     
     </div>
-     <!-- Simpler Location Reassignment Info Panel -->
+   
 <asp:UpdatePanel ID="upLocationReassignInfo" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="pnlLocationReassignInfo" runat="server" CssClass="modal" Style="display: none;">
@@ -553,31 +553,23 @@
     <asp:HiddenField ID="activeTabHidden" runat="server" Value="employeeTab" />
 
 <script type="text/javascript">
-    // Add this to your JavaScript section
     console.log('JavaScript loaded successfully');
-
-    // Debug function to check if modal is being called
     function debugModalShow() {
         console.log('showDepartmentReassignModal() called');
         var modal = document.getElementById('<%= pnlDepartmentReassign.ClientID %>');
     console.log('Modal element found:', modal);
-    
     if (modal) {
         console.log('Modal current display:', modal.style.display);
         console.log('Modal current visibility:', modal.style.visibility);
-        
         // Force show the modal for testing
         modal.style.display = 'flex';
         modal.style.visibility = 'visible';
-        
         console.log('Modal after setting display:', modal.style.display);
-        
         // Check if modal content is visible
         var modalContent = modal.querySelector('.modal-content');
         console.log('Modal content found:', modalContent);
     }
 }
-    // Add this function to debug dropdown on client side
     function debugDropdown() {
         var dropdown = document.getElementById('<%= ddlTargetDepartment.ClientID %>');
         console.log('Dropdown debug:');
@@ -591,16 +583,13 @@
                 console.log('Option ' + i + ': ' + dropdown.options[i].text + ' = ' + dropdown.options[i].value);
             }
 
-            // If dropdown is empty, try to see if it's a ViewState issue
-            if (dropdown.options.length <= 1) { // Only the default option
+            if (dropdown.options.length <= 1) {
                 console.warn('Dropdown appears empty! Checking for ViewState issues...');
             }
         } else {
             console.error('Dropdown not found!');
         }
     }
-
-    // Update your showDepartmentReassignModal to include dropdown debug
     function showDepartmentReassignModal() {
         console.log('showDepartmentReassignModal() called');
 
@@ -608,20 +597,14 @@
     console.log('Modal element:', modal);
 
     if (modal) {
-        // Debug dropdown first
         debugDropdown();
-
-        // Show modal
         modal.style.display = 'flex';
-
-        // Add backdrop
         var backdrop = document.createElement('div');
         backdrop.className = 'modal-backdrop';
         document.body.appendChild(backdrop);
         document.body.classList.add('body-no-scroll');
     }
 }
-// Replace your current showDepartmentReassignModal function with this:
 function showDepartmentReassignModal() {
     console.log('showDepartmentReassignModal() called');
     
@@ -629,28 +612,20 @@ function showDepartmentReassignModal() {
     console.log('Modal element:', modal);
 
     if (modal) {
-        // Add department reassign modal class for specific styling
         var modalContent = modal.querySelector('.modal-content');
         if (modalContent) {
             modalContent.classList.add('department-reassign-modal');
         }
-
-        // Force the modal to be visible with multiple methods
         modal.style.display = 'flex';
         modal.style.visibility = 'visible';
         modal.style.opacity = '1';
         modal.style.zIndex = '10000';
-
         console.log('Modal display set to flex');
-
-        // Add backdrop
         var backdrop = document.createElement('div');
         backdrop.className = 'modal-backdrop';
         backdrop.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);z-index:9999;';
         document.body.appendChild(backdrop);
         document.body.classList.add('body-no-scroll');
-
-        // Debug: Check dropdown contents
         var dropdown = document.getElementById('<%= ddlTargetDepartment.ClientID %>');
         if (dropdown) {
             console.log('Dropdown options count:', dropdown.options.length);
@@ -658,15 +633,12 @@ function showDepartmentReassignModal() {
                 console.log('Option ' + i + ': ' + dropdown.options[i].text + ' = ' + dropdown.options[i].value);
             }
         }
-
-        // Force a reflow to ensure display changes take effect
         modal.offsetHeight;
 
     } else {
         console.error('Modal not found! Check the ClientID:', '<%= pnlDepartmentReassign.ClientID %>');
     }
 }
-    // Success Modal Functions
     function showSuccessModal() {
         var modal = document.getElementById('<%= pnlSuccessModal.ClientID %>');
         if (modal) {
@@ -674,7 +646,6 @@ function showDepartmentReassignModal() {
             if (modalContent) {
                 modalContent.classList.add('success-modal');
             }
-
             modal.style.display = 'flex';
             var backdrop = document.createElement('div');
             backdrop.className = 'modal-backdrop';
@@ -694,8 +665,6 @@ function showDepartmentReassignModal() {
         });
         document.body.classList.remove('body-no-scroll');
     }
-
-    // Delete Confirmation Modal Functions
     function showDeleteConfirm() {
         var modal = document.getElementById('<%= pnlDeleteConfirm.ClientID %>');
         if (modal) {
@@ -723,8 +692,6 @@ function showDepartmentReassignModal() {
         });
         document.body.classList.remove('body-no-scroll');
     }
-
-    // Reassign Manager Modal Functions
     function showReassignManagerModal() {
         var modal = document.getElementById('reassignManagerModal');
         if (modal) {
@@ -766,13 +733,10 @@ function showDepartmentReassignModal() {
         if (modalContent) {
             modalContent.classList.add('department-reassign-modal');
         }
-        
         // Force the modal to be visible
         modal.style.display = 'flex';
         modal.style.visibility = 'visible';
-        
         console.log('Modal display set to flex');
-        
         // Add backdrop
         var backdrop = document.createElement('div');
         backdrop.className = 'modal-backdrop';
@@ -803,11 +767,9 @@ function showDepartmentReassignModal() {
         });
         document.body.classList.remove('body-no-scroll');
     }
-
     // Position Reassign Modal Functions
     function showPositionReassignModal() {
         console.log('showPositionReassignModal() called');
-
         var modal = document.getElementById('<%= pnlPositionReassign.ClientID %>');
     console.log('Modal element:', modal);
 
@@ -817,19 +779,15 @@ function showDepartmentReassignModal() {
         if (modalContent) {
             modalContent.classList.add('position-reassign-modal');
         }
-
         // Force the modal to be visible
         modal.style.display = 'flex';
         modal.style.visibility = 'visible';
-
         console.log('Modal display set to flex');
-
         // Add backdrop
         var backdrop = document.createElement('div');
         backdrop.className = 'modal-backdrop';
         document.body.appendChild(backdrop);
         document.body.classList.add('body-no-scroll');
-
         // Debug: Check dropdown contents
         var dropdown = document.getElementById('<%= ddlTargetPosition.ClientID %>');
             if (dropdown) {
@@ -853,7 +811,6 @@ function showDepartmentReassignModal() {
         document.body.removeChild(backdrop);
     });
     document.body.classList.remove('body-no-scroll');
-}
     // Location Reassign Info Panel Functions
     function showLocationReassignInfo() {
         console.log('showLocationReassignInfo() called');
@@ -864,9 +821,7 @@ function showDepartmentReassignModal() {
     if (modal) {
         modal.style.display = 'flex';
         modal.style.visibility = 'visible';
-        
         console.log('Info panel display set to flex');
-        
         // Add backdrop
         var backdrop = document.createElement('div');
         backdrop.className = 'modal-backdrop';
@@ -876,7 +831,6 @@ function showDepartmentReassignModal() {
         console.error('Location reassign info panel not found!');
     }
 }
-
 function hideLocationReassignInfo() {
     var modal = document.getElementById('<%= pnlLocationReassignInfo.ClientID %>');
     if (modal) {
@@ -887,8 +841,6 @@ function hideLocationReassignInfo() {
         document.body.removeChild(backdrop);
     });
     document.body.classList.remove('body-no-scroll');
-
-    // Also hide the success modal if it's showing
     hideSuccessModal();
 }
 

@@ -10,8 +10,8 @@
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="mainContentPlaceHolder" runat="server">
     <div class="container-fluid">
-      <%--  <h2>Company Hierarchy</h2>--%>
-        
+     
+
         <!-- Search and Filter Panel -->
         <div class="search-panel card">
             <div class="card-header">
@@ -25,12 +25,12 @@
                             <input type="text" class="form-control" id="searchName" placeholder="Enter name">
                         </div>
                     </div>
-                   <%-- <div class="col-md-4">
+                    <div class="col-md-4" style="display: none;">
                         <div class="form-group">
                             <label for="searchPosition">Position</label>
                             <input type="text" class="form-control" id="searchPosition" placeholder="Enter position">
                         </div>
-                    </div>--%>
+                    </div>
                     <div class="col-md-4 d-flex align-items-end">
                         <button type="button" class="btn btn-primary me-2" onclick="performSearch()">Search</button>
                         <button type="button" class="btn btn-secondary" onclick="clearSearch()">Clear</button>
@@ -38,11 +38,11 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="noResultsMessage" class="alert alert-warning" style="display: none;">
             No employees match your search criteria.
         </div>
-        
+
         <!-- Hierarchy Visualization -->
         <div class="card">
             <div class="card-header">
@@ -62,7 +62,7 @@
         let currentHierarchyData = null;
         let searchResults = new Set();
 
-        // ========== Initialize Page ==========
+        // initialize page
         document.addEventListener("DOMContentLoaded", function () {
             console.log("DOM loaded, initializing page...");
 
@@ -70,7 +70,7 @@
             loadHierarchyData();
         });
 
-        // ========== Data Loading ==========
+       
         function loadHierarchyData() {
             if (typeof PageMethods !== 'undefined') {
                 PageMethods.GetHierarchyData(
@@ -84,7 +84,6 @@
                             originalHierarchyData = data;
                             currentHierarchyData = data;
 
-                            // Render the hierarchy
                             renderD3(data);
                         } catch (e) {
                             console.error("Error:", e, "\nResponse:", response);
@@ -98,67 +97,11 @@
                 );
             } else {
                 console.error("PageMethods not available");
-                // For demonstration, we'll use sample data
                 loadSampleData();
             }
         }
 
-        function loadSampleData() {
-            // Sample data for demonstration
-            const sampleData = {
-                id: "org-root",
-                Name: "Organization",
-                ImageUrl: "",
-                children: [
-                    {
-                        id: "1",
-                        EmployeeID: "1",
-                        Name: "John CEO",
-                        Email: "john@company.com",
-                        PositionName: "CEO",
-                        ImageUrl: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=identicon",
-                        children: [
-                            {
-                                id: "2",
-                                EmployeeID: "2",
-                                Name: "Alice Manager",
-                                Email: "alice@company.com",
-                                PositionName: "CTO",
-                                ImageUrl: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=identicon",
-                                children: [
-                                    {
-                                        id: "4",
-                                        EmployeeID: "4",
-                                        Name: "Bob Developer",
-                                        Email: "bob@company.com",
-                                        PositionName: "Senior Developer",
-                                        ImageUrl: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=identicon",
-                                        children: []
-                                    }
-                                ]
-                            },
-                            {
-                                id: "3",
-                                EmployeeID: "3",
-                                Name: "Eve Manager",
-                                Email: "eve@company.com",
-                                PositionName: "CFO",
-                                ImageUrl: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=identicon",
-                                children: []
-                            }
-                        ]
-                    }
-                ]
-            };
-
-            originalHierarchyData = sampleData;
-            currentHierarchyData = sampleData;
-
-            // Render the hierarchy
-            renderD3(sampleData);
-        }
-
-        // ========== Search Functions ==========
+        // Search function
         function performSearch() {
             const nameQuery = document.getElementById('searchName').value.toLowerCase().trim();
             const positionQuery = document.getElementById('searchPosition').value.toLowerCase().trim();
@@ -188,8 +131,6 @@
         }
 
         function filterHierarchy(node, nameQuery, positionQuery) {
-            // We always want to return a copy of the root node to maintain the structure.
-            // The filtering logic only applies to its children.
             if (node.id === "org-root") {
                 const filteredChildren = [];
                 if (node.children) {
@@ -200,16 +141,12 @@
                         }
                     }
                 }
-
-                // Return the root node with the filtered list of children.
-                // It's important to return this even if the list is empty.
                 return {
                     ...node,
                     children: filteredChildren
                 };
             }
 
-            // This section handles the rest of the nodes.
             const matchesSearch = (
                 (!nameQuery || (node.Name && node.Name.toLowerCase().includes(nameQuery))) &&
                 (!positionQuery || (node.PositionName && node.PositionName.toLowerCase().includes(positionQuery)))
@@ -224,11 +161,9 @@
                     }
                 }
             }
-
-            // A node is included if it matches the search criteria or if any of its children match.
             if (matchesSearch || filteredChildren.length > 0) {
                 if (matchesSearch) {
-                    searchResults.add(node.id); // Add to set for highlighting
+                    searchResults.add(node.id); 
                 }
 
                 return {
@@ -237,7 +172,7 @@
                 };
             }
 
-            return null; // Return null if the node and its descendants do not match
+            return null; 
         }
 
         function highlightSearchResults() {
@@ -246,7 +181,6 @@
                 if (searchResults.has(d.data.id)) {
                     node.classed("highlighted", true);
 
-                    // Also highlight the path to this node
                     let current = d;
                     while (current.parent) {
                         d3.selectAll(".link").filter(link =>
@@ -268,7 +202,7 @@
             renderD3(originalHierarchyData);
         }
 
-        // ========== D3 Visualization ==========
+        //  D3 Visualization
         function renderD3(rootData) {
             console.log("Rendering hierarchy with data:", rootData);
 
@@ -306,7 +240,7 @@
                 .attr("height", height)
                 .attr("viewBox", [0, 0, width, height]);
 
-            // Add zoom functionality
+            //  zoom functionality
             const zoom = d3.zoom()
                 .scaleExtent([0.1, 3])
                 .on("zoom", function (event) {
@@ -345,12 +279,12 @@
                 console.error("Error creating tooltip:", error);
             }
 
-            // Draw links - VERTICAL orientation
+            
             g.selectAll(".link")
                 .data(root.links())
                 .enter().append("path")
                 .attr("class", "link")
-                .attr("d", d3.linkVertical()  // Changed to vertical
+                .attr("d", d3.linkVertical()  
                     .x(d => d.x)
                     .y(d => d.y));
 
@@ -389,23 +323,19 @@
                 })
                 .style("cursor", d => d.data.id === "org-root" ? "default" : "pointer");
 
-            // Add browser tooltip as fallback
             node.append("title")
                 .text(d => d.data.id === "org-root" ? "Organization" :
                     `${d.data.Name}\n${d.data.PositionName}\n${d.data.Email}`);
 
-            // Node circles (border only)
             node.append("circle")
                 .attr("r", 40)
                 .attr("fill", "none")
                 .attr("stroke", "#4a90e2")
                 .attr("stroke-width", 3)
                 .attr("class", d => {
-                    // Add your ranking classes if available in data
                     return "";
                 });
 
-            // Add images to nodes (Gravatar or database images)
             node.append("image")
                 .attr("xlink:href", d => d.data.ImageUrl || getGravatarUrl(d.data.Email))
                 .attr("x", -35)
@@ -418,14 +348,14 @@
             // Employee full name
             node.append("text")
                 .attr("class", "name")
-                .attr("dy", "3.5em")  // Position below image
+                .attr("dy", "3.5em") 
                 .attr("text-anchor", "middle")
                 .text(d => d.data.Name);
 
             // Position text
             node.append("text")
                 .attr("class", "title")
-                .attr("dy", "5em")  // Position below name
+                .attr("dy", "5em") 
                 .attr("text-anchor", "middle")
                 .text(d => d.data.PositionName || "");
 
@@ -462,7 +392,7 @@
             console.log("Hierarchy rendered successfully");
         }
 
-        // ========== Helper for Gravatar ==========
+        // Gravatar functionality 
         function getGravatarUrl(email) {
             if (!email) return "https://www.gravatar.com/avatar/?d=identicon";
 
